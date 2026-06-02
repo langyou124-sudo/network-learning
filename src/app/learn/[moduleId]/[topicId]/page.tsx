@@ -7,8 +7,32 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, completeTopic, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
+import { OsiLayers, NetworkTopology, Encapsulation } from '@/components/diagrams';
+
+const diagramComponents: Record<string, React.ComponentType> = {
+  'osi-layers': OsiLayers,
+  'network-topology': NetworkTopology,
+  'encapsulation': Encapsulation,
+};
 
 type TabType = 'content' | 'quiz' | 'notes';
+
+function renderContentWithDiagrams(content: string) {
+  const parts = content.split(/<Diagram\s+type="([^"]+)"\s*\/>/g);
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      const Component = diagramComponents[part];
+      if (Component) {
+        return (
+          <div key={i} className="my-6 p-5 rounded-2xl" style={{ background: 'var(--bg-warm)', border: '1px solid var(--border)' }}>
+            <Component />
+          </div>
+        );
+      }
+    }
+    return part.trim() ? <ReactMarkdown key={i}>{part}</ReactMarkdown> : null;
+  });
+}
 
 export default function TopicPage() {
   const params = useParams();
@@ -148,7 +172,7 @@ export default function TopicPage() {
       {activeTab === 'content' && (
         <div className="card px-8 py-8 animate-in">
           <div className="lesson-content">
-            <ReactMarkdown>{topic.content}</ReactMarkdown>
+            {renderContentWithDiagrams(topic.content)}
           </div>
 
           {topic.references.length > 0 && (
