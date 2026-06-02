@@ -7,7 +7,7 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, completeTopic, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
-import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation } from '@/components/diagrams';
+import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
@@ -19,10 +19,29 @@ const diagramComponents: Record<string, React.ComponentType> = {
 type TabType = 'content' | 'quiz' | 'notes';
 
 function renderContentWithDiagrams(content: string) {
-  const parts = content.split(/<Diagram\s+type="([^"]+)"\s*\/>/g);
+  const regex = /<(?:Diagram\s+type="([^"]+)"|Glossary\s+terms="([^"]*)")\s*\/>/g;
+  const parts: { type: 'md' | 'diagram' | 'glossary'; value: string }[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push({ type: 'md', value: content.slice(lastIndex, match.index) });
+    }
+    if (match[1]) {
+      parts.push({ type: 'diagram', value: match[1] });
+    } else if (match[2] !== undefined) {
+      parts.push({ type: 'glossary', value: match[2] });
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < content.length) {
+    parts.push({ type: 'md', value: content.slice(lastIndex) });
+  }
+
   return parts.map((part, i) => {
-    if (i % 2 === 1) {
-      const Component = diagramComponents[part];
+    if (part.type === 'diagram') {
+      const Component = diagramComponents[part.value];
       if (Component) {
         return (
           <div key={i} className="my-6 p-5 rounded-2xl" style={{ background: 'var(--bg-warm)', border: '1px solid var(--border)' }}>
@@ -31,7 +50,19 @@ function renderContentWithDiagrams(content: string) {
         );
       }
     }
-    return part.trim() ? <ReactMarkdown key={i}>{part}</ReactMarkdown> : null;
+    if (part.type === 'glossary') {
+      try {
+        const terms = JSON.parse(decodeURIComponent(part.value));
+        return (
+          <div key={i} className="my-6">
+            <GlossaryCard terms={terms} />
+          </div>
+        );
+      } catch {
+        return null;
+      }
+    }
+    return part.value.trim() ? <ReactMarkdown key={i}>{part.value}</ReactMarkdown> : null;
   });
 }
 
