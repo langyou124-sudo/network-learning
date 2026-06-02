@@ -7,10 +7,11 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, completeTopic, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
-import { OsiLayers, NetworkTopology, Encapsulation } from '@/components/diagrams';
+import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
+  'tcpip-layers': TcpIpLayers,
   'network-topology': NetworkTopology,
   'encapsulation': Encapsulation,
 };
