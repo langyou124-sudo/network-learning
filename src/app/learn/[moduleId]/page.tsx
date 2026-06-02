@@ -22,63 +22,68 @@ export default function ModulePage() {
 
   if (!module) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-12">
-        <p className="text-gray-500">模块不存在</p>
+      <div className="text-center py-16">
+        <p className="text-[var(--text-muted)]">模块不存在</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <Link href="/learn" className="text-blue-600 hover:text-blue-700 text-sm">
+    <div>
+      <div className="mb-8 animate-in">
+        <Link href="/learn" className="text-[13px] text-[var(--accent)] hover:underline">
           ← 返回知识库
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 mt-2">
-          {module.icon} {module.title}
-        </h1>
-        <p className="text-gray-600 mt-2">{module.description}</p>
+        <div className="flex items-center gap-3 mt-3">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+            style={{ background: 'var(--accent-light)' }}>
+            {module.icon}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">{module.title}</h1>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">{module.description}</p>
+          </div>
+        </div>
       </div>
 
       {module.topics.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {module.topics.map((topic, index) => {
             const isCompleted = completedTopics.includes(topic.id);
             return (
               <Link
                 key={topic.id}
                 href={`/learn/${moduleId}/${topic.id}`}
-                className="block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                className="card-lift flex items-center justify-between px-5 py-4 animate-in"
+                style={{ animationDelay: `${index * 0.06}s` }}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-semibold ${
-                      isCompleted
-                        ? 'bg-green-100 text-green-600'
-                        : 'bg-blue-100 text-blue-600'
-                    }`}>
-                      {isCompleted ? '✓' : index + 1}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{topic.title}</h3>
-                      <p className="text-sm text-gray-500">{topic.description}</p>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    isCompleted
+                      ? 'bg-[var(--success-bg)] text-[var(--success)]'
+                      : 'bg-[var(--accent-light)] text-[var(--accent)]'
+                  }`}>
+                    {isCompleted ? '✓' : index + 1}
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-400">
-                      {topic.quizzes.length} 道练习题
-                    </span>
-                    <span className="text-gray-400">→</span>
+                  <div>
+                    <h3 className="text-[14.5px] font-semibold text-[var(--text)]">{topic.title}</h3>
+                    <p className="text-[13px] text-[var(--text-muted)]">{topic.description}</p>
                   </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[12px] text-[var(--text-muted)]">
+                    {topic.quizzes.length} 道练习题
+                  </span>
+                  <span className="text-[var(--text-muted)]">→</span>
                 </div>
               </Link>
             );
           })}
         </div>
       ) : (
-        <div className="bg-white rounded-xl p-12 text-center shadow-sm">
-          <p className="text-gray-500 text-lg">内容正在准备中...</p>
-          <p className="text-gray-400 text-sm mt-2">敬请期待</p>
+        <div className="card text-center py-16">
+          <p className="text-[var(--text-muted)]">内容正在准备中…</p>
+          <p className="text-[var(--text-muted)] text-sm mt-1 opacity-60">敬请期待</p>
         </div>
       )}
     </div>

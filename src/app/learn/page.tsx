@@ -14,13 +14,13 @@ export default function LearnPage() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">知识库</h1>
-        <p className="text-gray-600 mt-2">选择模块开始学习</p>
+    <div>
+      <div className="mb-8 animate-in">
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">知识库</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">选择模块开始学习</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {modules.map((mod, index) => {
           const completedCount = mod.topics.filter(t =>
             completedTopics.includes(t.id)
@@ -30,67 +30,71 @@ export default function LearnPage() {
             : 0;
 
           return (
-            <div key={mod.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6">
+            <div
+              key={mod.id}
+              className="card-lift overflow-hidden animate-in"
+              style={{ animationDelay: `${index * 0.06}s` }}
+            >
+              <div className="px-6 py-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl">{mod.icon}</span>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                      style={{ background: 'var(--accent-light)' }}>
+                      {mod.icon}
+                    </div>
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-900">
+                      <h2 className="text-[15px] font-semibold text-[var(--text)]">
                         模块 {index + 1}：{mod.title}
                       </h2>
-                      <p className="text-sm text-gray-500">{mod.description}</p>
+                      <p className="text-[13px] text-[var(--text-muted)]">{mod.description}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-600">
-                      {completedCount}/{mod.topics.length} 完成
+                    <div className="text-[13px] font-medium text-[var(--text-secondary)]">
+                      {completedCount}/{mod.topics.length}
                     </div>
-                    <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all"
-                        style={{ width: `${progressPercent}%` }}
-                      />
+                    <div className="progress-bar w-20 mt-1.5">
+                      <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
                     </div>
                   </div>
                 </div>
 
                 {mod.topics.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {mod.topics.map((topic) => {
                       const isCompleted = completedTopics.includes(topic.id);
                       return (
                         <Link
                           key={topic.id}
                           href={`/learn/${mod.id}/${topic.id}`}
-                          className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-150 hover:bg-[var(--bg-warm)] group"
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
                               isCompleted
-                                ? 'bg-green-100 text-green-600'
-                                : 'bg-gray-100 text-gray-400'
+                                ? 'bg-[var(--success-bg)] text-[var(--success)]'
+                                : 'bg-[var(--border-light)] text-[var(--text-muted)]'
                             }`}>
                               {isCompleted ? '✓' : '○'}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{topic.title}</div>
-                              <div className="text-sm text-gray-500">{topic.description}</div>
+                              <div className="text-[14px] font-medium text-[var(--text)]">{topic.title}</div>
+                              <div className="text-[12px] text-[var(--text-muted)]">{topic.description}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">
+                            <span className="text-[12px] text-[var(--text-muted)]">
                               {topic.quizzes.length} 题
                             </span>
-                            <span className="text-gray-400">→</span>
+                            <span className="text-[var(--text-muted)] group-hover:text-[var(--accent)] transition-colors">→</span>
                           </div>
                         </Link>
                       );
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <p>内容正在准备中...</p>
+                  <div className="text-center py-8 text-[var(--text-muted)] text-sm">
+                    内容正在准备中…
                   </div>
                 )}
               </div>

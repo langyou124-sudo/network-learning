@@ -45,55 +45,45 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">设置</h1>
-        <p className="text-gray-600 mt-2">管理你的学习数据</p>
+    <div className="max-w-2xl">
+      <div className="mb-8 animate-in">
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">设置</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">管理你的学习数据</p>
       </div>
 
-      <div className="space-y-6">
-        {/* 数据导出 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">导出数据</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            将你的学习进度、错题记录导出为 JSON 文件，用于备份或迁移到其他设备。
+      <div className="space-y-5">
+        {/* 导出 */}
+        <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.06s' }}>
+          <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">导出数据</h2>
+          <p className="text-[13px] text-[var(--text-muted)] mb-4">
+            将学习进度、错题记录导出为 JSON 文件，用于备份或迁移。
           </p>
-          <button
-            onClick={handleExport}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            导出备份文件
-          </button>
+          <button onClick={handleExport} className="btn btn-primary">导出备份文件</button>
         </div>
 
-        {/* 数据导入 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">导入数据</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            从之前导出的备份文件恢复学习数据。导入会覆盖当前数据。
+        {/* 导入 */}
+        <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.12s' }}>
+          <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">导入数据</h2>
+          <p className="text-[13px] text-[var(--text-muted)] mb-4">
+            从备份文件恢复学习数据。导入会覆盖当前数据。
           </p>
-          <label className="inline-block px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer">
+          <label className="btn btn-primary cursor-pointer inline-flex">
             选择备份文件
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImport}
-              className="hidden"
-            />
+            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
           {importStatus === 'success' && (
-            <p className="text-sm text-green-600 mt-2">导入成功！</p>
+            <p className="text-[13px] mt-2" style={{ color: 'var(--success)' }}>导入成功！</p>
           )}
           {importStatus === 'error' && (
-            <p className="text-sm text-red-600 mt-2">导入失败，请检查文件格式</p>
+            <p className="text-[13px] mt-2" style={{ color: 'var(--danger)' }}>导入失败，请检查文件格式</p>
           )}
         </div>
 
         {/* 学习时长 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">学习时长</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            手动记录你的累计学习时长（小时）。
+        <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.18s' }}>
+          <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">学习时长</h2>
+          <p className="text-[13px] text-[var(--text-muted)] mb-4">
+            手动记录累计学习时长（小时）。
           </p>
           <div className="flex gap-3">
             <input
@@ -103,27 +93,24 @@ export default function SettingsPage() {
               placeholder="输入小时数"
               min="0"
               step="0.5"
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+              className="flex-1 px-4 py-2.5 rounded-xl text-[14px] focus:outline-none"
+              style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
             />
-            <button
-              onClick={handleUpdateHours}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-            >
+            <button onClick={handleUpdateHours} className="btn btn-primary"
+              style={{ background: 'linear-gradient(135deg, #7c5cbf 0%, #b088f4 100%)' }}>
               更新
             </button>
           </div>
         </div>
 
         {/* 危险操作 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-red-100">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">危险操作</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            清除所有学习数据，包括进度、成绩、错题和笔记。此操作不可恢复。
+        <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.24s', borderColor: 'var(--danger)', borderWidth: '1px' }}>
+          <h2 className="text-[15px] font-semibold mb-1" style={{ color: 'var(--danger)' }}>危险操作</h2>
+          <p className="text-[13px] text-[var(--text-muted)] mb-4">
+            清除所有学习数据，包括进度、成绩、错题和笔记。不可恢复。
           </p>
-          <button
-            onClick={handleClearData}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
+          <button onClick={handleClearData} className="btn"
+            style={{ background: 'var(--danger)', color: 'white' }}>
             清除所有数据
           </button>
         </div>

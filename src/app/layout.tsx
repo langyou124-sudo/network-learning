@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "通信知识学习平台",
+  title: "NetCom — 通信知识学习平台",
   description: "网络工程与通信工程交互式学习系统",
 };
 
@@ -28,10 +28,12 @@ export default function RootLayout({
       lang="zh-CN"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-gray-50">
+      <body className="min-h-full" style={{ background: 'var(--bg)' }}>
         <Sidebar />
-        <main className="ml-64 min-h-screen p-8">
-          {children}
+        <main className="ml-60 min-h-screen">
+          <div className="px-8 py-8 max-w-[1100px]">
+            {children}
+          </div>
         </main>
       </body>
     </html>
