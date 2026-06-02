@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getModuleById, getTopicById } from '@/data/courses';
-import { getProgress, completeTopic, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
+import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
 import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard } from '@/components/diagrams';
@@ -97,8 +97,8 @@ export default function TopicPage() {
   }, [moduleId, topicId]);
 
   const handleComplete = () => {
-    completeTopic(topicId);
-    setIsCompleted(true);
+    toggleTopicComplete(topicId);
+    setIsCompleted(!isCompleted);
   };
 
   const handleSaveNote = () => {
@@ -170,11 +170,10 @@ export default function TopicPage() {
         <h1 className="text-xl font-bold text-[var(--text)] tracking-tight">{topic.title}</h1>
         <button
           onClick={handleComplete}
-          disabled={isCompleted}
-          className={`btn ${isCompleted ? 'btn-secondary cursor-default' : 'btn-primary'}`}
+          className={`btn ${isCompleted ? 'btn-secondary' : 'btn-primary'}`}
           style={isCompleted ? { background: 'var(--success-bg)', color: 'var(--success)', border: 'none' } : {}}
         >
-          {isCompleted ? '✓ 已完成' : '标记完成'}
+          {isCompleted ? '✓ 已完成 · 点击取消' : '标记完成'}
         </button>
       </div>
 

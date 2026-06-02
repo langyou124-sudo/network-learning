@@ -42,6 +42,20 @@ export function completeTopic(topicId: string) {
   return progress;
 }
 
+// 切换课题完成状态
+export function toggleTopicComplete(topicId: string) {
+  const progress = getProgress();
+  const idx = progress.completedTopics.indexOf(topicId);
+  if (idx >= 0) {
+    progress.completedTopics.splice(idx, 1);
+  } else {
+    progress.completedTopics.push(topicId);
+  }
+  progress.lastStudyDate = new Date().toISOString().split('T')[0];
+  saveProgress(progress);
+  return progress;
+}
+
 // 保存测验成绩
 export function saveQuizScore(topicId: string, correct: number, total: number) {
   const progress = getProgress();
