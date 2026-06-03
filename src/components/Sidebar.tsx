@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { modules } from '@/data/courses';
@@ -34,12 +35,52 @@ function GearIcon() {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 路由变化时关闭移动端 sidebar
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
-    <aside
-      className="fixed left-0 top-0 w-60 h-screen flex flex-col glass-dark"
-      style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}
-    >
+    <>
+      {/* 移动端汉堡按钮 */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all"
+        style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+        aria-label="菜单"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          {isOpen ? (
+            <>
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </>
+          ) : (
+            <>
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </>
+          )}
+        </svg>
+      </button>
+
+      {/* 移动端遮罩层 */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`fixed left-0 top-0 w-60 h-screen flex flex-col glass-dark z-40 transition-transform duration-300 md:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}
+      >
       {/* 品牌区 */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-3 mb-1">
@@ -112,5 +153,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -230,7 +230,7 @@ export default function STPTopology() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${sw.color}10, ${sw.color}05)`
@@ -288,7 +288,7 @@ export default function STPTopology() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: sw.color + '05', border: `1.5px solid ${sw.color}20` }}
                 >
                   {/* 核心信息 */}
@@ -351,7 +351,7 @@ export default function STPTopology() {
         </button>
 
         {showStates && (
-          <div className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl" style={{ background: '#6366f105', border: '1.5px solid #6366f120' }}>
+          <div className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl" style={{ background: '#6366f105', border: '1.5px solid #6366f120' }}>
             <div className="flex flex-col gap-2">
               {stpStates.map((state, i) => (
                 <div key={state.name}>

@@ -116,7 +116,7 @@ export default function FiberOptic() {
                 className="w-full text-left transition-all duration-300"
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? 'linear-gradient(135deg, #6366f110, #6366f105)'
@@ -140,7 +140,7 @@ export default function FiberOptic() {
 
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
                     style={{ background: '#6366f105', border: '1.5px solid #6366f120', color: 'var(--text-secondary)' }}
                   >
                     {s.desc}
@@ -168,7 +168,7 @@ export default function FiberOptic() {
                   style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
                 >
                   <div
-                    className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                    className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                     style={{
                       background: isActive
                         ? `linear-gradient(135deg, ${f.color}10, ${f.color}05)`
@@ -226,7 +226,7 @@ export default function FiberOptic() {
                 {/* 展开详情 */}
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                     style={{ background: f.color + '05', border: `1.5px solid ${f.color}20` }}
                   >
                     {/* 传输原理 */}
@@ -344,7 +344,7 @@ export default function FiberOptic() {
                 className="w-full text-left transition-all duration-300"
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${w.color}10, ${w.color}05)`
@@ -373,7 +373,7 @@ export default function FiberOptic() {
 
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
                     style={{ background: w.color + '05', border: `1.5px solid ${w.color}20`, color: 'var(--text-secondary)' }}
                   >
                     {w.desc}

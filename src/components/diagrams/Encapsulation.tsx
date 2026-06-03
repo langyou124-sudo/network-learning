@@ -108,7 +108,7 @@ export default function Encapsulation() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-3 rounded-xl text-[13px] leading-relaxed"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-5 py-3 rounded-xl text-[13px] leading-relaxed"
                   style={{
                     background: step.color + '06',
                     border: `1px solid ${step.color}15`,

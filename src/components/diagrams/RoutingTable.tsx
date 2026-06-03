@@ -99,7 +99,7 @@ export default function RoutingTable() {
                 {/* 展开详情 */}
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl"
                     style={{ background: colors.bg, border: `1.5px solid ${colors.border}40` }}
                   >
                     <div className="text-[13px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>

@@ -197,7 +197,7 @@ export default function CellularNetwork() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${g.color}10, ${g.color}05)`
@@ -249,7 +249,7 @@ export default function CellularNetwork() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: g.color + '05', border: `1.5px solid ${g.color}20` }}
                 >
                   {/* 关键技术 */}
@@ -301,7 +301,7 @@ export default function CellularNetwork() {
                 className="w-full text-left transition-all duration-300"
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${uc.color}10, ${uc.color}05)`
@@ -330,7 +330,7 @@ export default function CellularNetwork() {
 
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl text-[13.5px] leading-relaxed"
                     style={{ background: uc.color + '05', border: `1.5px solid ${uc.color}20`, color: 'var(--text-secondary)' }}
                   >
                     {uc.desc}

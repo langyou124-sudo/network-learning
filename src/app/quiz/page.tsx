@@ -46,7 +46,7 @@ export default function QuizPage() {
         <p className="text-[var(--text-muted)] text-sm mt-1">选择课题开始练习</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
         {[
           { value: topics.length, label: '总练习题', color: 'var(--accent)' },
           { value: attemptedCount, label: '已尝试', color: 'var(--success)' },

@@ -270,7 +270,7 @@ export default function FaultDiagnosis() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${step.color}10, ${step.color}05)`
@@ -325,7 +325,7 @@ export default function FaultDiagnosis() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: step.color + '05', border: `1.5px solid ${step.color}20` }}
                 >
                   {/* 关键要点 */}
@@ -424,7 +424,7 @@ export default function FaultDiagnosis() {
                   style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
                 >
                   <div
-                    className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                    className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                     style={{
                       background: isActive
                         ? `linear-gradient(135deg, ${fault.color}10, ${fault.color}05)`
@@ -477,7 +477,7 @@ export default function FaultDiagnosis() {
                 {/* 展开详情 */}
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                     style={{ background: fault.color + '05', border: `1.5px solid ${fault.color}20` }}
                   >
                     {/* 症状列表 */}
@@ -548,7 +548,7 @@ export default function FaultDiagnosis() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showOSI ? 'linear-gradient(135deg, #ec489910, #ec489905)' : 'var(--surface)',
               border: `1.5px solid ${showOSI ? '#ec489940' : 'var(--border)'}`,

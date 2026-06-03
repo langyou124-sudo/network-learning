@@ -111,7 +111,7 @@ export default function SDNArchitecture() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${layer.color}10, ${layer.color}05)`
@@ -169,7 +169,7 @@ export default function SDNArchitecture() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: layer.color + '05', border: `1.5px solid ${layer.color}20` }}
                 >
                   {/* 核心概念 */}
@@ -248,7 +248,7 @@ export default function SDNArchitecture() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showComparison ? 'linear-gradient(135deg, #8b5cf610, #8b5cf605)' : 'var(--surface)',
               border: `1.5px solid ${showComparison ? '#8b5cf640' : 'var(--border)'}`,
@@ -297,7 +297,7 @@ export default function SDNArchitecture() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showOpenFlow ? 'linear-gradient(135deg, #f9731610, #f9731605)' : 'var(--surface)',
               border: `1.5px solid ${showOpenFlow ? '#f9731640' : 'var(--border)'}`,
@@ -355,7 +355,7 @@ export default function SDNArchitecture() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showNFV ? 'linear-gradient(135deg, #06b6d410, #06b6d405)' : 'var(--surface)',
               border: `1.5px solid ${showNFV ? '#06b6d440' : 'var(--border)'}`,

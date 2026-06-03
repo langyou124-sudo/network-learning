@@ -151,7 +151,7 @@ export default function SNMPDiagram() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${comp.color}10, ${comp.color}05)`
@@ -196,7 +196,7 @@ export default function SNMPDiagram() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: comp.color + '05', border: `1.5px solid ${comp.color}20` }}
                 >
                   {/* 核心概念 */}
@@ -295,7 +295,7 @@ export default function SNMPDiagram() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showOID ? 'linear-gradient(135deg, #a855f710, #a855f705)' : 'var(--surface)',
               border: `1.5px solid ${showOID ? '#a855f740' : 'var(--border)'}`,
@@ -349,7 +349,7 @@ export default function SNMPDiagram() {
           className="w-full text-left transition-all duration-300"
         >
           <div
-            className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+            className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
             style={{
               background: showVersions ? 'linear-gradient(135deg, #06b6d410, #06b6d405)' : 'var(--surface)',
               border: `1.5px solid ${showVersions ? '#06b6d440' : 'var(--border)'}`,

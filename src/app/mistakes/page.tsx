@@ -35,7 +35,7 @@ export default function MistakesPage() {
         <p className="text-[var(--text-muted)] text-sm mt-1">复习做错的题目，查漏补缺</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
         {[
           { value: mistakes.length, label: '总错题', color: 'var(--warning)' },
           { value: unreviewedCount, label: '未复习', color: 'var(--danger)' },
@@ -94,7 +94,7 @@ export default function MistakesPage() {
 
               <p className="font-medium text-[var(--text)] text-[14.5px] mb-3">{mistake.question}</p>
 
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div className="rounded-xl px-4 py-3" style={{ background: 'var(--danger-bg)' }}>
                   <div className="text-[11px] font-medium mb-1" style={{ color: 'var(--danger)' }}>你的答案</div>
                   <div className="text-[13px]" style={{ color: 'var(--danger)' }}>

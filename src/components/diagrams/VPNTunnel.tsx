@@ -111,7 +111,7 @@ export default function VPNTunnel() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${vpn.color}10, ${vpn.color}05)`
@@ -174,7 +174,7 @@ export default function VPNTunnel() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: vpn.color + '05', border: `1.5px solid ${vpn.color}20` }}
                 >
                   {/* 说明 */}
@@ -285,7 +285,7 @@ export default function VPNTunnel() {
         </button>
 
         {showIKE && (
-          <div className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl" style={{ background: '#22c55e04', border: '1.5px solid #22c55e15' }}>
+          <div className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl" style={{ background: '#22c55e04', border: '1.5px solid #22c55e15' }}>
             {/* Phase 1 */}
             <button
               onClick={() => setIkePhase(ikePhase === 1 ? null : 1)}
@@ -426,7 +426,7 @@ export default function VPNTunnel() {
         </button>
 
         {showProtocols && (
-          <div className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl" style={{ background: '#6366f104', border: '1.5px solid #6366f115' }}>
+          <div className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl" style={{ background: '#6366f104', border: '1.5px solid #6366f115' }}>
             <div className="space-y-0">
               {/* 表头 */}
               <div

@@ -180,7 +180,7 @@ export default function WirelessStandards() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${s.color}10, ${s.color}05)`
@@ -238,7 +238,7 @@ export default function WirelessStandards() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: s.color + '05', border: `1.5px solid ${s.color}20` }}
                 >
                   {/* 技术参数 */}
@@ -291,7 +291,7 @@ export default function WirelessStandards() {
                 className="w-full text-left transition-all duration-300"
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${band.color}10, ${band.color}05)`
@@ -327,7 +327,7 @@ export default function WirelessStandards() {
 
                 {isActive && (
                   <div
-                    className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl text-[13px]"
+                    className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl text-[13px]"
                     style={{ background: band.color + '05', border: `1.5px solid ${band.color}20` }}
                   >
                     <div className="mb-2">

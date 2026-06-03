@@ -119,7 +119,7 @@ export default function EncryptionFlow() {
                 style={{ transform: isActive ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${enc.color}10, ${enc.color}05)`
@@ -172,7 +172,7 @@ export default function EncryptionFlow() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: enc.color + '05', border: `1.5px solid ${enc.color}20` }}
                 >
                   {/* 核心概念 */}
@@ -254,7 +254,7 @@ export default function EncryptionFlow() {
         </button>
 
         {showComparison && (
-          <div className="mx-4 mt-1 mb-2 px-5 py-4 rounded-xl" style={{ background: '#3b82f604', border: '1.5px solid #3b82f615' }}>
+          <div className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-4 rounded-xl" style={{ background: '#3b82f604', border: '1.5px solid #3b82f615' }}>
             <div className="space-y-0">
               {comparisonData.map((item, i) => (
                 <div

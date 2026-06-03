@@ -161,7 +161,7 @@ export default function TcpIpLayers() {
               {/* 展开详情 */}
               {isActive && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{
                     background: layer.color + '05',
                     border: `1.5px solid ${layer.color}20`,

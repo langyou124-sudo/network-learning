@@ -153,7 +153,7 @@ export default function RoutingProcess() {
                 style={{ transform: isActive || isPlaying ? 'scale(1.005)' : 'scale(1)' }}
               >
                 <div
-                  className="flex items-center rounded-xl px-5 py-3.5 transition-all duration-300"
+                  className="flex items-center rounded-xl px-3 sm:px-5 py-3.5 transition-all duration-300"
                   style={{
                     background: isActive || isPlaying
                       ? `linear-gradient(135deg, ${step.color}10, ${step.color}05)`
@@ -205,7 +205,7 @@ export default function RoutingProcess() {
               {/* 展开详情 */}
               {(isActive || isPlaying) && (
                 <div
-                  className="mx-4 mt-1 mb-2 px-5 py-5 rounded-xl"
+                  className="mx-2 sm:mx-4 mt-1 mb-2 px-3 sm:px-5 py-5 rounded-xl"
                   style={{ background: step.color + '05', border: `1.5px solid ${step.color}20` }}
                 >
                   {/* 详细说明 */}

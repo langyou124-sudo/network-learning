@@ -30,7 +30,7 @@ export default function ProgressPage() {
       </div>
 
       {/* 总览卡片 */}
-      <div className="grid grid-cols-4 gap-4 mb-8 animate-in" style={{ animationDelay: '0.06s' }}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 animate-in" style={{ animationDelay: '0.06s' }}>
         {[
           { value: `${stats.completionRate}%`, label: '完成率', sub: `${stats.completedCount}/${stats.totalTopics}`, color: 'var(--accent)' },
           { value: stats.avgScore || '—', label: '平均分', sub: '满分100', color: 'var(--success)' },

@@ -215,7 +215,7 @@ export default function TopicPage() {
 
       {/* 知识讲解 */}
       {activeTab === 'content' && (
-        <div className="card px-8 py-8 animate-in">
+        <div className="card px-4 sm:px-8 py-4 sm:py-8 animate-in">
           <div className="lesson-content">
             {renderContentWithDiagrams(topic.content)}
           </div>
@@ -244,7 +244,7 @@ export default function TopicPage() {
 
       {/* 练习题 */}
       {activeTab === 'quiz' && (
-        <div className="card px-8 py-8 animate-in">
+        <div className="card px-4 sm:px-8 py-4 sm:py-8 animate-in">
           {topic.quizzes.length === 0 ? (
             <p className="text-center text-[var(--text-muted)] py-8">暂无练习题</p>
           ) : showResult ? (
@@ -412,7 +412,7 @@ export default function TopicPage() {
 
       {/* 笔记 */}
       {activeTab === 'notes' && (
-        <div className="card px-8 py-8 animate-in">
+        <div className="card px-4 sm:px-8 py-4 sm:py-8 animate-in">
           <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4">学习笔记</h2>
           <textarea
             value={note}

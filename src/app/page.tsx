@@ -39,7 +39,7 @@ export default function Home() {
           </p>
 
           {/* 统计卡片 */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { value: `${stats.completionRate}%`, label: '学习进度', sub: `${stats.completedCount}/${stats.totalTopics} 课题`, color: '#6b9fff' },
               { value: stats.avgScore || '—', label: '平均分', sub: '测验成绩', color: '#5cc68a' },
@@ -67,7 +67,7 @@ export default function Home() {
       </div>
 
       {/* 快速入口 */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
           { href: '/learn', icon: '📚', title: '继续学习', desc: '从上次停止的地方开始', gradient: 'linear-gradient(135deg, #3b5998 0%, #5a7cc2 100%)' },
           { href: '/quiz', icon: '✏️', title: '开始练习', desc: '巩固所学知识', gradient: 'linear-gradient(135deg, #2d8a56 0%, #4aad6e 100%)' },
@@ -99,7 +99,7 @@ export default function Home() {
             查看全部 →
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {modules.map((mod, i) => (
             <Link
               key={mod.id}
@@ -133,7 +133,7 @@ export default function Home() {
         }}
       >
         <h3 className="font-semibold text-[var(--text)] mb-3 text-[15px]">学习建议</h3>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
           {[
             '每天坚持学习 1-2 个课题，积少成多',
             '学完后做练习题巩固，错题要及时复习',
