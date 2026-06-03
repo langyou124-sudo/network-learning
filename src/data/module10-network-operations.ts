@@ -109,6 +109,8 @@ Agent   Agent   Agent
 | Trap | Agent → NMS | 主动上报告警 |
 | GetBulk | NMS → Agent | 批量获取数据 |
 
+<Diagram type="snmp-diagram" />
+
 ### MIB 与 OID
 
 **MIB（管理信息库）** 定义了设备可被管理的变量。
@@ -289,6 +291,8 @@ iso.org.dod.internet.mgmt.mib-2.system.sysName
 这一课，我们来学习系统化的故障排除方法。
 
 <Glossary terms="%5B%7B%22term%22%3A%22%E5%88%86%E5%B1%82%E6%8E%92%E6%9F%A5%22%2C%22english%22%3A%22Layered%20Troubleshooting%22%2C%22definition%22%3A%22%E6%8C%89OSI%E5%B1%82%E6%AC%A1%E4%BB%8E%E4%B8%8B%E5%BE%80%E4%B8%8A%E6%88%96%E4%BB%8E%E4%B8%8A%E5%BE%80%E4%B8%8B%E6%8E%92%E6%9F%A5%E9%97%AE%E9%A2%98%22%7D%2C%7B%22term%22%3A%22ping%22%2C%22english%22%3A%22Packet%20Internet%20Groper%22%2C%22definition%22%3A%22ICMP%E5%B7%A5%E5%85%B7%EF%BC%8C%E6%B5%8B%E8%AF%95%E7%BD%91%E7%BB%9C%E8%BF%9E%E9%80%9A%E6%80%A7%22%7D%2C%7B%22term%22%3A%22traceroute%22%2C%22english%22%3A%22Traceroute%22%2C%22definition%22%3A%22%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA%E5%B7%A5%E5%85%B7%EF%BC%8C%E6%98%BE%E7%A4%BA%E6%95%B0%E6%8D%AE%E5%8C%85%E7%BB%8F%E8%BF%87%E7%9A%84%E8%B7%AF%E7%94%B1%E5%99%A8%22%7D%2C%7B%22term%22%3A%22Wireshark%22%2C%22english%22%3A%22Wireshark%22%2C%22definition%22%3A%22%E7%BD%91%E7%BB%9C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%EF%BC%8C%E5%88%86%E6%9E%90%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85%22%7D%5D" />
+
+<Diagram type="fault-diagnosis" />
 
 ## 分层排查法
 

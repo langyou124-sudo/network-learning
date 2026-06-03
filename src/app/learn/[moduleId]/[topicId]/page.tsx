@@ -7,13 +7,26 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
-import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard } from '@/components/diagrams';
+import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
   'tcpip-layers': TcpIpLayers,
   'network-topology': NetworkTopology,
   'encapsulation': Encapsulation,
+  'routing-table': RoutingTable,
+  'vlan-diagram': VlanDiagram,
+  'stp-topology': STPTopology,
+  'routing-process': RoutingProcess,
+  'encryption-flow': EncryptionFlow,
+  'firewall-types': FirewallTypes,
+  'vpn-tunnel': VPNTunnel,
+  'wireless-standards': WirelessStandards,
+  'cellular-network': CellularNetwork,
+  'fiber-optic': FiberOptic,
+  'sdn-architecture': SDNArchitecture,
+  'snmp-diagram': SNMPDiagram,
+  'fault-diagnosis': FaultDiagnosis,
 };
 
 type TabType = 'content' | 'quiz' | 'notes';

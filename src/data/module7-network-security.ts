@@ -240,6 +240,8 @@ export const networkSecurity: Module = {
 - 性能开销大
 - 需要针对不同协议开发代理
 
+<Diagram type="firewall-types" />
+
 ## ACL 访问控制列表
 
 ACL 是防火墙最常用的规则配置方式。
@@ -409,6 +411,8 @@ IPS 串联在网络中，所有流量都经过它：
 **加密**就是把明文变成密文，只有拥有密钥的人才能解密。这是保护数据机密性的核心技术。
 
 <Glossary terms="%5B%7B%22term%22%3A%22%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%22%2C%22english%22%3A%22Symmetric%20Encryption%22%2C%22definition%22%3A%22%E5%8A%A0%E5%AF%86%E5%92%8C%E8%A7%A3%E5%AF%86%E4%BD%BF%E7%94%A8%E5%90%8C%E4%B8%80%E6%8A%8A%E5%AF%86%E9%92%A5%EF%BC%8C%E9%80%9F%E5%BA%A6%E5%BF%AB%E4%BD%86%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E5%9B%B0%E9%9A%BE%22%7D%2C%7B%22term%22%3A%22%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%22%2C%22english%22%3A%22Asymmetric%20Encryption%22%2C%22definition%22%3A%22%E4%BD%BF%E7%94%A8%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86%E3%80%81%E7%A7%81%E9%92%A5%E8%A7%A3%E5%AF%86%EF%BC%88%E6%88%96%E5%8F%8D%E4%B9%8B%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%BA%86%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E9%97%AE%E9%A2%98%22%7D%2C%7B%22term%22%3A%22%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%22%2C%22english%22%3A%22Digital%20Signature%22%2C%22definition%22%3A%22%E7%94%A8%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86%E6%95%B0%E6%8D%AE%E7%9A%84%E5%93%88%E5%B8%8C%E5%80%BC%EF%BC%8C%E7%94%A8%E4%BA%8E%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%E5%92%8C%E4%B8%8D%E5%8F%AF%E5%90%A6%E8%AE%A4%22%7D%2C%7B%22term%22%3A%22%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%22%2C%22english%22%3A%22Digital%20Certificate%22%2C%22definition%22%3A%22%E7%94%B1CA%E7%AD%BE%E5%8F%91%E7%9A%84%E8%AF%81%E6%98%8E%E5%85%AC%E9%92%A5%E5%BD%92%E5%B1%9E%E7%9A%84%E6%95%B0%E5%AD%97%E6%96%87%E4%BB%B6%22%7D%2C%7B%22term%22%3A%22PKI%22%2C%22english%22%3A%22Public%20Key%20Infrastructure%22%2C%22definition%22%3A%22%E5%85%AC%E9%92%A5%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%EF%BC%8C%E7%AE%A1%E7%90%86%E5%AF%86%E9%92%A5%E5%92%8C%E8%AF%81%E4%B9%A6%E7%9A%84%E4%BD%93%E7%B3%BB%22%7D%5D" />
+
+<Diagram type="encryption-flow" />
 
 ## 对称加密
 
@@ -627,6 +631,8 @@ VPN 在公共网络（如互联网）上建立一条**加密隧道**，让你像
 **站点到站点 VPN**
 - 两个办公室之间建立 VPN 连接
 - 适合分公司互联
+
+<Diagram type="vpn-tunnel" />
 
 ## IPsec VPN
 

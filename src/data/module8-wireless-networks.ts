@@ -226,6 +226,8 @@ Wi-Fi 基于 IEEE 802.11 标准，经历了多次升级：
 | 802.11ac | Wi-Fi 5 | 5 GHz | 6.9 Gbps | 2013 |
 | 802.11ax | Wi-Fi 6 | 2.4/5/6 GHz | 9.6 Gbps | 2019 |
 
+<Diagram type="wireless-standards" />
+
 ### 频段对比
 
 **2.4 GHz 频段**
@@ -415,6 +417,8 @@ AP 和设备协商"什么时候醒来通信"，其他时间设备可以休眠。
 这一切背后是移动通信技术从 1G 到 5G 的演进。
 
 <Glossary terms="%5B%7B%22term%22%3A%22%E8%9C%82%E7%AA%9D%E7%BD%91%E7%BB%9C%22%2C%22english%22%3A%22Cellular%20Network%22%2C%22definition%22%3A%22%E6%8A%8A%E6%9C%8D%E5%8A%A1%E5%8C%BA%E5%88%86%E6%88%90%E5%A4%9A%E4%B8%AA%E5%B0%8F%E5%8C%BA%EF%BC%8C%E6%AF%8F%E4%B8%AA%E5%B0%8F%E5%8C%BA%E7%94%B1%E4%B8%80%E4%B8%AA%E5%9F%BA%E7%AB%99%E6%9C%8D%E5%8A%A1%22%7D%2C%7B%22term%22%3A%22OFDM%22%2C%22english%22%3A%22Orthogonal%20Frequency%20Division%20Multiplexing%22%2C%22definition%22%3A%22%E6%AD%A3%E4%BA%A4%E9%A2%91%E5%88%86%E5%A4%8D%E7%94%A8%EF%BC%8C4G%2F5G%E7%9A%84%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%22%7D%2C%7B%22term%22%3A%22MIMO%22%2C%22english%22%3A%22Multiple-Input%20Multiple-Output%22%2C%22definition%22%3A%22%E5%A4%9A%E5%85%A5%E5%A4%9A%E5%87%BA%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%A4%9A%E6%A0%B9%E5%A4%A9%E7%BA%BF%E6%8F%90%E9%AB%98%E9%80%9F%E7%8E%87%E5%92%8C%E5%8F%AF%E9%9D%A0%E6%80%A7%22%7D%2C%7B%22term%22%3A%22%E7%BD%91%E7%BB%9C%E5%88%87%E7%89%87%22%2C%22english%22%3A%22Network%20Slicing%22%2C%22definition%22%3A%22%E5%9C%A8%E5%90%8C%E4%B8%80%E7%89%A9%E7%90%86%E7%BD%91%E7%BB%9C%E4%B8%8A%E5%88%9B%E5%BB%BA%E5%A4%9A%E4%B8%AA%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C%22%7D%5D" />
+
+<Diagram type="cellular-network" />
 
 ## 蜂窝网络原理
 

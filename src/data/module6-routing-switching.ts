@@ -59,6 +59,8 @@ ip route show
 route -n
 \`\`\`
 
+<Diagram type="routing-table" />
+
 ## 静态路由 vs 动态路由
 
 ### 静态路由：手动配置
@@ -421,6 +423,8 @@ VLAN 把一个物理交换机**逻辑上**划分成多个虚拟交换机：
 └── VLAN 30（市场部）：端口 21-30
 \`\`\`
 
+<Diagram type="vlan-diagram" />
+
 **效果：**
 - VLAN 10 的设备只能和 VLAN 10 内的设备通信
 - 不同 VLAN 之间默认不能通信
@@ -587,6 +591,8 @@ Switch(config)# ip routing
 ## STP 的工作原理
 
 STP 的核心思想是：**选择一些链路"激活"，禁用其他链路，让网络形成一棵没有环路的"树"。**
+
+<Diagram type="stp-topology" />
 
 ### 第一步：选举根桥
 
