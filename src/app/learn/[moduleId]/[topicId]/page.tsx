@@ -7,6 +7,7 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
@@ -75,7 +76,7 @@ function renderContentWithDiagrams(content: string) {
         return null;
       }
     }
-    return part.value.trim() ? <ReactMarkdown key={i}>{part.value}</ReactMarkdown> : null;
+    return part.value.trim() ? <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>{part.value}</ReactMarkdown> : null;
   });
 }
 
