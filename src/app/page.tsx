@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { modules } from '@/data/courses';
 
 const features = [
   { icon: '📐', title: '系统化课程', desc: '从网络基础到运维实战，10大模块循序渐进', href: '/learn' },
@@ -16,7 +15,6 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden rounded-2xl mb-16 animate-in"
         style={{ background: 'linear-gradient(160deg, #0f1219 0%, #1a2540 40%, #243660 100%)' }}>
-        {/* 装饰光晕 */}
         <div className="absolute -top-20 -right-20 w-80 h-80 opacity-10"
           style={{ background: 'radial-gradient(circle, rgba(74,111,165,0.8) 0%, transparent 70%)' }} />
         <div className="absolute -bottom-16 left-1/4 w-60 h-60 opacity-[0.06]"
@@ -60,43 +58,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 课程模块 */}
-      <section className="mb-16">
-        <div className="flex items-end justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-bold text-[var(--text)] tracking-tight">课程模块</h2>
-            <p className="text-[13px] text-[var(--text-muted)] mt-1">10 大模块 · 43 个课题 · 覆盖核心知识体系</p>
-          </div>
-          <Link href="/learn" className="text-[13px] text-[var(--accent)] hover:underline hidden sm:block">
-            查看全部 →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {modules.map((mod, i) => (
-            <Link
-              key={mod.id}
-              href={`/learn/${mod.id}`}
-              className="card-lift px-5 py-5 animate-in"
-              style={{ animationDelay: `${(i + 2) * 0.06}s` }}
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
-                  style={{ background: 'var(--accent-light)' }}>
-                  {mod.icon}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-[14.5px] text-[var(--text)] mb-0.5">{mod.title}</h3>
-                  <p className="text-[13px] text-[var(--text-muted)] leading-relaxed line-clamp-2">{mod.description}</p>
-                  <span className="inline-block mt-2 text-[12px] text-[var(--accent)]">{mod.topics.length} 个课题</span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 底部留白区域 — 后续可填充推荐、动态、公告等 */}
+      {/* 底部留白 — 后续可填充推荐、动态、公告等 */}
     </div>
   );
 }
