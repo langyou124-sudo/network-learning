@@ -30,8 +30,8 @@ export default function RootLayout({
     >
       <body className="min-h-full" style={{ background: 'var(--bg)' }}>
         <Sidebar />
-        <main className="md:ml-60 ml-0 min-h-screen">
-          <div className="px-4 sm:px-8 py-4 sm:py-8 max-w-[1100px] pt-16 md:pt-8">
+        <main className="min-h-screen">
+          <div className="px-4 sm:px-8 py-4 sm:py-8 max-w-[1100px] pt-16 md:pt-8 mx-auto">
             {children}
           </div>
         </main>
