@@ -2,16 +2,34 @@
 
 import { useEffect, useState } from 'react';
 import { modules } from '@/data/courses';
-import { getProgress, getStats } from '@/lib/storage';
+import { getProgress, getStats, getStudyTimeRange, getStudyTimeByDate, getStudyStreak } from '@/lib/storage';
 import { Progress } from '@/types';
+
+// 格式化秒数为 Xh Xm 或 Xm
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  const rm = m % 60;
+  return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
+}
 
 export default function ProgressPage() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [stats, setStats] = useState<ReturnType<typeof getStats> | null>(null);
+  const [weekData, setWeekData] = useState<{ date: string; total: number }[]>([]);
+  const [todaySeconds, setTodaySeconds] = useState(0);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     setProgress(getProgress());
     setStats(getStats());
+    const range = getStudyTimeRange(7);
+    setWeekData(range);
+    const today = new Date().toISOString().split('T')[0];
+    setTodaySeconds(getStudyTimeByDate(today).total);
+    setStreak(getStudyStreak());
   }, []);
 
   if (!progress || !stats) return null;
@@ -35,7 +53,7 @@ export default function ProgressPage() {
           { value: `${stats.completionRate}%`, label: '完成率', sub: `${stats.completedCount}/${stats.totalTopics}`, color: 'var(--accent)' },
           { value: stats.avgScore || '—', label: '平均分', sub: '满分100', color: 'var(--success)' },
           { value: stats.totalMistakes, label: '错题数', sub: `${stats.unreviewedMistakes} 未复习`, color: 'var(--warning)' },
-          { value: `${progress.totalStudyHours}h`, label: '学习时长', sub: '累计', color: '#b088f4' },
+          { value: formatDuration(todaySeconds), label: '今日学习', sub: `连续 ${streak} 天`, color: '#b088f4' },
         ].map((s, i) => (
           <div key={i} className="card px-5 py-4 text-center">
             <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
@@ -53,6 +71,42 @@ export default function ProgressPage() {
         </div>
         <div className="text-[13px] text-[var(--text-muted)] text-right">
           {stats.completedCount} / {stats.totalTopics} 课题已完成
+        </div>
+      </div>
+
+      {/* 最近7天学习时间 */}
+      <div className="card px-6 py-5 mb-8 animate-in" style={{ animationDelay: '0.15s' }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[15px] font-semibold text-[var(--text)]">学习时间</h2>
+          <span className="text-[13px] text-[var(--text-muted)]">
+            本周累计 {formatDuration(weekData.reduce((s, d) => s + d.total, 0))}
+          </span>
+        </div>
+        <div className="flex items-end gap-2 h-28">
+          {weekData.map((d) => {
+            const maxTotal = Math.max(...weekData.map(w => w.total), 1);
+            const heightPct = d.total > 0 ? Math.max((d.total / maxTotal) * 100, 4) : 2;
+            const dayLabel = new Date(d.date + 'T00:00:00').toLocaleDateString('zh-CN', { weekday: 'narrow' });
+            const isToday = d.date === new Date().toISOString().split('T')[0];
+            return (
+              <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full flex justify-center" style={{ height: '100px' }}>
+                  <div
+                    className="w-full max-w-[32px] rounded-t transition-all duration-300"
+                    style={{
+                      height: `${heightPct}%`,
+                      background: isToday ? 'var(--accent)' : d.total > 0 ? 'var(--accent-light)' : 'var(--border-light)',
+                      minHeight: '2px',
+                    }}
+                    title={d.total > 0 ? formatDuration(d.total) : '无记录'}
+                  />
+                </div>
+                <span className={`text-[11px] ${isToday ? 'text-[var(--accent)] font-medium' : 'text-[var(--text-muted)]'}`}>
+                  {dayLabel}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

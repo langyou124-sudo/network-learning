@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { exportData, importData, getProgress, saveProgress } from '@/lib/storage';
+import { exportData, importData, resetStudyTime, getProgress } from '@/lib/storage';
 
 export default function SettingsPage() {
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [studyHours, setStudyHours] = useState('');
-
   const handleExport = () => {
     exportData();
   };
@@ -25,14 +23,12 @@ export default function SettingsPage() {
     reader.readAsText(file);
   };
 
-  const handleUpdateHours = () => {
-    const hours = parseFloat(studyHours);
-    if (isNaN(hours) || hours < 0) return;
-    const progress = getProgress();
-    progress.totalStudyHours = hours;
-    saveProgress(progress);
-    setStudyHours('');
-    alert('学习时长已更新');
+  const handleResetStudyTime = () => {
+    if (confirm('确定要重置学习时间记录吗？')) {
+      resetStudyTime();
+      alert('学习时间已重置');
+      window.location.reload();
+    }
   };
 
   const handleClearData = () => {
@@ -83,24 +79,18 @@ export default function SettingsPage() {
         <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.18s' }}>
           <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">学习时长</h2>
           <p className="text-[13px] text-[var(--text-muted)] mb-4">
-            手动记录累计学习时长（小时）。
+            学习时间由系统自动记录，进入知识库或错题页时自动计时。
           </p>
-          <div className="flex gap-3">
-            <input
-              type="number"
-              value={studyHours}
-              onChange={(e) => setStudyHours(e.target.value)}
-              placeholder="输入小时数"
-              min="0"
-              step="0.5"
-              className="flex-1 px-4 py-2.5 rounded-xl text-[14px] focus:outline-none"
-              style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
-            />
-            <button onClick={handleUpdateHours} className="btn btn-primary"
-              style={{ background: 'linear-gradient(135deg, #7c5cbf 0%, #b088f4 100%)' }}>
-              更新
-            </button>
+          <div className="text-[13px] text-[var(--text-secondary)] mb-4">
+            累计学习：{(() => {
+              const hours = getProgress().totalStudyHours;
+              if (hours < 1) return `${Math.round(hours * 60)} 分钟`;
+              return `${hours.toFixed(1)} 小时`;
+            })()}
           </div>
+          <button onClick={handleResetStudyTime} className="btn btn-secondary">
+            重置学习时间
+          </button>
         </div>
 
         {/* 危险操作 */}

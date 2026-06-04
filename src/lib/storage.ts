@@ -1,4 +1,4 @@
-import { Progress, MistakeRecord } from '@/types';
+import { Progress, MistakeRecord, DayStudyTime } from '@/types';
 
 const PROGRESS_KEY = 'network-learning-progress';
 const MISTAKES_KEY = 'network-learning-mistakes';
@@ -11,6 +11,7 @@ const defaultProgress: Progress = {
   notes: {},
   lastStudyDate: new Date().toISOString().split('T')[0],
   totalStudyHours: 0,
+  studyTimeRecords: {},
 };
 
 // 获取学习进度
@@ -19,7 +20,11 @@ export function getProgress(): Progress {
   const stored = localStorage.getItem(PROGRESS_KEY);
   if (!stored) return defaultProgress;
   try {
-    return JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+    // 兼容旧数据：补全缺失字段
+    if (!parsed.studyTimeRecords) parsed.studyTimeRecords = {};
+    if (typeof parsed.totalStudyHours !== 'number') parsed.totalStudyHours = 0;
+    return parsed;
   } catch {
     return defaultProgress;
   }
@@ -136,6 +141,110 @@ export function getStats() {
     unreviewedMistakes,
     totalStudyHours: progress.totalStudyHours,
   };
+}
+
+// === 学习时间相关 ===
+
+// 获取今天的日期字符串 YYYY-MM-DD
+function today(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+// 累加学习时间
+export function addStudyTime(seconds: number, topicId?: string) {
+  if (seconds <= 0) return;
+  const progress = getProgress();
+  const date = today();
+
+  // 兼容旧数据：如果没有 studyTimeRecords 则初始化
+  if (!progress.studyTimeRecords) {
+    progress.studyTimeRecords = {};
+  }
+
+  if (!progress.studyTimeRecords[date]) {
+    progress.studyTimeRecords[date] = { total: 0, byTopic: {} };
+  }
+
+  const dayRecord = progress.studyTimeRecords[date];
+  dayRecord.total += seconds;
+
+  if (topicId) {
+    dayRecord.byTopic[topicId] = (dayRecord.byTopic[topicId] || 0) + seconds;
+  }
+
+  // 同步更新 totalStudyHours
+  progress.totalStudyHours += seconds / 3600;
+
+  // 清理30天前的记录
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+  for (const key of Object.keys(progress.studyTimeRecords)) {
+    if (key < cutoffStr) {
+      delete progress.studyTimeRecords[key];
+    }
+  }
+
+  // 更新 lastStudyDate
+  progress.lastStudyDate = date;
+
+  saveProgress(progress);
+}
+
+// 获取某天的学习时间
+export function getStudyTimeByDate(date: string): DayStudyTime {
+  const progress = getProgress();
+  return progress.studyTimeRecords?.[date] || { total: 0, byTopic: {} };
+}
+
+// 获取最近N天的学习时间
+export function getStudyTimeRange(days: number): { date: string; total: number }[] {
+  const progress = getProgress();
+  const result: { date: string; total: number }[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const record = progress.studyTimeRecords?.[dateStr];
+    result.push({ date: dateStr, total: record?.total || 0 });
+  }
+  return result;
+}
+
+// 获取某课题的累计学习时间（秒）
+export function getTopicStudyTime(topicId: string): number {
+  const progress = getProgress();
+  let total = 0;
+  for (const record of Object.values(progress.studyTimeRecords || {})) {
+    total += record.byTopic[topicId] || 0;
+  }
+  return total;
+}
+
+// 计算连续学习天数
+export function getStudyStreak(): number {
+  const progress = getProgress();
+  const records = progress.studyTimeRecords || {};
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const dateStr = d.toISOString().split('T')[0];
+    if (records[dateStr] && records[dateStr].total > 0) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+// 重置学习时间
+export function resetStudyTime() {
+  const progress = getProgress();
+  progress.studyTimeRecords = {};
+  progress.totalStudyHours = 0;
+  saveProgress(progress);
 }
 
 // 导出数据

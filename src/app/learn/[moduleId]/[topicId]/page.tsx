@@ -6,6 +6,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
+import { useStudyTimer } from '@/hooks/useStudyTimer';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
@@ -98,6 +99,9 @@ export default function TopicPage() {
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
   const [showResult, setShowResult] = useState(false);
   const [quizScore, setQuizScore] = useState({ correct: 0, total: 0 });
+
+  // 静默学习计时
+  useStudyTimer({ topicId, enabled: !!topic });
 
   useEffect(() => {
     const mod = getModuleById(moduleId);

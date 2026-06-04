@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getMistakes, markMistakeReviewed } from '@/lib/storage';
 import { MistakeRecord } from '@/types';
+import { useStudyTimer } from '@/hooks/useStudyTimer';
 
 export default function MistakesPage() {
   const [mistakes, setMistakes] = useState<MistakeRecord[]>([]);
   const [filter, setFilter] = useState<'all' | 'unreviewed' | 'reviewed'>('all');
+
+  // 静默学习计时
+  useStudyTimer({ enabled: true });
 
   useEffect(() => {
     setMistakes(getMistakes());

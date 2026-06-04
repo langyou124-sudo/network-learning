@@ -28,6 +28,12 @@ export interface Quiz {
   explanation: string;
 }
 
+// 每日学习时间记录
+export interface DayStudyTime {
+  total: number; // 当天总学习秒数
+  byTopic: Record<string, number>; // 课题ID -> 秒数
+}
+
 // 学习进度
 export interface Progress {
   completedTopics: string[]; // 已完成的课题ID
@@ -40,6 +46,7 @@ export interface Progress {
   notes: Record<string, string>; // 课题ID -> 笔记内容
   lastStudyDate: string;
   totalStudyHours: number;
+  studyTimeRecords: Record<string, DayStudyTime>; // 'YYYY-MM-DD' -> 记录
 }
 
 // 错题记录
