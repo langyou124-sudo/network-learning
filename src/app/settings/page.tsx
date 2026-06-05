@@ -1,11 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 import { exportData, importData, resetStudyTime, clearAllData, getProgress } from '@/lib/storage';
 
 export default function SettingsPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [displayName, setDisplayName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [importError, setImportError] = useState('');
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setUser(data.user);
+        setDisplayName(data.user.user_metadata?.display_name || '');
+      }
+    });
+  }, []);
+
+  const handleSaveName = async () => {
+    if (!displayName.trim()) return;
+    setSaving(true);
+    setSaveMsg('');
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ data: { display_name: displayName.trim() } });
+    if (error) {
+      setSaveMsg('保存失败');
+    } else {
+      setSaveMsg('已保存');
+    }
+    setSaving(false);
+    setTimeout(() => setSaveMsg(''), 3000);
+  };
   const handleExport = () => {
     exportData();
   };
@@ -49,6 +80,38 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-5">
+        {/* 个人资料 */}
+        {user && (
+          <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.06s' }}>
+            <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">个人资料</h2>
+            <p className="text-[13px] text-[var(--text-muted)] mb-4">
+              设置你的显示名称，其他地方会用这个名字来称呼你。
+            </p>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={displayName}
+                onChange={e => setDisplayName(e.target.value)}
+                placeholder="输入昵称"
+                className="flex-1 px-4 py-2 rounded-xl text-[14px] focus:outline-none"
+                style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
+              />
+              <button
+                onClick={handleSaveName}
+                disabled={saving || !displayName.trim()}
+                className="btn btn-primary px-5 py-2 text-[13px] disabled:opacity-50"
+              >
+                {saving ? '保存中...' : '保存'}
+              </button>
+            </div>
+            {saveMsg && (
+              <p className="text-[13px] mt-2" style={{ color: saveMsg === '已保存' ? 'var(--success)' : 'var(--danger)' }}>
+                {saveMsg}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* 导出 */}
         <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.06s' }}>
           <h2 className="text-[15px] font-semibold text-[var(--text)] mb-1">导出数据</h2>

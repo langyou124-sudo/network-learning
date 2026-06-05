@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 
 export default function SignupPage() {
+  const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,10 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: { display_name: nickname.trim() || email.split('@')[0] },
+      },
     });
 
     if (error) {
@@ -55,6 +59,18 @@ export default function SignupPage() {
 
         <form onSubmit={handleSignup}>
           <div className="space-y-4">
+            <div>
+              <label className="text-[13px] text-[var(--text-secondary)] mb-1.5 block">昵称</label>
+              <input
+                type="text"
+                value={nickname}
+                onChange={e => setNickname(e.target.value)}
+                placeholder="给自己起个名字"
+                className="w-full px-4 py-2.5 rounded-xl text-[14px] focus:outline-none"
+                style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
+              />
+            </div>
+
             <div>
               <label className="text-[13px] text-[var(--text-secondary)] mb-1.5 block">邮箱</label>
               <input

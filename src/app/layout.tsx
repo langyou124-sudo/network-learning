@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import UserMenu from "@/components/UserMenu";
 import ChatWidget from "@/components/ChatWidget";
 
 const geistSans = Geist({
@@ -30,6 +31,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full" style={{ background: 'var(--bg)' }}>
+        <UserMenu />
         <Sidebar />
         <main className="min-h-screen">
           <div className="px-4 sm:px-8 py-4 sm:py-8 max-w-[1100px] pt-16 md:pt-8 mx-auto">

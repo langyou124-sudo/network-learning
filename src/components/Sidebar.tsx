@@ -156,7 +156,9 @@ export default function Sidebar() {
         <div className="px-5 py-4 border-t border-white/6">
           {user ? (
             <div className="space-y-2">
-              <div className="text-[12px] text-gray-300 truncate">{user.email}</div>
+              <div className="text-[12px] text-gray-300 truncate">
+                {user.user_metadata?.display_name || user.email?.split('@')[0]}
+              </div>
               <button
                 onClick={handleLogout}
                 className="text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
@@ -165,9 +167,7 @@ export default function Sidebar() {
               </button>
             </div>
           ) : (
-            <Link href="/login" className="text-[12px] text-gray-400 hover:text-gray-200 transition-colors">
-              登录 / 注册
-            </Link>
+            <div className="text-[12px] text-gray-500">未登录</div>
           )}
           <div className="text-[10px] text-gray-600 mt-2">达博理 v1.0</div>
         </div>
