@@ -134,12 +134,10 @@ export function markMistakeReviewed(quizId: string) {
   localStorage.setItem(MISTAKES_KEY, JSON.stringify(updated));
 }
 
-// 计算统计数据
-export function getStats() {
+// 计算统计数据（totalTopics 由调用方传入，避免硬编码）
+export function getStats(totalTopics: number) {
   const progress = getProgress();
   const mistakes = getMistakes();
-
-  const totalTopics = 43; // 总课题数
   const completedCount = progress.completedTopics.length;
   const completionRate = Math.round((completedCount / totalTopics) * 100);
 

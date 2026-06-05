@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
@@ -10,6 +10,36 @@ interface Message {
   content: string;
 }
 
+// SSE 流式读取（提取为共享逻辑）
+async function readSSEStream(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  onDelta: (text: string) => void
+) {
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const data = line.slice(6).trim();
+      if (data === '[DONE]') continue;
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+          onDelta(parsed.delta.text);
+        }
+      } catch { /* skip malformed JSON */ }
+    }
+  }
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,6 +47,8 @@ export default function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  // 用 ref 跟踪最新 messages，避免闭包过期
+  const messagesRef = useRef<Message[]>([]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,26 +58,14 @@ export default function ChatWidget() {
     if (open) inputRef.current?.focus();
   }, [open]);
 
-  // 监听外部触发的 AI 解释请求
   useEffect(() => {
-    const handler = (e: CustomEvent<{ message: string; context?: string }>) => {
-      setOpen(true);
-      const { message, context } = e.detail;
-      // 把消息设到输入框，如果有 context 则直接发送
-      if (context) {
-        setInput('');
-        // 直接发送带 context 的消息
-        sendWithContext(message, context);
-      } else {
-        setInput(message);
-      }
-    };
-    window.addEventListener('ai-explain' as string, handler as EventListener);
-    return () => window.removeEventListener('ai-explain' as string, handler as EventListener);
-  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
+    messagesRef.current = messages;
+  }, [messages]);
 
-  const sendWithContext = async (text: string, context: string) => {
+  // 统一的发送逻辑
+  const doSend = useCallback(async (text: string, context?: string) => {
     const userMsg: Message = { role: 'user', content: text };
+    const currentMessages = messagesRef.current;
     setMessages(prev => [...prev, userMsg]);
     setLoading(true);
 
@@ -54,44 +74,27 @@ export default function ChatWidget() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
-          context,
+          messages: [...currentMessages, userMsg].map(m => ({ role: m.role, content: m.content })),
+          ...(context ? { context } : {}),
         }),
       });
 
       if (!resp.ok) throw new Error('请求失败');
 
       const reader = resp.body?.getReader();
-      const decoder = new TextDecoder();
       let assistantContent = '';
-      let buffer = '';
 
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                assistantContent += parsed.delta.text;
-                setMessages(prev => {
-                  const updated = [...prev];
-                  updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
-                  return updated;
-                });
-              }
-            } catch { /* skip */ }
-          }
-        }
+        await readSSEStream(reader, (delta) => {
+          assistantContent += delta;
+          setMessages(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
+            return updated;
+          });
+        });
       }
     } catch {
       setMessages(prev => [
@@ -101,84 +104,29 @@ export default function ChatWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // 监听外部触发的 AI 解释请求
+  useEffect(() => {
+    const handler = (e: CustomEvent<{ message: string; context?: string }>) => {
+      setOpen(true);
+      const { message, context } = e.detail;
+      if (context) {
+        setInput('');
+        doSend(message, context);
+      } else {
+        setInput(message);
+      }
+    };
+    window.addEventListener('ai-explain' as string, handler as EventListener);
+    return () => window.removeEventListener('ai-explain' as string, handler as EventListener);
+  }, [doSend]);
 
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || loading) return;
-
-    const userMsg: Message = { role: 'user', content: text };
-    setMessages(prev => [...prev, userMsg]);
     setInput('');
-    setLoading(true);
-
-    try {
-      const resp = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [...messages, userMsg].map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
-      });
-
-      if (!resp.ok) {
-        throw new Error('请求失败');
-      }
-
-      // 流式读取 SSE
-      const reader = resp.body?.getReader();
-      const decoder = new TextDecoder();
-      let assistantContent = '';
-      let buffer = '';
-
-      // 先加一个空的 assistant 消息
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') continue;
-
-            try {
-              const parsed = JSON.parse(data);
-              // Anthropic SSE: content_block_delta with text_delta
-              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                assistantContent += parsed.delta.text;
-                setMessages(prev => {
-                  const updated = [...prev];
-                  updated[updated.length - 1] = {
-                    role: 'assistant',
-                    content: assistantContent,
-                  };
-                  return updated;
-                });
-              }
-            } catch {
-              // skip malformed JSON
-            }
-          }
-        }
-      }
-    } catch {
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        { role: 'assistant', content: '抱歉，AI 服务暂时不可用，请稍后再试。' },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+    await doSend(text);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

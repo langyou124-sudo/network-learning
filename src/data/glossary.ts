@@ -106,7 +106,7 @@ export const glossary: GlossaryTerm[] = [
 ];
 
 // 快速查找表：term/alias → GlossaryTerm（不区分大小写）
-const _lookup: Map<string, GlossaryTerm> | null = null;
+let _lookup: Map<string, GlossaryTerm> | null = null;
 
 export function getGlossaryLookup(): Map<string, GlossaryTerm> {
   if (_lookup) return _lookup;
@@ -119,5 +119,6 @@ export function getGlossaryLookup(): Map<string, GlossaryTerm> {
       }
     }
   }
+  _lookup = map;
   return map;
 }
