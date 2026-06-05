@@ -193,7 +193,7 @@ export default function ChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-105"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-105"
           style={{
             background: 'linear-gradient(135deg, var(--accent) 0%, #6366f1 100%)',
             boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
@@ -208,7 +208,7 @@ export default function ChatWidget() {
       {/* 聊天面板 */}
       {open && (
         <div
-          className="fixed bottom-6 right-6 w-[380px] h-[520px] rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-in"
+          className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 w-full h-full sm:w-[380px] sm:h-[520px] sm:rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-in"
           style={{
             background: 'var(--surface)',
             border: '1px solid var(--border)',
