@@ -1,49 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getEmbedding } from '@/lib/api/embedding';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
+import { validateSearchParams, errorResponse } from '@/lib/api/validate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const ZHIPUAI_KEY = process.env.ZHIPUAI_API_KEY!;
-const EMBEDDING_MODEL = 'embedding-3';
-
-async function getEmbedding(text: string): Promise<number[]> {
-  const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${ZHIPUAI_KEY}`,
-    },
-    body: JSON.stringify({
-      model: EMBEDDING_MODEL,
-      input: text,
-    }),
-  });
-
-  if (!resp.ok) {
-    throw new Error(`Embedding API error: ${resp.status}`);
-  }
-
-  const data = await resp.json();
-  return data.data[0].embedding;
-}
-
 export async function GET(req: NextRequest) {
-  const query = req.nextUrl.searchParams.get('q');
-  const moduleId = req.nextUrl.searchParams.get('module') || undefined;
-  const limit = parseInt(req.nextUrl.searchParams.get('limit') || '5');
+  // Rate limiting
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  const { ok, remaining, retryAfter } = checkRateLimit(`search:${ip}`, RATE_LIMITS.search);
 
-  if (!query || query.trim().length === 0) {
-    return NextResponse.json({ error: '缺少搜索关键词' }, { status: 400 });
+  if (!ok) {
+    return NextResponse.json(
+      { error: `请求太频繁，请 ${retryAfter} 秒后重试` },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter), 'X-RateLimit-Remaining': '0' },
+      }
+    );
   }
+
+  // 输入校验
+  const validation = validateSearchParams(req.nextUrl.searchParams);
+  if (!validation.ok) {
+    return errorResponse(validation.error!);
+  }
+
+  const { query, limit, moduleId } = validation;
 
   try {
-    // 1. 将查询文本向量化
-    const embedding = await getEmbedding(query.trim());
+    const embedding = await getEmbedding(query!);
 
-    // 2. 调 Supabase 搜索函数
     const { data, error } = await supabase.rpc('search_knowledge', {
       query_embedding: embedding,
       match_count: limit,
@@ -55,10 +46,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '搜索失败' }, { status: 500 });
     }
 
-    return NextResponse.json({
-      query,
-      results: data || [],
-    });
+    return NextResponse.json(
+      { query, results: data || [] },
+      { headers: { 'X-RateLimit-Remaining': String(remaining) } }
+    );
   } catch (err) {
     console.error('Search error:', err);
     return NextResponse.json({ error: '搜索服务异常' }, { status: 500 });

@@ -1,5 +1,8 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getEmbedding } from '@/lib/api/embedding';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
+import { validateChatBody, errorResponse } from '@/lib/api/validate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,21 +12,6 @@ const supabase = createClient(
 const MIMO_KEY = process.env.MIMO_API_KEY!;
 const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
 const MODEL = 'mimo-v2.5-pro';
-
-// 向量化查询（复用 search route 的逻辑）
-async function getEmbedding(text: string): Promise<number[]> {
-  const resp = await fetch('https://open.bigmodel.cn/api/paas/v4/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.ZHIPUAI_API_KEY}`,
-    },
-    body: JSON.stringify({ model: 'embedding-3', input: text }),
-  });
-  if (!resp.ok) throw new Error(`Embedding error: ${resp.status}`);
-  const data = await resp.json();
-  return data.data[0].embedding;
-}
 
 // RAG：搜索相关知识块
 async function searchContext(query: string): Promise<string> {
@@ -38,23 +26,44 @@ async function searchContext(query: string): Promise<string> {
     return data.map((r: { chunk_text: string; metadata?: { topicTitle?: string } }) =>
       `【${r.metadata?.topicTitle || '相关知识'}】\n${r.chunk_text}`
     ).join('\n\n---\n\n');
-  } catch {
+  } catch (err) {
+    console.error('RAG search error:', err);
     return '';
   }
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, context } = await req.json();
+  // Rate limiting
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  const { ok, retryAfter } = checkRateLimit(`chat:${ip}`, RATE_LIMITS.chat);
 
-  if (!messages || messages.length === 0) {
-    return new Response(JSON.stringify({ error: '缺少消息' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  if (!ok) {
+    return NextResponse.json(
+      { error: `请求太频繁，请 ${retryAfter} 秒后重试` },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    );
   }
 
+  // 解析并校验请求体
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return errorResponse('请求体不是合法 JSON');
+  }
+
+  const validation = validateChatBody(body);
+  if (!validation.ok) {
+    return errorResponse(validation.error!);
+  }
+
+  const { messages, context } = validation;
+
   // 取最后一条用户消息做 RAG
-  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+  const lastUserMsg = [...messages!].reverse().find(m => m.role === 'user');
   const ragContext = lastUserMsg ? await searchContext(lastUserMsg.content) : '';
 
   // 构建系统提示
@@ -86,7 +95,7 @@ export async function POST(req: NextRequest) {
       model: MODEL,
       max_tokens: 2048,
       system: systemPrompt,
-      messages,
+      messages: messages!.map(m => ({ role: m.role, content: m.content })),
       stream: true,
     }),
   });

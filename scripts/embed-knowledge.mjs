@@ -5,13 +5,22 @@ import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
+import { fileURLToPath as furl } from 'url';
 
+// 加载 .env.local
 const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: resolve(__dirname, '../.env.local') });
 
-// === 配置 ===
-const SUPABASE_URL = 'https://nogosumihlmhvmcpuckh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_W7BfPgF6RNSkt8pVseYxHw_A6vy_Tsl';
-const ZHIPUAI_KEY = 'f112aed48a2b4ba4929dccafa6bec004.AF0xBdFVmy3WnJqm';
+// === 配置（从环境变量读取）===
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const ZHIPUAI_KEY = process.env.ZHIPUAI_API_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_KEY || !ZHIPUAI_KEY) {
+  console.error('缺少环境变量，请确保 .env.local 中配置了 NEXT_PUBLIC_SUPABASE_URL、NEXT_PUBLIC_SUPABASE_ANON_KEY、ZHIPUAI_API_KEY');
+  process.exit(1);
+}
 const EMBEDDING_MODEL = 'embedding-3';
 const CHUNK_SIZE = 500;      // 每块目标字符数
 const CHUNK_OVERLAP = 80;    // 块间重叠字符数
