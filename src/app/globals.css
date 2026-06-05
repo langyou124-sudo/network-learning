@@ -448,3 +448,73 @@ body {
     padding: 16px;
   }
 }
+
+/* ===== AI 聊天 Markdown ===== */
+.chat-markdown {
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.chat-markdown p {
+  margin-bottom: 8px;
+}
+
+.chat-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-markdown strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.chat-markdown ul, .chat-markdown ol {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.chat-markdown li {
+  margin-bottom: 3px;
+}
+
+.chat-markdown code {
+  background: rgba(0,0,0,0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: var(--font-mono), monospace;
+}
+
+.chat-markdown pre {
+  background: #1a1d24;
+  color: #d0ccc4;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
+.chat-markdown pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.chat-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 12.5px;
+}
+
+.chat-markdown th, .chat-markdown td {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.chat-markdown th {
+  background: var(--bg-warm);
+  font-weight: 600;
+}

@@ -1,0 +1,349 @@
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export default function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+
+  // 监听外部触发的 AI 解释请求
+  useEffect(() => {
+    const handler = (e: CustomEvent<{ message: string; context?: string }>) => {
+      setOpen(true);
+      const { message, context } = e.detail;
+      // 把消息设到输入框，如果有 context 则直接发送
+      if (context) {
+        setInput('');
+        // 直接发送带 context 的消息
+        sendWithContext(message, context);
+      } else {
+        setInput(message);
+      }
+    };
+    window.addEventListener('ai-explain' as string, handler as EventListener);
+    return () => window.removeEventListener('ai-explain' as string, handler as EventListener);
+  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const sendWithContext = async (text: string, context: string) => {
+    const userMsg: Message = { role: 'user', content: text };
+    setMessages(prev => [...prev, userMsg]);
+    setLoading(true);
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
+          context,
+        }),
+      });
+
+      if (!resp.ok) throw new Error('请求失败');
+
+      const reader = resp.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      let buffer = '';
+
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                assistantContent += parsed.delta.text;
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
+                  return updated;
+                });
+              }
+            } catch { /* skip */ }
+          }
+        }
+      }
+    } catch {
+      setMessages(prev => [
+        ...prev.slice(0, -1),
+        { role: 'assistant', content: '抱歉，AI 服务暂时不可用，请稍后再试。' },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const userMsg: Message = { role: 'user', content: text };
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+        }),
+      });
+
+      if (!resp.ok) {
+        throw new Error('请求失败');
+      }
+
+      // 流式读取 SSE
+      const reader = resp.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      let buffer = '';
+
+      // 先加一个空的 assistant 消息
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              // Anthropic SSE: content_block_delta with text_delta
+              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                assistantContent += parsed.delta.text;
+                setMessages(prev => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = {
+                    role: 'assistant',
+                    content: assistantContent,
+                  };
+                  return updated;
+                });
+              }
+            } catch {
+              // skip malformed JSON
+            }
+          }
+        }
+      }
+    } catch {
+      setMessages(prev => [
+        ...prev.slice(0, -1),
+        { role: 'assistant', content: '抱歉，AI 服务暂时不可用，请稍后再试。' },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  return (
+    <>
+      {/* 悬浮按钮 */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-105"
+          style={{
+            background: 'linear-gradient(135deg, var(--accent) 0%, #6366f1 100%)',
+            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
+      )}
+
+      {/* 聊天面板 */}
+      {open && (
+        <div
+          className="fixed bottom-6 right-6 w-[380px] h-[520px] rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-in"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            animationDuration: '0.2s',
+          }}
+        >
+          {/* 头部 */}
+          <div
+            className="flex items-center justify-between px-5 py-3.5 shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, var(--accent) 0%, #6366f1 100%)',
+            }}
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z" />
+                  <path d="M9.5 14.5 3 21" /><path d="M14.5 14.5 21 21" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-white font-semibold text-[14px]">达博理 AI 助手</div>
+                <div className="text-white/60 text-[11px]">网络工程 · 智能问答</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="text-white/70 hover:text-white transition-colors"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* 消息区 */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-3xl mb-3">🤖</div>
+                <p className="text-[13px] text-[var(--text-muted)] mb-1">你好！我是达博理 AI 助手</p>
+                <p className="text-[12px] text-[var(--text-muted)]">可以问我任何网络工程相关的问题</p>
+                <div className="mt-4 space-y-2">
+                  {['TCP 三次握手是怎么回事？', '子网划分怎么计算？', 'OSPF 和 RIP 有什么区别？'].map(q => (
+                    <button
+                      key={q}
+                      onClick={() => { setInput(q); }}
+                      className="block w-full text-left px-3 py-2 rounded-lg text-[12px] transition-colors"
+                      style={{
+                        background: 'var(--bg-warm)',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-light)',
+                      }}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-[13.5px] leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'rounded-br-md'
+                      : 'rounded-bl-md'
+                  }`}
+                  style={{
+                    background: msg.role === 'user' ? 'var(--accent)' : 'var(--bg-warm)',
+                    color: msg.role === 'user' ? 'white' : 'var(--text)',
+                    border: msg.role === 'assistant' ? '1px solid var(--border-light)' : 'none',
+                  }}
+                >
+                  {msg.role === 'assistant' ? (
+                    <div className="chat-markdown">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {loading && messages[messages.length - 1]?.role !== 'assistant' && (
+              <div className="flex justify-start">
+                <div className="px-4 py-2.5 rounded-2xl rounded-bl-md" style={{ background: 'var(--bg-warm)', border: '1px solid var(--border-light)' }}>
+                  <div className="flex gap-1.5">
+                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-muted)', animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-muted)', animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ background: 'var(--text-muted)', animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* 输入区 */}
+          <div className="px-4 pb-4 pt-2 shrink-0" style={{ borderTop: '1px solid var(--border-light)' }}>
+            <div className="flex items-end gap-2">
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="输入问题..."
+                rows={1}
+                className="flex-1 px-4 py-2.5 rounded-xl text-[13.5px] focus:outline-none resize-none"
+                style={{
+                  border: '1.5px solid var(--border)',
+                  background: 'var(--surface)',
+                  maxHeight: '80px',
+                }}
+              />
+              <button
+                onClick={sendMessage}
+                disabled={!input.trim() || loading}
+                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-opacity disabled:opacity-40"
+                style={{ background: 'var(--accent)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1.5 text-center">
+              MiMo v2.5 · 基于课程知识库回答
+            </p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

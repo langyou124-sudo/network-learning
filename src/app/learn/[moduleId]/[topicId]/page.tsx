@@ -273,7 +273,21 @@ export default function TopicPage() {
             </div>
           )}
 
-          <div className="flex justify-end mt-6 pt-5" style={{ borderTop: '1px solid var(--border-light)' }}>
+          <div className="flex justify-between items-center mt-6 pt-5" style={{ borderTop: '1px solid var(--border-light)' }}>
+            <button
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('ai-explain', {
+                  detail: {
+                    message: `请用通俗易懂的方式解释一下「${topic.title}」这个知识点的核心内容，重点解释其中的关键概念。`,
+                    context: topic.content.slice(0, 2000),
+                  },
+                }));
+              }}
+              className="btn btn-secondary"
+              style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}
+            >
+              🤖 AI 解释
+            </button>
             <button onClick={() => setActiveTab('quiz')} className="btn btn-primary">
               开始练习 →
             </button>
