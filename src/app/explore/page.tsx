@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 
 // 知识模块配置 — 后续新增模块在这里加
@@ -78,9 +79,60 @@ const knowledgeModules = [
   },
 ];
 
+interface SearchResult {
+  id: number;
+  module_id: string;
+  topic_id: string;
+  chunk_text: string;
+  metadata: { topicTitle?: string; chunkIndex?: number; totalChunks?: number };
+  similarity: number;
+}
+
 export default function ExplorePage() {
   const activeModules = knowledgeModules.filter(m => m.status === 'active');
   const comingModules = knowledgeModules.filter(m => m.status === 'coming');
+
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const doSearch = useCallback(async (q: string) => {
+    if (!q.trim()) {
+      setResults([]);
+      setSearched(false);
+      return;
+    }
+
+    setSearching(true);
+    try {
+      const resp = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}&limit=8`);
+      const data = await resp.json();
+      setResults(data.results || []);
+      setSearched(true);
+    } catch {
+      setResults([]);
+      setSearched(true);
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+    // 防抖：停止输入 500ms 后搜索
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => doSearch(val), 500);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      doSearch(query);
+    }
+  };
 
   return (
     <div>
@@ -92,112 +144,171 @@ export default function ExplorePage() {
         </p>
       </div>
 
-      {/* 搜索栏 — 后续接入向量数据库 */}
-      <div className="card px-5 py-4 mb-8 animate-in" style={{ animationDelay: '0.06s' }}>
+      {/* 搜索栏 */}
+      <div className="card px-5 py-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
         <div className="flex items-center gap-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
             type="text"
+            value={query}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder="搜索知识点...（如：TCP三次握手、子网划分）"
             className="flex-1 bg-transparent text-[14.5px] focus:outline-none text-[var(--text)]"
-            style={{ color: 'var(--text)' }}
           />
-          <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
-            即将上线
-          </span>
+          {searching && (
+            <span className="text-[11px] text-[var(--text-muted)]">搜索中...</span>
+          )}
         </div>
       </div>
+
+      {/* 搜索结果 */}
+      {searched && (
+        <div className="mb-8 animate-in">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[15px] font-semibold text-[var(--text)]">
+              搜索结果
+            </h2>
+            <button
+              onClick={() => { setQuery(''); setResults([]); setSearched(false); }}
+              className="text-[12px] text-[var(--accent)] hover:underline"
+            >
+              清除搜索
+            </button>
+          </div>
+
+          {results.length === 0 ? (
+            <div className="card px-6 py-8 text-center">
+              <p className="text-[var(--text-muted)] text-[13px]">未找到相关知识点，换个关键词试试</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {results.map((r) => {
+                const topicTitle = r.metadata?.topicTitle || r.topic_id;
+                const similarity = Math.round(r.similarity * 100);
+                return (
+                  <Link
+                    key={r.id}
+                    href={`/learn/${r.module_id}/${r.topic_id}`}
+                    className="card-lift px-5 py-4 block"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
+                          style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+                          {r.module_id}
+                        </span>
+                        <span className="text-[13px] font-medium text-[var(--text)]">{topicTitle}</span>
+                      </div>
+                      <span className="text-[11px] text-[var(--text-muted)]">匹配度 {similarity}%</span>
+                    </div>
+                    <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-3">
+                      {r.chunk_text}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 已上线模块 */}
-      <section className="mb-10">
-        <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.1s' }}>
-          已上线
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {activeModules.map((mod, i) => (
-            <Link
-              key={mod.id}
-              href={mod.href}
-              className="card-lift px-6 py-5 animate-in block"
-              style={{ animationDelay: `${(i + 2) * 0.06}s` }}
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                  style={{ background: `${mod.color}18` }}>
-                  {mod.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-[15px] text-[var(--text)]">{mod.title}</h3>
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
-                      style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
-                      {mod.topicCount} 课题
-                    </span>
+      {!searched && (
+        <section className="mb-10">
+          <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.1s' }}>
+            已上线
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {activeModules.map((mod, i) => (
+              <Link
+                key={mod.id}
+                href={mod.href}
+                className="card-lift px-6 py-5 animate-in block"
+                style={{ animationDelay: `${(i + 2) * 0.06}s` }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                    style={{ background: `${mod.color}18` }}>
+                    {mod.icon}
                   </div>
-                  <p className="text-[11px] text-[var(--text-muted)] mb-2">{mod.subtitle}</p>
-                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-3">{mod.description}</p>
-                  <div className="flex gap-1.5 flex-wrap">
-                    {mod.tags.map(tag => (
-                      <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full"
-                        style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
-                        {tag}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-[15px] text-[var(--text)]">{mod.title}</h3>
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
+                        style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
+                        {mod.topicCount} 课题
                       </span>
-                    ))}
+                    </div>
+                    <p className="text-[11px] text-[var(--text-muted)] mb-2">{mod.subtitle}</p>
+                    <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-3">{mod.description}</p>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {mod.tags.map(tag => (
+                        <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full"
+                          style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 即将上线 */}
-      <section className="mb-10">
-        <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.3s' }}>
-          即将上线
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {comingModules.map((mod, i) => (
-            <div
-              key={mod.id}
-              className="card px-5 py-4 animate-in"
-              style={{
-                animationDelay: `${(i + 5) * 0.06}s`,
-                opacity: 0.7,
-              }}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
-                  style={{ background: `${mod.color}18` }}>
-                  {mod.icon}
+      {!searched && (
+        <section className="mb-10">
+          <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.3s' }}>
+            即将上线
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {comingModules.map((mod, i) => (
+              <div
+                key={mod.id}
+                className="card px-5 py-4 animate-in"
+                style={{
+                  animationDelay: `${(i + 5) * 0.06}s`,
+                  opacity: 0.7,
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
+                    style={{ background: `${mod.color}18` }}>
+                    {mod.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-[14px] text-[var(--text)]">{mod.title}</h3>
+                    <p className="text-[11px] text-[var(--text-muted)]">{mod.subtitle}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium text-[14px] text-[var(--text)]">{mod.title}</h3>
-                  <p className="text-[11px] text-[var(--text-muted)]">{mod.subtitle}</p>
+                <p className="text-[12.5px] text-[var(--text-muted)] leading-relaxed mb-2">{mod.description}</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {mod.tags.map(tag => (
+                    <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full"
+                      style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)' }}>
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <p className="text-[12.5px] text-[var(--text-muted)] leading-relaxed mb-2">{mod.description}</p>
-              <div className="flex gap-1.5 flex-wrap">
-                {mod.tags.map(tag => (
-                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full"
-                    style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)' }}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 底部提示 */}
-      <div className="card px-6 py-5 text-center animate-in" style={{ animationDelay: '0.6s' }}>
-        <p className="text-[13px] text-[var(--text-muted)]">
-          有想学习的领域？反馈给我们，优先上线。
-        </p>
-      </div>
+      {!searched && (
+        <div className="card px-6 py-5 text-center animate-in" style={{ animationDelay: '0.6s' }}>
+          <p className="text-[13px] text-[var(--text-muted)]">
+            有想学习的领域？反馈给我们，优先上线。
+          </p>
+        </div>
+      )}
     </div>
   );
 }
