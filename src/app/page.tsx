@@ -39,6 +39,10 @@ export default function LandingPage() {
               style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.12)' }}>
               网络工程
             </Link>
+            <Link href="/login" className="btn px-8 py-3 text-[15px]"
+              style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              登录 / 注册
+            </Link>
           </div>
         </div>
       </section>
