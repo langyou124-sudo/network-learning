@@ -1,17 +1,14 @@
 import { NextRequest } from 'next/server';
-import { getSupabaseClient } from '@/lib/supabase';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
 import { validateChatBody, errorResponse, getClientIp, rateLimitResponse } from '@/lib/api/validate';
-
-const supabase = getSupabaseClient();
 
 const MIMO_KEY = process.env.MIMO_API_KEY!;
 const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
 const MODEL = 'mimo-v2.5-pro';
 
-// RAG：搜索相关知识块
-async function searchContext(query: string): Promise<string> {
+async function searchContext(supabase: Awaited<ReturnType<typeof createServerClient>>, query: string): Promise<string> {
   try {
     const embedding = await getEmbedding(query);
     const { data } = await supabase.rpc('search_knowledge', {
@@ -30,11 +27,16 @@ async function searchContext(query: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = await createServerClient();
+
+  // 鉴权
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return errorResponse('请先登录', 401);
+
   const ip = getClientIp(req);
-  const { ok, retryAfter } = checkRateLimit(`chat:${ip}`, RATE_LIMITS.chat);
+  const { ok, retryAfter } = await checkRateLimit(`chat:${user.id}`, RATE_LIMITS.chat);
   if (!ok) return rateLimitResponse(retryAfter);
 
-  // 解析并校验请求体
   let body: unknown;
   try {
     body = await req.json();
@@ -43,17 +45,13 @@ export async function POST(req: NextRequest) {
   }
 
   const validation = validateChatBody(body);
-  if (!validation.ok) {
-    return errorResponse(validation.error!);
-  }
+  if (!validation.ok) return errorResponse(validation.error!);
 
   const { messages, context } = validation;
 
-  // 取最后一条用户消息做 RAG
   const lastUserMsg = [...messages!].reverse().find(m => m.role === 'user');
-  const ragContext = lastUserMsg ? await searchContext(lastUserMsg.content) : '';
+  const ragContext = lastUserMsg ? await searchContext(supabase, lastUserMsg.content) : '';
 
-  // 构建系统提示
   let systemPrompt = `你是达博理智能学习助手，专注于网络工程和通信技术领域。
 你的职责是帮助学生理解网络工程知识，包括OSI模型、TCP/IP协议、路由交换、网络安全等。
 回答要求：
@@ -70,7 +68,6 @@ export async function POST(req: NextRequest) {
     systemPrompt += `\n\n用户当前正在学习的内容：\n${context}`;
   }
 
-  // 调 MiMo API（流式）
   const mimoResp = await fetch(MIMO_ENDPOINT, {
     method: 'POST',
     headers: {
@@ -96,7 +93,6 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 直接透传 SSE 流
   return new Response(mimoResp.body, {
     headers: {
       'Content-Type': 'text/event-stream',

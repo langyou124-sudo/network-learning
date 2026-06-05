@@ -1,35 +1,75 @@
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
 interface RateLimitEntry {
   count: number;
   resetAt: number;
 }
 
-const store = new Map<string, RateLimitEntry>();
+// In-memory fallback for when Redis is not configured
+const memStore = new Map<string, RateLimitEntry>();
 
-// Serverless cold starts accumulate stale entries — clean up periodically
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
     const now = Date.now();
-    for (const [key, entry] of store) {
-      if (now > entry.resetAt) store.delete(key);
+    for (const [key, entry] of memStore) {
+      if (now > entry.resetAt) memStore.delete(key);
     }
   }, 60_000).unref?.();
 }
 
 export interface RateLimitConfig {
-  windowMs: number;  // 时间窗口（毫秒）
-  max: number;       // 窗口内最大请求数
+  windowMs: number;
+  max: number;
 }
 
-export function checkRateLimit(
+// Redis rate limiters (lazy init)
+let chatLimiter: Ratelimit | null = null;
+let searchLimiter: Ratelimit | null = null;
+
+function getRedis(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
+
+function getChatLimiter(): Ratelimit | null {
+  if (chatLimiter) return chatLimiter;
+  const redis = getRedis();
+  if (!redis) return null;
+  chatLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, '60 s'),
+    analytics: true,
+    prefix: 'daboli:chat',
+  });
+  return chatLimiter;
+}
+
+function getSearchLimiter(): Ratelimit | null {
+  if (searchLimiter) return searchLimiter;
+  const redis = getRedis();
+  if (!redis) return null;
+  searchLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(30, '60 s'),
+    analytics: true,
+    prefix: 'daboli:search',
+  });
+  return searchLimiter;
+}
+
+// 内存限流（降级方案）
+function checkMemRateLimit(
   identifier: string,
   config: RateLimitConfig
 ): { ok: boolean; remaining: number; retryAfter: number } {
   const now = Date.now();
-  const key = identifier;
-  const entry = store.get(key);
+  const entry = memStore.get(identifier);
 
   if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + config.windowMs });
+    memStore.set(identifier, { count: 1, resetAt: now + config.windowMs });
     return { ok: true, remaining: config.max - 1, retryAfter: 0 };
   }
 
@@ -42,10 +82,26 @@ export function checkRateLimit(
   return { ok: true, remaining: config.max - entry.count, retryAfter: 0 };
 }
 
-// 预设配置
+export async function checkRateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): Promise<{ ok: boolean; remaining: number; retryAfter: number }> {
+  // 尝试 Redis 限流
+  const limiter = config.max === 10 ? getChatLimiter() : getSearchLimiter();
+  if (limiter) {
+    const result = await limiter.limit(identifier);
+    return {
+      ok: result.success,
+      remaining: result.remaining,
+      retryAfter: result.success ? 0 : Math.ceil((result.reset - Date.now()) / 1000),
+    };
+  }
+
+  // 降级到内存限流
+  return checkMemRateLimit(identifier, config);
+}
+
 export const RATE_LIMITS = {
-  // 聊天接口：每分钟最多 10 次（LLM 调用贵）
   chat: { windowMs: 60_000, max: 10 },
-  // 搜索接口：每分钟最多 30 次
   search: { windowMs: 60_000, max: 30 },
 } as const;

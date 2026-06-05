@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 const navItems = [
   { href: '/', label: '首页', icon: HomeIcon },
@@ -43,10 +45,26 @@ function ExploreIcon() {
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  };
 
   return (
     <>
@@ -134,11 +152,24 @@ export default function Sidebar() {
           </div>
         </nav>
 
-        {/* 底部 */}
+        {/* 底部用户信息 */}
         <div className="px-5 py-4 border-t border-white/6">
-          <div className="text-[11px] text-gray-600">
-            达博理 v1.0
-          </div>
+          {user ? (
+            <div className="space-y-2">
+              <div className="text-[12px] text-gray-300 truncate">{user.email}</div>
+              <button
+                onClick={handleLogout}
+                className="text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                退出登录
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="text-[12px] text-gray-400 hover:text-gray-200 transition-colors">
+              登录 / 注册
+            </Link>
+          )}
+          <div className="text-[10px] text-gray-600 mt-2">达博理 v1.0</div>
         </div>
       </aside>
     </>

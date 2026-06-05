@@ -1,8 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+export { createClient as createServerClient } from '@/lib/supabase/server';
+export { createClient as createBrowserClient } from '@/lib/supabase/client';
+
+import { createClient as createServer } from '@/lib/supabase/server';
 
 export function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  return createServer();
 }
