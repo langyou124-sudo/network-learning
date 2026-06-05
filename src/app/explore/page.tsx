@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // 知识模块配置 — 后续新增模块在这里加
 const knowledgeModules = [
@@ -185,31 +187,9 @@ export default function ExplorePage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {results.map((r) => {
-                const topicTitle = r.metadata?.topicTitle || r.topic_id;
-                const similarity = Math.round(r.similarity * 100);
-                return (
-                  <Link
-                    key={r.id}
-                    href={`/learn/${r.module_id}/${r.topic_id}`}
-                    className="card-lift px-5 py-4 block"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
-                          style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
-                          {r.module_id}
-                        </span>
-                        <span className="text-[13px] font-medium text-[var(--text)]">{topicTitle}</span>
-                      </div>
-                      <span className="text-[11px] text-[var(--text-muted)]">匹配度 {similarity}%</span>
-                    </div>
-                    <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-3">
-                      {r.chunk_text}
-                    </p>
-                  </Link>
-                );
-              })}
+              {results.map((r) => (
+                <SearchResultCard key={r.id} result={r} />
+              ))}
             </div>
           )}
         </div>
@@ -307,6 +287,80 @@ export default function ExplorePage() {
           <p className="text-[13px] text-[var(--text-muted)]">
             有想学习的领域？反馈给我们，优先上线。
           </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 搜索结果卡片组件 — 可展开查看完整内容
+function SearchResultCard({ result }: { result: SearchResult }) {
+  const [expanded, setExpanded] = useState(false);
+  const topicTitle = result.metadata?.topicTitle || result.topic_id;
+  const similarity = Math.round(result.similarity * 100);
+
+  // 模块名映射
+  const moduleNames: Record<string, string> = {
+    'network-basics': '网络基础',
+    'physical-datalink': '物理层与数据链路层',
+    'network-layer': '网络层',
+    'transport-layer': '传输层',
+    'application-layer': '应用层',
+    'routing-switching': '路由与交换',
+    'network-security': '网络安全',
+    'wireless-networks': '无线网络',
+    'telecom-networks': '电信网络',
+    'network-operations': '网络运维',
+  };
+
+  return (
+    <div className="card px-5 py-4 animate-in">
+      <div
+        className="flex items-center justify-between mb-2 cursor-pointer"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0"
+            style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+            {moduleNames[result.module_id] || result.module_id}
+          </span>
+          <span className="text-[13.5px] font-medium text-[var(--text)] truncate">{topicTitle}</span>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-[11px] text-[var(--text-muted)]">{similarity}%</span>
+          <svg
+            width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className="transition-transform duration-200"
+            style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', color: 'var(--text-muted)' }}
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+      </div>
+
+      {/* 预览：未展开时显示前 120 字 */}
+      {!expanded && (
+        <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+          {result.chunk_text}
+        </p>
+      )}
+
+      {/* 展开后显示完整 Markdown 内容 */}
+      {expanded && (
+        <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-light)' }}>
+          <div className="lesson-content text-[14px]">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.chunk_text}</ReactMarkdown>
+          </div>
+          <div className="mt-3 flex justify-end">
+            <Link
+              href={`/learn/${result.module_id}/${result.topic_id}`}
+              className="text-[12px] font-medium px-3 py-1.5 rounded-lg transition-colors"
+              style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}
+            >
+              查看完整课题 →
+            </Link>
+          </div>
         </div>
       )}
     </div>
