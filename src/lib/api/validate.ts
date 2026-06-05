@@ -1,9 +1,21 @@
-// API 输入校验工具
-
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export function errorResponse(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
+}
+
+export function getClientIp(req: NextRequest): string {
+  return req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+}
+
+export function rateLimitResponse(retryAfter: number, extraHeaders?: Record<string, string>) {
+  return NextResponse.json(
+    { error: `请求太频繁，请 ${retryAfter} 秒后重试` },
+    {
+      status: 429,
+      headers: { 'Retry-After': String(retryAfter), ...extraHeaders },
+    }
+  );
 }
 
 // 校验聊天请求

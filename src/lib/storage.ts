@@ -1,58 +1,64 @@
 import { Progress, MistakeRecord, DayStudyTime } from '@/types';
 
-const PROGRESS_KEY = 'network-learning-progress';
-const MISTAKES_KEY = 'network-learning-mistakes';
+export const PROGRESS_KEY = 'network-learning-progress';
+export const MISTAKES_KEY = 'network-learning-mistakes';
 const SCHEMA_VERSION_KEY = 'network-learning-schema-version';
 const CURRENT_SCHEMA_VERSION = 2;
 
-// 默认进度
-const defaultProgress: Progress = {
-  completedTopics: [],
-  quizScores: {},
-  weakPoints: [],
-  notes: {},
-  lastStudyDate: new Date().toISOString().split('T')[0],
-  totalStudyHours: 0,
-  studyTimeRecords: {},
-};
+function today(): string {
+  return new Date().toISOString().split('T')[0];
+}
 
-// 数据迁移：按版本号逐步升级
+function createDefaultProgress(): Progress {
+  return {
+    completedTopics: [],
+    quizScores: {},
+    weakPoints: [],
+    notes: {},
+    lastStudyDate: today(),
+    totalStudyHours: 0,
+    studyTimeRecords: {},
+  };
+}
+
+// In-memory cache to avoid repeated localStorage JSON.parse
+let _progressCache: Progress | null = null;
+
+export function resetProgressCache() {
+  _progressCache = null;
+}
+
 function migrateData(parsed: Record<string, unknown>): Progress {
   const version = (parsed._schemaVersion as number) || 1;
-
   let data = { ...parsed };
-
-  // v1 → v2: 补全 studyTimeRecords 字段
   if (version < 2) {
     if (!data.studyTimeRecords) data.studyTimeRecords = {};
     if (typeof data.totalStudyHours !== 'number') data.totalStudyHours = 0;
   }
-
-  // 写入新版本号
   data._schemaVersion = CURRENT_SCHEMA_VERSION;
   return data as unknown as Progress;
 }
 
-// 获取学习进度
 export function getProgress(): Progress {
-  if (typeof window === 'undefined') return defaultProgress;
+  if (typeof window === 'undefined') return createDefaultProgress();
+  if (_progressCache) return _progressCache;
   const stored = localStorage.getItem(PROGRESS_KEY);
-  if (!stored) return defaultProgress;
+  if (!stored) return createDefaultProgress();
   try {
     const parsed = JSON.parse(stored);
     const migrated = migrateData(parsed);
-    // 迁移后回写
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(migrated));
     localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
+    _progressCache = migrated;
     return migrated;
   } catch {
-    return defaultProgress;
+    return createDefaultProgress();
   }
 }
 
-// 保存学习进度
 export function saveProgress(progress: Progress) {
   if (typeof window === 'undefined') return;
+  _progressCache = progress;
   localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
 }
 
@@ -62,12 +68,11 @@ export function completeTopic(topicId: string) {
   if (!progress.completedTopics.includes(topicId)) {
     progress.completedTopics.push(topicId);
   }
-  progress.lastStudyDate = new Date().toISOString().split('T')[0];
+  progress.lastStudyDate = today();
   saveProgress(progress);
   return progress;
 }
 
-// 切换课题完成状态
 export function toggleTopicComplete(topicId: string) {
   const progress = getProgress();
   const idx = progress.completedTopics.indexOf(topicId);
@@ -76,19 +81,14 @@ export function toggleTopicComplete(topicId: string) {
   } else {
     progress.completedTopics.push(topicId);
   }
-  progress.lastStudyDate = new Date().toISOString().split('T')[0];
+  progress.lastStudyDate = today();
   saveProgress(progress);
   return progress;
 }
 
-// 保存测验成绩
 export function saveQuizScore(topicId: string, correct: number, total: number) {
   const progress = getProgress();
-  progress.quizScores[topicId] = {
-    correct,
-    total,
-    date: new Date().toISOString().split('T')[0],
-  };
+  progress.quizScores[topicId] = { correct, total, date: today() };
   saveProgress(progress);
   return progress;
 }
@@ -163,12 +163,6 @@ export function getStats(totalTopics: number) {
 
 // === 学习时间相关 ===
 
-// 获取今天的日期字符串 YYYY-MM-DD
-function today(): string {
-  return new Date().toISOString().split('T')[0];
-}
-
-// 累加学习时间
 export function addStudyTime(seconds: number, topicId?: string) {
   if (seconds <= 0) return;
   const progress = getProgress();
@@ -265,7 +259,6 @@ export function resetStudyTime() {
   saveProgress(progress);
 }
 
-// 导出数据
 export function exportData() {
   const data = {
     progress: getProgress(),
@@ -276,9 +269,15 @@ export function exportData() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `network-learning-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `network-learning-backup-${today()}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export function clearAllData() {
+  _progressCache = null;
+  localStorage.removeItem(PROGRESS_KEY);
+  localStorage.removeItem(MISTAKES_KEY);
 }
 
 // 导入数据（带结构校验）

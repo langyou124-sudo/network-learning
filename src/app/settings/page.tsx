@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { exportData, importData, resetStudyTime, getProgress } from '@/lib/storage';
+import { exportData, importData, resetStudyTime, clearAllData, getProgress } from '@/lib/storage';
 
 export default function SettingsPage() {
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -35,8 +35,7 @@ export default function SettingsPage() {
 
   const handleClearData = () => {
     if (confirm('确定要清除所有学习数据吗？此操作不可恢复。')) {
-      localStorage.removeItem('network-learning-progress');
-      localStorage.removeItem('network-learning-mistakes');
+      clearAllData();
       alert('数据已清除');
       window.location.reload();
     }

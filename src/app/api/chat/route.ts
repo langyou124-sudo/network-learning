@@ -1,13 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest } from 'next/server';
+import { getSupabaseClient } from '@/lib/supabase';
 import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
-import { validateChatBody, errorResponse } from '@/lib/api/validate';
+import { validateChatBody, errorResponse, getClientIp, rateLimitResponse } from '@/lib/api/validate';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabase = getSupabaseClient();
 
 const MIMO_KEY = process.env.MIMO_API_KEY!;
 const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
@@ -33,19 +30,9 @@ async function searchContext(query: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
-  // Rate limiting
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  const ip = getClientIp(req);
   const { ok, retryAfter } = checkRateLimit(`chat:${ip}`, RATE_LIMITS.chat);
-
-  if (!ok) {
-    return NextResponse.json(
-      { error: `请求太频繁，请 ${retryAfter} 秒后重试` },
-      {
-        status: 429,
-        headers: { 'Retry-After': String(retryAfter) },
-      }
-    );
-  }
+  if (!ok) return rateLimitResponse(retryAfter);
 
   // 解析并校验请求体
   let body: unknown;

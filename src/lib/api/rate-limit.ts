@@ -1,6 +1,3 @@
-// 简易内存 Rate Limiter（适用于 Vercel Serverless）
-// 注意：每个实例有独立内存，多实例间不共享，但对学习平台够用
-
 interface RateLimitEntry {
   count: number;
   resetAt: number;
@@ -8,13 +5,15 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// 定期清理过期条目（防止内存泄漏）
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store) {
-    if (now > entry.resetAt) store.delete(key);
-  }
-}, 60_000);
+// Serverless cold starts accumulate stale entries — clean up periodically
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of store) {
+      if (now > entry.resetAt) store.delete(key);
+    }
+  }, 60_000).unref?.();
+}
 
 export interface RateLimitConfig {
   windowMs: number;  // 时间窗口（毫秒）

@@ -36,8 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated
+courses-export.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.vercel

@@ -84,8 +84,9 @@ export default function ProgressPage() {
           </span>
         </div>
         <div className="flex items-end gap-2 h-28">
-          {weekData.map((d) => {
+          {(() => {
             const maxTotal = Math.max(...weekData.map(w => w.total), 1);
+            return weekData.map((d) => {
             const heightPct = d.total > 0 ? Math.max((d.total / maxTotal) * 100, 4) : 2;
             const dayLabel = new Date(d.date + 'T00:00:00').toLocaleDateString('zh-CN', { weekday: 'narrow' });
             const isToday = d.date === new Date().toISOString().split('T')[0];
@@ -107,7 +108,8 @@ export default function ProgressPage() {
                 </span>
               </div>
             );
-          })}
+          });
+          })()}
         </div>
       </div>
 

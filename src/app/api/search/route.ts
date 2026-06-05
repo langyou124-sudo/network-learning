@@ -1,28 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/lib/supabase';
 import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
-import { validateSearchParams, errorResponse } from '@/lib/api/validate';
+import { validateSearchParams, errorResponse, getClientIp, rateLimitResponse } from '@/lib/api/validate';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabase = getSupabaseClient();
 
 export async function GET(req: NextRequest) {
-  // Rate limiting
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+  const ip = getClientIp(req);
   const { ok, remaining, retryAfter } = checkRateLimit(`search:${ip}`, RATE_LIMITS.search);
-
-  if (!ok) {
-    return NextResponse.json(
-      { error: `请求太频繁，请 ${retryAfter} 秒后重试` },
-      {
-        status: 429,
-        headers: { 'Retry-After': String(retryAfter), 'X-RateLimit-Remaining': '0' },
-      }
-    );
-  }
+  if (!ok) return rateLimitResponse(retryAfter, { 'X-RateLimit-Remaining': '0' });
 
   // 输入校验
   const validation = validateSearchParams(req.nextUrl.searchParams);
