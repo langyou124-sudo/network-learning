@@ -1,0 +1,203 @@
+'use client';
+
+import Link from 'next/link';
+
+// 知识模块配置 — 后续新增模块在这里加
+const knowledgeModules = [
+  {
+    id: 'network-engineering',
+    title: '网络工程',
+    subtitle: 'Network Engineering',
+    description: '从网络基础到运维实战，覆盖软考网络工程师核心考点。包含OSI模型、TCP/IP协议、路由交换、网络安全等10大模块。',
+    icon: '🌐',
+    color: '#4a6fa5',
+    href: '/learn',
+    topicCount: 43,
+    status: 'active' as const,
+    tags: ['软考', 'HCIA', 'CCNA'],
+  },
+  {
+    id: 'coming-soon-1',
+    title: '云计算基础',
+    subtitle: 'Cloud Computing',
+    description: '云服务架构、虚拟化技术、容器编排、主流云平台实战。涵盖AWS、阿里云、华为云核心知识。',
+    icon: '☁️',
+    color: '#6b8cce',
+    href: '#',
+    topicCount: 0,
+    status: 'coming' as const,
+    tags: ['AWS', '阿里云', 'K8s'],
+  },
+  {
+    id: 'coming-soon-2',
+    title: '操作系统',
+    subtitle: 'Operating System',
+    description: '进程管理、内存管理、文件系统、I/O模型。Linux与Windows Server系统管理核心知识。',
+    icon: '💻',
+    color: '#7c5cbf',
+    href: '#',
+    topicCount: 0,
+    status: 'coming' as const,
+    tags: ['Linux', '软考', '运维'],
+  },
+  {
+    id: 'coming-soon-3',
+    title: '数据库技术',
+    subtitle: 'Database',
+    description: '关系型数据库原理、SQL语言、索引优化、事务管理。MySQL、PostgreSQL、Redis实战。',
+    icon: '🗄️',
+    color: '#e8943a',
+    href: '#',
+    topicCount: 0,
+    status: 'coming' as const,
+    tags: ['MySQL', 'Redis', '软考'],
+  },
+  {
+    id: 'coming-soon-4',
+    title: '信息安全',
+    subtitle: 'Information Security',
+    description: '密码学、网络攻防、安全协议、等级保护。覆盖CISP、软考信息安全工程师考点。',
+    icon: '🔒',
+    color: '#d94f4f',
+    href: '#',
+    topicCount: 0,
+    status: 'coming' as const,
+    tags: ['CISP', '等保', '渗透测试'],
+  },
+  {
+    id: 'coming-soon-5',
+    title: 'Python 编程',
+    subtitle: 'Python Programming',
+    description: '从基础语法到实战项目，网络自动化、数据分析、Web开发全链路。',
+    icon: '🐍',
+    color: '#3b7dd8',
+    href: '#',
+    topicCount: 0,
+    status: 'coming' as const,
+    tags: ['自动化', '数据分析', 'Web'],
+  },
+];
+
+export default function ExplorePage() {
+  const activeModules = knowledgeModules.filter(m => m.status === 'active');
+  const comingModules = knowledgeModules.filter(m => m.status === 'coming');
+
+  return (
+    <div>
+      {/* Hero */}
+      <div className="mb-10 animate-in">
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight mb-2">知识探索</h1>
+        <p className="text-[var(--text-muted)] text-sm max-w-lg">
+          多领域知识体系，AI 智能问答辅助。选择一个知识模块开始学习，后续将持续接入更多领域。
+        </p>
+      </div>
+
+      {/* 搜索栏 — 后续接入向量数据库 */}
+      <div className="card px-5 py-4 mb-8 animate-in" style={{ animationDelay: '0.06s' }}>
+        <div className="flex items-center gap-3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="搜索知识点...（如：TCP三次握手、子网划分）"
+            className="flex-1 bg-transparent text-[14.5px] focus:outline-none text-[var(--text)]"
+            style={{ color: 'var(--text)' }}
+          />
+          <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+            即将上线
+          </span>
+        </div>
+      </div>
+
+      {/* 已上线模块 */}
+      <section className="mb-10">
+        <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.1s' }}>
+          已上线
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {activeModules.map((mod, i) => (
+            <Link
+              key={mod.id}
+              href={mod.href}
+              className="card-lift px-6 py-5 animate-in block"
+              style={{ animationDelay: `${(i + 2) * 0.06}s` }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                  style={{ background: `${mod.color}18` }}>
+                  {mod.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-[15px] text-[var(--text)]">{mod.title}</h3>
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
+                      style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
+                      {mod.topicCount} 课题
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[var(--text-muted)] mb-2">{mod.subtitle}</p>
+                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-3">{mod.description}</p>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {mod.tags.map(tag => (
+                      <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full"
+                        style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)', border: '1px solid var(--border-light)' }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 即将上线 */}
+      <section className="mb-10">
+        <h2 className="text-[15px] font-semibold text-[var(--text)] mb-4 animate-in" style={{ animationDelay: '0.3s' }}>
+          即将上线
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {comingModules.map((mod, i) => (
+            <div
+              key={mod.id}
+              className="card px-5 py-4 animate-in"
+              style={{
+                animationDelay: `${(i + 5) * 0.06}s`,
+                opacity: 0.7,
+              }}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
+                  style={{ background: `${mod.color}18` }}>
+                  {mod.icon}
+                </div>
+                <div>
+                  <h3 className="font-medium text-[14px] text-[var(--text)]">{mod.title}</h3>
+                  <p className="text-[11px] text-[var(--text-muted)]">{mod.subtitle}</p>
+                </div>
+              </div>
+              <p className="text-[12.5px] text-[var(--text-muted)] leading-relaxed mb-2">{mod.description}</p>
+              <div className="flex gap-1.5 flex-wrap">
+                {mod.tags.map(tag => (
+                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full"
+                    style={{ background: 'var(--bg-warm)', color: 'var(--text-muted)' }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 底部提示 */}
+      <div className="card px-6 py-5 text-center animate-in" style={{ animationDelay: '0.6s' }}>
+        <p className="text-[13px] text-[var(--text-muted)]">
+          有想学习的领域？反馈给我们，优先上线。
+        </p>
+      </div>
+    </div>
+  );
+}

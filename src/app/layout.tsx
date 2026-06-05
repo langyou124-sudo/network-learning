@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NetCom — 通信知识学习平台",
-  description: "网络工程与通信工程交互式学习系统",
+  title: "达博理 — 智能知识学习平台",
+  description: "多领域知识体系智能学习平台，AI驱动个性化学习体验",
 };
 
 export default function RootLayout({

@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { href: '/', label: '首页', icon: HomeIcon },
-  { href: '/learn', label: '知识库', icon: BookIcon },
+  { href: '/explore', label: '知识探索', icon: ExploreIcon },
+  { href: '/learn', label: '网络工程', icon: BookIcon },
   { href: '/diagrams', label: '交互式图表', icon: DiagramIcon },
   { href: '/quiz', label: '练习题', icon: PenIcon },
   { href: '/mistakes', label: '错题本', icon: AlertIcon },
@@ -34,6 +35,9 @@ function GearIcon() {
 }
 function DiagramIcon() {
   return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>;
+}
+function ExploreIcon() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>;
 }
 
 export default function Sidebar() {
@@ -98,8 +102,8 @@ export default function Sidebar() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
             <div>
-              <div className="text-white text-sm font-semibold tracking-tight">NetCom</div>
-              <div className="text-[11px] text-gray-500">通信知识学习平台</div>
+              <div className="text-white text-sm font-semibold tracking-tight">达博理</div>
+              <div className="text-[11px] text-gray-500">智能知识学习平台</div>
             </div>
           </div>
         </div>
@@ -133,7 +137,7 @@ export default function Sidebar() {
         {/* 底部 */}
         <div className="px-5 py-4 border-t border-white/6">
           <div className="text-[11px] text-gray-600">
-            NetCom Academy v1.0
+            达博理 v1.0
           </div>
         </div>
       </aside>

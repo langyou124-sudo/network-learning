@@ -3,8 +3,8 @@
 import Link from 'next/link';
 
 const features = [
-  { icon: '📐', title: '系统化课程', desc: '从网络基础到运维实战，10大模块循序渐进', href: '/learn' },
-  { icon: '🧩', title: '交互式图表', desc: 'OSI模型、拓扑结构、加密流程可视化呈现', href: '/diagrams' },
+  { icon: '🧭', title: '知识探索', desc: '多领域知识库，AI智能问答，按需探索学习', href: '/explore' },
+  { icon: '📐', title: '网络工程', desc: '从网络基础到运维实战，10大模块循序渐进', href: '/learn' },
   { icon: '✏️', title: '练习与错题', desc: '每课配套练习，错题自动收录，查漏补缺', href: '/quiz' },
   { icon: '📊', title: '学习追踪', desc: '进度、分数、笔记一站式管理', href: '/progress' },
 ];
@@ -23,23 +23,23 @@ export default function LandingPage() {
         <div className="relative z-10 px-6 sm:px-12 py-14 sm:py-20">
           <p className="text-[13px] tracking-widest uppercase mb-4"
             style={{ color: 'rgba(255,255,255,0.4)' }}>
-            Network Engineering · Telecommunications
+            Daboli · Smart Learning Platform
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4 leading-tight max-w-xl">
-            通信知识学习平台
+            达博理
           </h1>
           <p className="text-base sm:text-lg mb-10 max-w-md leading-relaxed"
             style={{ color: 'rgba(255,255,255,0.55)' }}>
-            网络工程与通信工程系统化学习，<br className="hidden sm:block" />
-            从零基础到独立掌握核心知识。
+            AI驱动的智能知识学习平台，<br className="hidden sm:block" />
+            从网络工程出发，探索无限知识。
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/learn" className="btn btn-primary px-8 py-3 text-[15px]">
-              开始学习
+            <Link href="/explore" className="btn btn-primary px-8 py-3 text-[15px]">
+              知识探索
             </Link>
-            <Link href="/quiz" className="btn px-8 py-3 text-[15px]"
+            <Link href="/learn" className="btn px-8 py-3 text-[15px]"
               style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.12)' }}>
-              练习题库
+              网络工程
             </Link>
           </div>
         </div>
