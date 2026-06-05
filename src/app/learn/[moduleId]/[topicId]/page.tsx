@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getModuleById, getTopicById } from '@/data/courses';
@@ -9,7 +9,30 @@ import { Module, Topic } from '@/types';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { highlightTerms } from '@/components/GlossaryTooltip';
 import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, GlossaryCard, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
+
+// 处理 React 子节点，对纯文本节点做术语高亮
+function processChildren(children: React.ReactNode): React.ReactNode {
+  return React.Children.map(children, (child) => {
+    if (typeof child === 'string') {
+      const highlighted = highlightTerms(child);
+      return highlighted.length === 1 ? highlighted[0] : <>{highlighted}</>;
+    }
+    if (typeof child === 'number' || typeof child === 'boolean') return child;
+    if (React.isValidElement(child)) {
+      const props = child.props as Record<string, unknown>;
+      if (props.children) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return React.cloneElement(child as React.ReactElement<any>, {
+          ...props,
+          children: processChildren(props.children as React.ReactNode),
+        });
+      }
+    }
+    return child;
+  });
+}
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
@@ -77,7 +100,19 @@ function renderContentWithDiagrams(content: string) {
         return null;
       }
     }
-    return part.value.trim() ? <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>{part.value}</ReactMarkdown> : null;
+    return part.value.trim() ? (
+      <ReactMarkdown
+        key={i}
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <p>{processChildren(children)}</p>,
+          li: ({ children }) => <li>{processChildren(children)}</li>,
+          td: ({ children }) => <td>{processChildren(children)}</td>,
+        }}
+      >
+        {part.value}
+      </ReactMarkdown>
+    ) : null;
   });
 }
 
