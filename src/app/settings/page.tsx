@@ -5,6 +5,7 @@ import { exportData, importData, resetStudyTime, getProgress } from '@/lib/stora
 
 export default function SettingsPage() {
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [importError, setImportError] = useState('');
   const handleExport = () => {
     exportData();
   };
@@ -16,9 +17,10 @@ export default function SettingsPage() {
     const reader = new FileReader();
     reader.onload = (event) => {
       const jsonStr = event.target?.result as string;
-      const success = importData(jsonStr);
-      setImportStatus(success ? 'success' : 'error');
-      setTimeout(() => setImportStatus('idle'), 3000);
+      const result = importData(jsonStr);
+      setImportStatus(result.ok ? 'success' : 'error');
+      setImportError(result.ok ? '' : result.error || '未知错误');
+      setTimeout(() => { setImportStatus('idle'); setImportError(''); }, 5000);
     };
     reader.readAsText(file);
   };
@@ -71,7 +73,9 @@ export default function SettingsPage() {
             <p className="text-[13px] mt-2" style={{ color: 'var(--success)' }}>导入成功！</p>
           )}
           {importStatus === 'error' && (
-            <p className="text-[13px] mt-2" style={{ color: 'var(--danger)' }}>导入失败，请检查文件格式</p>
+            <p className="text-[13px] mt-2" style={{ color: 'var(--danger)' }}>
+              导入失败：{importError || '请检查文件格式'}
+            </p>
           )}
         </div>
 

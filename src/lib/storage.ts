@@ -2,6 +2,8 @@ import { Progress, MistakeRecord, DayStudyTime } from '@/types';
 
 const PROGRESS_KEY = 'network-learning-progress';
 const MISTAKES_KEY = 'network-learning-mistakes';
+const SCHEMA_VERSION_KEY = 'network-learning-schema-version';
+const CURRENT_SCHEMA_VERSION = 2;
 
 // 默认进度
 const defaultProgress: Progress = {
@@ -14,6 +16,23 @@ const defaultProgress: Progress = {
   studyTimeRecords: {},
 };
 
+// 数据迁移：按版本号逐步升级
+function migrateData(parsed: Record<string, unknown>): Progress {
+  const version = (parsed._schemaVersion as number) || 1;
+
+  let data = { ...parsed };
+
+  // v1 → v2: 补全 studyTimeRecords 字段
+  if (version < 2) {
+    if (!data.studyTimeRecords) data.studyTimeRecords = {};
+    if (typeof data.totalStudyHours !== 'number') data.totalStudyHours = 0;
+  }
+
+  // 写入新版本号
+  data._schemaVersion = CURRENT_SCHEMA_VERSION;
+  return data as unknown as Progress;
+}
+
 // 获取学习进度
 export function getProgress(): Progress {
   if (typeof window === 'undefined') return defaultProgress;
@@ -21,10 +40,11 @@ export function getProgress(): Progress {
   if (!stored) return defaultProgress;
   try {
     const parsed = JSON.parse(stored);
-    // 兼容旧数据：补全缺失字段
-    if (!parsed.studyTimeRecords) parsed.studyTimeRecords = {};
-    if (typeof parsed.totalStudyHours !== 'number') parsed.totalStudyHours = 0;
-    return parsed;
+    const migrated = migrateData(parsed);
+    // 迁移后回写
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(migrated));
+    localStorage.setItem(SCHEMA_VERSION_KEY, String(CURRENT_SCHEMA_VERSION));
+    return migrated;
   } catch {
     return defaultProgress;
   }
@@ -263,18 +283,38 @@ export function exportData() {
   URL.revokeObjectURL(url);
 }
 
-// 导入数据
-export function importData(jsonStr: string) {
+// 导入数据（带结构校验）
+export function importData(jsonStr: string): { ok: boolean; error?: string } {
+  let data: Record<string, unknown>;
   try {
-    const data = JSON.parse(jsonStr);
-    if (data.progress) {
-      saveProgress(data.progress);
-    }
-    if (data.mistakes) {
-      localStorage.setItem(MISTAKES_KEY, JSON.stringify(data.mistakes));
-    }
-    return true;
+    data = JSON.parse(jsonStr);
   } catch {
-    return false;
+    return { ok: false, error: '不是合法的 JSON 文件' };
   }
+
+  if (typeof data !== 'object' || data === null) {
+    return { ok: false, error: '数据格式错误' };
+  }
+
+  // 校验 progress 结构
+  if (data.progress) {
+    const p = data.progress as Record<string, unknown>;
+    if (!Array.isArray(p.completedTopics)) {
+      return { ok: false, error: 'progress.completedTopics 缺失或不是数组' };
+    }
+    if (typeof p.quizScores !== 'object') {
+      return { ok: false, error: 'progress.quizScores 缺失或不是对象' };
+    }
+    saveProgress(data.progress as Progress);
+  }
+
+  // 校验 mistakes 结构
+  if (data.mistakes) {
+    if (!Array.isArray(data.mistakes)) {
+      return { ok: false, error: 'mistakes 不是数组' };
+    }
+    localStorage.setItem(MISTAKES_KEY, JSON.stringify(data.mistakes));
+  }
+
+  return { ok: true };
 }

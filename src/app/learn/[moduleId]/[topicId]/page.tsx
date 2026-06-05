@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
@@ -83,7 +84,9 @@ function renderContentWithDiagrams(content: string) {
       if (Component) {
         return (
           <div key={i} className="my-6 p-5 rounded-2xl" style={{ background: 'var(--bg-warm)', border: '1px solid var(--border)' }}>
-            <Component />
+            <ErrorBoundary>
+              <Component />
+            </ErrorBoundary>
           </div>
         );
       }

@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 
 // 知识模块配置 — 后续新增模块在这里加
 const knowledgeModules = [
@@ -350,7 +351,7 @@ function SearchResultCard({ result }: { result: SearchResult }) {
       {expanded && (
         <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border-light)' }}>
           <div className="lesson-content text-[14px]">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.chunk_text}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>{result.chunk_text}</ReactMarkdown>
           </div>
           <div className="mt-3 flex justify-end">
             <Link
