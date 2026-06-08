@@ -1,5 +1,15 @@
 import { Progress, MistakeRecord, DayStudyTime } from '@/types';
 
+/**
+ * 数据分类与安全策略
+ * - 存储位置：localStorage（客户端浏览器）
+ * - 数据内容：学习进度、练习成绩、错题记录、用户笔记
+ * - 敏感级别：低 — 不含 PII、密码、支付信息
+ * - 加密状态：明文（localStorage 无法加密）
+ * - 合规：无特殊合规要求，用户可随时导出/清除
+ * - 未来计划：如需云同步，迁移到 Supabase 并启用 RLS
+ */
+
 export const PROGRESS_KEY = 'network-learning-progress';
 export const MISTAKES_KEY = 'network-learning-mistakes';
 const SCHEMA_VERSION_KEY = 'network-learning-schema-version';
