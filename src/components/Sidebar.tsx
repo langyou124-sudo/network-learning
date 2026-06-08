@@ -73,7 +73,8 @@ export default function Sidebar() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all"
         style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-        aria-label="菜单"
+        aria-label={isOpen ? '关闭菜单' : '打开菜单'}
+        aria-expanded={isOpen}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           {isOpen ? (
@@ -99,15 +100,20 @@ export default function Sidebar() {
         />
       )}
 
-      {/* 桌面端触发区域 — 左侧窄条，鼠标划入展开 */}
-      <div
-        className="hidden md:block fixed left-0 top-0 w-3 h-screen z-40"
+      {/* 桌面端触发区域 — 左侧窄条，鼠标划入或 Tab 聚焦展开 */}
+      <button
+        className="hidden md:block fixed left-0 top-0 w-3 h-screen z-40 opacity-0 focus-visible:opacity-100 focus-visible:w-10 focus-visible:bg-white/10 transition-all"
         onMouseEnter={() => setIsOpen(true)}
+        onFocus={() => setIsOpen(true)}
+        aria-label="打开侧边栏"
       />
 
       {/* 侧边栏 */}
       <aside
+        role="navigation"
+        aria-label="主导航"
         onMouseLeave={() => setIsOpen(false)}
+        onKeyDown={(e) => { if (e.key === 'Escape') setIsOpen(false); }}
         className={`fixed left-0 top-0 w-60 h-screen flex flex-col glass-dark z-40 transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -138,6 +144,7 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] transition-all duration-150 ${
                     isActive
                       ? 'bg-white/10 text-white font-medium'

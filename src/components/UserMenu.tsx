@@ -32,8 +32,15 @@ export default function UserMenu() {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('keydown', keyHandler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('keydown', keyHandler);
+    };
   }, [open]);
 
   const handleLogout = async () => {
@@ -66,6 +73,8 @@ export default function UserMenu() {
     <div ref={ref} className="fixed top-4 right-4 md:right-6 z-50">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="menu"
         className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all"
         style={{
           background: 'var(--surface)',
@@ -94,6 +103,8 @@ export default function UserMenu() {
 
       {open && (
         <div
+          role="menu"
+          aria-label="用户菜单"
           className="absolute right-0 mt-1.5 w-40 rounded-lg py-1 animate-in"
           style={{
             background: 'var(--surface)',
@@ -103,6 +114,7 @@ export default function UserMenu() {
         >
           <Link
             href="/settings"
+            role="menuitem"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-[13px] text-[var(--text)] hover:bg-[var(--surface-hover)] transition-colors"
           >
@@ -113,6 +125,7 @@ export default function UserMenu() {
             设置
           </Link>
           <button
+            role="menuitem"
             onClick={handleLogout}
             className="flex items-center gap-2 px-3 py-2 text-[13px] text-[var(--danger)] hover:bg-[var(--surface-hover)] transition-colors w-full text-left"
           >

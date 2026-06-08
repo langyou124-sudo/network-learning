@@ -39,13 +39,16 @@ function lookupTerm(text: string): GlossaryTerm | undefined {
 }
 
 // Tooltip 弹出层
-function TooltipPopup({ term, definition, position }: {
+function TooltipPopup({ term, definition, position, id }: {
   term: string;
   definition: string;
   position: { x: number; y: number };
+  id: string;
 }) {
   return (
     <div
+      id={id}
+      role="tooltip"
       className="fixed z-[100] px-4 py-3 rounded-xl shadow-lg max-w-xs pointer-events-none animate-in"
       style={{
         left: `${position.x}px`,
@@ -76,22 +79,38 @@ export function GlossaryHighlight({ term: displayText, glossaryTerm }: {
   const ref = useRef<HTMLSpanElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  const tooltipId = `glossary-${displayText.replace(/\s+/g, '-')}`;
+
+  const showTooltip = () => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setPos({
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
+      setShow(true);
+    }
+  };
+
   const handleEnter = () => {
-    timerRef.current = setTimeout(() => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        setPos({
-          x: rect.left + rect.width / 2,
-          y: rect.top,
-        });
-        setShow(true);
-      }
-    }, 200);
+    timerRef.current = setTimeout(showTooltip, 200);
   };
 
   const handleLeave = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setShow(false);
+  };
+
+  const handleFocus = () => {
+    showTooltip();
+  };
+
+  const handleBlur = () => {
+    setShow(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') setShow(false);
   };
 
   useEffect(() => {
@@ -102,15 +121,21 @@ export function GlossaryHighlight({ term: displayText, glossaryTerm }: {
     <>
       <span
         ref={ref}
+        tabIndex={0}
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
-        className="cursor-help border-b border-dotted"
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        aria-describedby={show ? tooltipId : undefined}
+        className="cursor-help border-b border-dotted outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 rounded-sm"
         style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
       >
         {displayText}
       </span>
       {show && (
         <TooltipPopup
+          id={tooltipId}
           term={glossaryTerm.term}
           definition={glossaryTerm.definition}
           position={pos}
