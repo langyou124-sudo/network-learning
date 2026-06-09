@@ -8,6 +8,7 @@ export default function SignupPage() {
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -100,9 +101,24 @@ export default function SignupPage() {
             {error && <p className="text-[13px] text-[var(--danger)]">{error}</p>}
             {message && <p className="text-[13px] text-[var(--success)]">{message}</p>}
 
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={e => setAgreed(e.target.checked)}
+                className="mt-0.5 accent-[var(--accent)]"
+              />
+              <span className="text-[12px] text-[var(--text-muted)] leading-relaxed">
+                我已阅读并同意{' '}
+                <Link href="/privacy" target="_blank" className="text-[var(--accent)] hover:underline">隐私政策</Link>
+                {' '}和{' '}
+                <Link href="/terms" target="_blank" className="text-[var(--accent)] hover:underline">用户协议</Link>
+              </span>
+            </label>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !agreed}
               className="w-full btn btn-primary py-2.5 text-[14px] disabled:opacity-50"
             >
               {loading ? '注册中...' : '注册'}
