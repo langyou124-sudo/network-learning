@@ -79,6 +79,15 @@ export default function ChatWidget() {
         }),
       });
 
+      if (resp.status === 401) {
+        setMessages(prev => [
+          ...prev,
+          { role: 'assistant', content: '请先登录后再使用 AI 助手。[点击登录](/login)' },
+        ]);
+        setLoading(false);
+        return;
+      }
+
       if (!resp.ok) throw new Error('请求失败');
 
       const reader = resp.body?.getReader();
