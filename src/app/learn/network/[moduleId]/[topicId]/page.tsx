@@ -214,9 +214,9 @@ export default function TopicPage() {
     <div>
       {/* 面包屑 */}
       <div className="flex items-center gap-2 text-[13px] text-[var(--text-muted)] mb-5 animate-in">
-        <Link href="/learn" className="hover:text-[var(--accent)] transition-colors">知识库</Link>
+        <Link href="/learn/network" className="hover:text-[var(--accent)] transition-colors">网络工程</Link>
         <span className="opacity-40">/</span>
-        <Link href={`/learn/${moduleId}`} className="hover:text-[var(--accent)] transition-colors">{module.title}</Link>
+        <Link href={`/learn/network/${moduleId}`} className="hover:text-[var(--accent)] transition-colors">{module.title}</Link>
         <span className="opacity-40">/</span>
         <span className="text-[var(--text)]">{topic.title}</span>
       </div>

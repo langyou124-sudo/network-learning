@@ -9,7 +9,7 @@ import type { User } from '@supabase/supabase-js';
 const navItems = [
   { href: '/', label: '首页', icon: HomeIcon },
   { href: '/explore', label: '知识探索', icon: ExploreIcon },
-  { href: '/learn', label: '网络工程', icon: BookIcon },
+  { href: '/learn', label: '学习中心', icon: BookIcon },
   { href: '/diagrams', label: '交互式图表', icon: DiagramIcon },
   { href: '/quiz', label: '练习题', icon: PenIcon },
   { href: '/mistakes', label: '错题本', icon: AlertIcon },

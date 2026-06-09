@@ -31,8 +31,8 @@ export default function ModulePage() {
   return (
     <div>
       <div className="mb-8 animate-in">
-        <Link href="/learn" className="text-[13px] text-[var(--accent)] hover:underline">
-          ← 返回知识库
+        <Link href="/learn/network" className="text-[13px] text-[var(--accent)] hover:underline">
+          ← 返回网络工程
         </Link>
         <div className="flex items-center gap-3 mt-3">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
@@ -53,7 +53,7 @@ export default function ModulePage() {
             return (
               <Link
                 key={topic.id}
-                href={`/learn/${moduleId}/${topic.id}`}
+                href={`/learn/network/${moduleId}/${topic.id}`}
                 className="card-lift flex items-center justify-between px-5 py-4 animate-in"
                 style={{ animationDelay: `${index * 0.06}s` }}
               >
