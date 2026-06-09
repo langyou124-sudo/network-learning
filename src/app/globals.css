@@ -62,13 +62,6 @@ body {
 }
 
 /* ===== 毛玻璃效果 ===== */
-.glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
 .glass-dark {
   background: rgba(15, 18, 25, 0.85);
   backdrop-filter: blur(20px) saturate(1.4);
@@ -139,9 +132,6 @@ body {
   background: linear-gradient(135deg, #faf9f6 0%, #f0ece4 50%, #e8e0d4 100%);
 }
 
-.gradient-hero {
-  background: linear-gradient(160deg, #0f1219 0%, #1a2540 40%, #243660 100%);
-}
 
 /* ===== 按钮 ===== */
 .btn {
@@ -191,6 +181,15 @@ body {
   color: var(--text);
 }
 
+/* ===== 表单焦点状态 ===== */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
 /* ===== 学习内容排版 ===== */
 .lesson-content {
   line-height: 1.95;
@@ -199,7 +198,7 @@ body {
 }
 
 .lesson-content h1 {
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 8px;
@@ -209,13 +208,11 @@ body {
 }
 
 .lesson-content h2 {
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 650;
   color: var(--text);
   margin-top: 40px;
   margin-bottom: 16px;
-  padding-left: 14px;
-  border-left: 3px solid var(--accent);
   letter-spacing: -0.01em;
 }
 
@@ -416,10 +413,10 @@ body {
 /* ===== 移动端适配 ===== */
 @media (max-width: 767px) {
   .lesson-content h1 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
   .lesson-content h2 {
-    font-size: 1.15rem;
+    font-size: 1.3rem;
   }
   .lesson-content h3 {
     font-size: 1rem;

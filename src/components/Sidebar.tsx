@@ -68,10 +68,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* 移动端汉堡按钮 */}
+      {/* 汉堡按钮 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all"
+        className="fixed top-4 left-4 z-50 w-10 h-10 rounded-lg flex items-center justify-center transition-all"
         style={{ background: 'var(--surface)', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
         aria-label={isOpen ? '关闭菜单' : '打开菜单'}
         aria-expanded={isOpen}
@@ -99,14 +99,6 @@ export default function Sidebar() {
           onClick={() => setIsOpen(false)}
         />
       )}
-
-      {/* 桌面端触发区域 — 左侧窄条，鼠标划入或 Tab 聚焦展开 */}
-      <button
-        className="hidden md:block fixed left-0 top-0 w-3 h-screen z-40 opacity-0 focus-visible:opacity-100 focus-visible:w-10 focus-visible:bg-white/10 transition-all"
-        onMouseEnter={() => setIsOpen(true)}
-        onFocus={() => setIsOpen(true)}
-        aria-label="打开侧边栏"
-      />
 
       {/* 侧边栏 */}
       <aside
