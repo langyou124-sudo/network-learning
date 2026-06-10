@@ -40,6 +40,7 @@ import { topic_09_03 } from './topics/topic-09-03';
 import { topic_10_01 } from './topics/topic-10-01';
 import { topic_10_02 } from './topics/topic-10-02';
 import { topic_10_03 } from './topics/topic-10-03';
+import { topic_10_04 } from './topics/topic-10-04';
 import { topic_41 } from './topics/topic-41';
 import { topic_42 } from './topics/topic-42';
 import { topic_43 } from './topics/topic-43';
@@ -104,6 +105,7 @@ const topicMap: Record<string, { title: string; description: string; content: st
   'topic-10-01': topic_10_01,
   'topic-10-02': topic_10_02,
   'topic-10-03': topic_10_03,
+  'topic-10-04': topic_10_04,
   'topic-41': topic_41,
   'topic-42': topic_42,
   'topic-43': topic_43,

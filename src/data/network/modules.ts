@@ -116,7 +116,8 @@ export const modulesMeta = [
     "topicIds": [
       "topic-10-01",
       "topic-10-02",
-      "topic-10-03"
+      "topic-10-03",
+      "topic-10-04"
     ]
   },
   {
