@@ -24,8 +24,8 @@ export const subjects: Subject[] = [
     description: '覆盖初级/中级/高级全级别软考科目',
     icon: '📝',
     href: '/learn/ruankao',
-    status: 'coming',
-    moduleCount: 0,
+    status: 'active',
+    moduleCount: 6,
   },
 ];
 

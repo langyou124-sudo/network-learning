@@ -118,5 +118,67 @@ export const modulesMeta = [
       "topic-10-02",
       "topic-10-03"
     ]
+  },
+  {
+    "id": "ipv6-technology",
+    "title": "IPv6技术",
+    "description": "下一代互联网协议，从地址格式到过渡技术",
+    "icon": "🔢",
+    "topicIds": [
+      "topic-41",
+      "topic-42",
+      "topic-43",
+      "topic-44",
+      "topic-45",
+      "topic-46",
+      "topic-50"
+    ]
+  },
+  {
+    "id": "datacenter-cloud",
+    "title": "数据中心与云网络",
+    "description": "数据中心网络架构、云计算与虚拟化技术",
+    "icon": "☁️",
+    "topicIds": [
+      "topic-47",
+      "topic-48",
+      "topic-49"
+    ]
+  },
+  {
+    "id": "sdn-nfv",
+    "title": "SDN与NFV",
+    "description": "软件定义网络与网络功能虚拟化",
+    "icon": "🧩",
+    "topicIds": [
+      "topic-51",
+      "topic-52",
+      "topic-53",
+      "topic-54"
+    ]
+  },
+  {
+    "id": "network-design",
+    "title": "网络规划设计",
+    "description": "网络需求分析、拓扑设计、设备选型",
+    "icon": "📐",
+    "topicIds": [
+      "topic-55",
+      "topic-56",
+      "topic-57",
+      "topic-58"
+    ]
+  },
+  {
+    "id": "emerging-tech",
+    "title": "网络新技术",
+    "description": "5G、Wi-Fi 6/7、零信任、确定性网络等前沿技术",
+    "icon": "🚀",
+    "topicIds": [
+      "topic-59",
+      "topic-60",
+      "topic-61",
+      "topic-62"
+    ]
   }
 ];

@@ -40,6 +40,28 @@ import { topic_09_03 } from './topics/topic-09-03';
 import { topic_10_01 } from './topics/topic-10-01';
 import { topic_10_02 } from './topics/topic-10-02';
 import { topic_10_03 } from './topics/topic-10-03';
+import { topic_41 } from './topics/topic-41';
+import { topic_42 } from './topics/topic-42';
+import { topic_43 } from './topics/topic-43';
+import { topic_44 } from './topics/topic-44';
+import { topic_45 } from './topics/topic-45';
+import { topic_46 } from './topics/topic-46';
+import { topic_50 } from './topics/topic-50';
+import { topic_47 } from './topics/topic-47';
+import { topic_48 } from './topics/topic-48';
+import { topic_49 } from './topics/topic-49';
+import { topic_51 } from './topics/topic-51';
+import { topic_52 } from './topics/topic-52';
+import { topic_53 } from './topics/topic-53';
+import { topic_54 } from './topics/topic-54';
+import { topic_55 } from './topics/topic-55';
+import { topic_56 } from './topics/topic-56';
+import { topic_57 } from './topics/topic-57';
+import { topic_58 } from './topics/topic-58';
+import { topic_59 } from './topics/topic-59';
+import { topic_60 } from './topics/topic-60';
+import { topic_61 } from './topics/topic-61';
+import { topic_62 } from './topics/topic-62';
 
 const topicMap: Record<string, { title: string; description: string; content: string; quizzes: any[]; references: string[] }> = {
   'topic-01': topic_01,
@@ -82,6 +104,28 @@ const topicMap: Record<string, { title: string; description: string; content: st
   'topic-10-01': topic_10_01,
   'topic-10-02': topic_10_02,
   'topic-10-03': topic_10_03,
+  'topic-41': topic_41,
+  'topic-42': topic_42,
+  'topic-43': topic_43,
+  'topic-44': topic_44,
+  'topic-45': topic_45,
+  'topic-46': topic_46,
+  'topic-50': topic_50,
+  'topic-47': topic_47,
+  'topic-48': topic_48,
+  'topic-49': topic_49,
+  'topic-51': topic_51,
+  'topic-52': topic_52,
+  'topic-53': topic_53,
+  'topic-54': topic_54,
+  'topic-55': topic_55,
+  'topic-56': topic_56,
+  'topic-57': topic_57,
+  'topic-58': topic_58,
+  'topic-59': topic_59,
+  'topic-60': topic_60,
+  'topic-61': topic_61,
+  'topic-62': topic_62,
 };
 
 export const networkModules: Module[] = modulesMeta.map(mod => ({

@@ -29,7 +29,7 @@ const knowledgeModules = [
     color: '#c7923e',
     href: '/learn/ruankao',
     topicCount: 0,
-    status: 'coming' as const,
+    status: 'active' as const,
     tags: ['中级', '高级', '初级'],
   },
   {
