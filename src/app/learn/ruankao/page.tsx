@@ -12,7 +12,7 @@ const subjectGroups = [
     title: '网络工程师（中级）',
     icon: '🌐',
     color: '#4a6fa5',
-    moduleIds: ['rk-network-basics', 'rk-data-comm', 'rk-network-interconnect'],
+    moduleIds: ['ne-computer-network-basics', 'ne-network-interconnection', 'ne-network-security', 'ne-network-management', 'ne-network-planning', 'ne-new-technologies'],
   },
   {
     id: 'software-designer',

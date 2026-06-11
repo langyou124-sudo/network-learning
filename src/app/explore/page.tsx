@@ -28,9 +28,9 @@ const knowledgeModules = [
     icon: '📝',
     color: '#c7923e',
     href: '/learn/ruankao',
-    topicCount: 0,
+    topicCount: 55,
     status: 'active' as const,
-    tags: ['中级', '高级', '初级'],
+    tags: ['网络工程师', '软件设计师', '中级'],
   },
   {
     id: 'coming-soon-1',

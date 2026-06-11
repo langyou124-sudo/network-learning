@@ -22,6 +22,9 @@ function processChildren(children: React.ReactNode): React.ReactNode {
     if (typeof child === 'number' || typeof child === 'boolean') return child;
     if (React.isValidElement(child)) {
       const props = child.props as Record<string, unknown>;
+      const tag = typeof child.type === 'string' ? child.type : '';
+      // Skip code/pre elements to avoid breaking code block styling
+      if (tag === 'code' || tag === 'pre') return child;
       if (props.children) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return React.cloneElement(child as React.ReactElement<any>, {

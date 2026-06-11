@@ -9,7 +9,7 @@ export const topic_60 = {
 
 这一课，我们来深入了解 Wi-Fi 6（802.11ax）和 Wi-Fi 7（802.11be）的核心技术。
 
-<Glossary terms="%5B%7B%22term%22%3A%22OFDMA%22%2C%22english%22%3A%22Orthogonal%20Frequency%20Division%20Multiple%20Access%22%2C%22definition%22%3A%22%E6%AD%A3%E4%BA%A4%E9%A2%91%E5%88%86%E5%A4%8D%E5%A4%9A%E5%9D%80%EF%BC%8C%E5%B0%86%E4%BF%A1%E9%81%93%E6%8B%86%E6%88%90%E5%A4%9A%E4%B8%AA%E5%AD%90%E8%BD%BD%E6%B3%A2%EF%BC%8C%E5%90%8C%E6%97%B6%E4%B8%BA%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%8D%E6%9C%8D%E5%8A%A1%22%7D%2C%7B%22term%22%3A%22BSS%20Coloring%22%2C%22english%22%3A%22Basic%20Service%20Set%20Coloring%22%2C%22definition%22%3A%22BSS%E7%9D%80%E8%89%B2%EF%BC%8C%E7%BB%99%E4%B8%8D%E5%90%8CAP%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%87%E8%AE%B0%E4%B8%8D%E5%90%8C%E9%A2%9C%E8%89%B2%EF%BC%8C%E5%87%8F%E5%B0%91%E5%90%8C%E9%A2%91%E5%B9%B2%E6%89%B0%22%7D%2C%7B%22term%22%3A%22TWT%22%2C%22english%22%3A%22Target%20Wake%20Time%22%2C%22definition%22%3A%22%E7%9B%AE%E6%A0%87%E5%94%A4%E9%86%92%E6%97%B6%E9%97%B4%EF%BC%8C%E8%AE%BE%E5%A4%87%E4%B8%8EAP%E5%8D%8F%E5%95%86%E5%94%A4%E9%86%92%E6%97%B6%E9%97%B4%EFF%BC%8C%E5%85%B6%E4%BB%96%E6%97%B6%E9%97%B4%E5%8F%AF%E4%BB%A5%E4%BC%91%E7%9C%A0%E8%8A%82%E7%9C%81%E7%94%B5%E9%87%8F%22%7D%2C%7B%22term%22%3A%22MLO%22%2C%22english%22%3A%22Multi-Link%20Operation%22%2C%22definition%22%3A%22%E5%A4%9A%E9%93%BE%E8%B7%AF%E6%93%8D%E4%BD%9C%EF%BC%8CWi-Fi%207%E6%96%B0%E6%8A%80%E6%9C%AF%EF%BC%8C%E8%AE%BE%E5%A4%87%E5%8F%AF%E5%90%8C%E6%97%B6%E9%80%9A%E8%BF%87%E5%A4%9A%E4%B8%AA%E9%A2%91%E6%AE%B5%E5%92%8C%E4%BF%A1%E9%81%93%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE%22%7D%2C%7B%22term%22%3A%22MU-MIMO%22%2C%22english%22%3A%22Multi-User%20Multiple%20Input%20Multiple%20Output%22%2C%22definition%22%3A%22%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E5%85%A5%E5%A4%9A%E5%87%BA%EF%BC%8CAP%E5%8F%AF%E5%90%8C%E6%97%B6%E4%B8%8E%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%8D%E9%80%9A%E4%BF%A1%22%7D%2C%7B%22term%22%3A%221024-QAM%22%2C%22english%22%3A%221024-Quadrature%20Amplitude%20Modulation%22%2C%22definition%22%3A%221024%E6%AD%A3%E4%BA%A4%E5%B9%85%E5%BA%A6%E8%B0%83%E5%88%B6%EF%BC%8C%E6%AF%8F%E4%B8%AA%E7%AC%A6%E5%8F%B7%E6%90%BA%E5%B8%A610bit%E6%95%B0%E6%8D%AE%22%7D%2C%7B%22term%22%3A%224096-QAM%22%2C%22english%22%3A%224096-Quadrature%20Amplitude%20Modulation%22%2C%22definition%22%3A%224096%E6%AD%A3%E4%BA%A4%E5%B9%85%E5%BA%A6%E8%B0%83%E5%88%B6%EF%BC%8C%E6%AF%8F%E4%B8%AA%E7%AC%A6%E5%8F%B7%E6%90%BA%E5%B8%A612bit%E6%95%B0%E6%8D%AE%EF%BC%8C40%E2%80%9350%25%E6%8F%90%E5%8D%87%22%7D%5D" />
+<Glossary terms="%5B%7B%22term%22%3A%22OFDMA%22%2C%22english%22%3A%22Orthogonal%20Frequency%20Division%20Multiple%20Access%22%2C%22definition%22%3A%22%E6%AD%A3%E4%BA%A4%E9%A2%91%E5%88%86%E5%A4%8D%E5%A4%9A%E5%9D%80%EF%BC%8C%E5%B0%86%E4%BF%A1%E9%81%93%E6%8B%86%E6%88%90%E5%A4%9A%E4%B8%AA%E5%AD%90%E8%BD%BD%E6%B3%A2%EF%BC%8C%E5%90%8C%E6%97%B6%E4%B8%BA%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%8D%E6%9C%8D%E5%8A%A1%22%7D%2C%7B%22term%22%3A%22BSS%20Coloring%22%2C%22english%22%3A%22Basic%20Service%20Set%20Coloring%22%2C%22definition%22%3A%22BSS%E7%9D%80%E8%89%B2%EF%BC%8C%E7%BB%99%E4%B8%8D%E5%90%8CAP%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%87%E8%AE%B0%E4%B8%8D%E5%90%8C%E9%A2%9C%E8%89%B2%EF%BC%8C%E5%87%8F%E5%B0%91%E5%90%8C%E9%A2%91%E5%B9%B2%E6%89%B0%22%7D%2C%7B%22term%22%3A%22TWT%22%2C%22english%22%3A%22Target%20Wake%20Time%22%2C%22definition%22%3A%22%E7%9B%AE%E6%A0%87%E5%94%A4%E9%86%92%E6%97%B6%E9%97%B4%EF%BC%8C%E8%AE%BE%E5%A4%87%E4%B8%8EAP%E5%8D%8F%E5%95%86%E5%94%A4%E9%86%92%E6%97%B6%E9%97%B4%EF%BC%8C%E5%85%B6%E4%BB%96%E6%97%B6%E9%97%B4%E5%8F%AF%E4%BB%A5%E4%BC%91%E7%9C%A0%E8%8A%82%E7%9C%81%E7%94%B5%E9%87%8F%22%7D%2C%7B%22term%22%3A%22MLO%22%2C%22english%22%3A%22Multi-Link%20Operation%22%2C%22definition%22%3A%22%E5%A4%9A%E9%93%BE%E8%B7%AF%E6%93%8D%E4%BD%9C%EF%BC%8CWi-Fi%207%E6%96%B0%E6%8A%80%E6%9C%AF%EF%BC%8C%E8%AE%BE%E5%A4%87%E5%8F%AF%E5%90%8C%E6%97%B6%E9%80%9A%E8%BF%87%E5%A4%9A%E4%B8%AA%E9%A2%91%E6%AE%B5%E5%92%8C%E4%BF%A1%E9%81%93%E4%BC%A0%E8%BE%93%E6%95%B0%E6%8D%AE%22%7D%2C%7B%22term%22%3A%22MU-MIMO%22%2C%22english%22%3A%22Multi-User%20Multiple%20Input%20Multiple%20Output%22%2C%22definition%22%3A%22%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E5%85%A5%E5%A4%9A%E5%87%BA%EF%BC%8CAP%E5%8F%AF%E5%90%8C%E6%97%B6%E4%B8%8E%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%8D%E9%80%9A%E4%BF%A1%22%7D%2C%7B%22term%22%3A%221024-QAM%22%2C%22english%22%3A%221024-Quadrature%20Amplitude%20Modulation%22%2C%22definition%22%3A%221024%E6%AD%A3%E4%BA%A4%E5%B9%85%E5%BA%A6%E8%B0%83%E5%88%B6%EF%BC%8C%E6%AF%8F%E4%B8%AA%E7%AC%A6%E5%8F%B7%E6%90%BA%E5%B8%A610bit%E6%95%B0%E6%8D%AE%22%7D%2C%7B%22term%22%3A%224096-QAM%22%2C%22english%22%3A%224096-Quadrature%20Amplitude%20Modulation%22%2C%22definition%22%3A%224096%E6%AD%A3%E4%BA%A4%E5%B9%85%E5%BA%A6%E8%B0%83%E5%88%B6%EF%BC%8C%E6%AF%8F%E4%B8%AA%E7%AC%A6%E5%8F%B7%E6%90%BA%E5%B8%A612bit%E6%95%B0%E6%8D%AE%EF%BC%8C40%E2%80%9350%25%E6%8F%90%E5%8D%87%22%7D%5D" />
 
 ## Wi-Fi 标准演进总览
 
@@ -30,47 +30,159 @@ export const topic_60 = {
 
 **类比**：以前 Wi-Fi 像一条单车道公路，所有车排队通过。OFDMA 把公路分成多条车道，多辆车同时通过。
 
-`,
+**OFDMA 的效果**：
+- 降低延迟：小数据包不需要等待大包传完
+- 提高效率：一次传输可以同时服务多个设备
+- 特别适合 IoT 场景：大量设备发送小数据包
+
+### BSS Coloring：减少同频干扰
+
+在公寓楼里，你和邻居的路由器可能都在用同一个信道。传统 Wi-Fi 检测到同信道信号就退避等待，即使那个信号来自邻居的网络。
+
+**BSS Coloring** 给每个 BSS（基本服务集）分配一个"颜色"标识（0-7）。设备收到帧时检查颜色：
+- 颜色相同 → 自己网络的信号，正常处理
+- 颜色不同 → 邻居的干扰，可以忽略或降低优先级
+
+**效果**：密集部署环境下，同频干扰减少，空间复用效率提升。
+
+### TWT：省电利器
+
+**TWT（目标唤醒时间）** 让设备和 AP 协商好"什么时候醒来通信"，其余时间休眠。
+
+- IoT 传感器每天只醒来几次发送数据，电池寿命从几个月延长到几年
+- 手机在不活跃时进入低功耗模式，续航提升
+- 减少了信道上的竞争，其他设备也有更多机会
+
+### 上下行 MU-MIMO
+
+Wi-Fi 5 只支持下行 MU-MIMO（AP 同时给多个设备发数据）。Wi-Fi 6 扩展到**上下行都支持** MU-MIMO：
+
+- 下行 MU-MIMO：AP 同时向最多 8 个设备发送
+- 上行 MU-MIMO：最多 8 个设备同时向 AP 发送
+
+### 1024-QAM：更高的调制效率
+
+Wi-Fi 5 使用 256-QAM（每符号 8 bit），Wi-Fi 6 升级到 **1024-QAM**（每符号 10 bit），单流速率提升 25%。
+
+### BSS Coloring + OFDMA 的协同
+
+这两个技术配合使用效果最佳：
+- OFDMA 让多个设备同时通信，减少等待
+- BSS Coloring 让邻居网络的干扰不影响自己网络的调度
+
+## Wi-Fi 7（802.11be）核心技术
+
+### MLO（多链路操作）：Wi-Fi 7 的杀手锏
+
+MLO 允许设备**同时使用多个频段和信道**传输数据：
+
+\`\`\`
+传统 Wi-Fi: 设备 → [2.4G 或 5G 或 6G] → AP （一次只能用一个频段）
+
+Wi-Fi 7 MLO: 设备 → [2.4G + 5G + 6G] → AP （同时使用多个频段）
+\`\`\`
+
+**MLO 的好处**：
+- **更高吞吐量**：多条链路的带宽叠加
+- **更低延迟**：如果一条链路拥堵，数据立刻从另一条链路发出
+- **更高可靠性**：一条链路故障，其他链路继续工作
+
+### 320MHz 信道带宽
+
+Wi-Fi 6 最大支持 160MHz，Wi-Fi 7 翻倍到 **320MHz**（在 6GHz 频段）。更宽的信道 = 更高的吞吐量。
+
+### 4096-QAM
+
+Wi-Fi 7 将调制效率从 1024-QAM（10 bit/符号）提升到 **4096-QAM**（12 bit/符号），单符号数据量再增加 20%。
+
+### 确定性时延
+
+Wi-Fi 7 通过以下技术实现确定性低时延：
+- **MLO**：多条链路冗余，减少排队等待
+- **TAS（时间感知整形）**：类似 TSN 的时间调度机制
+- **帧抢占**：高优先级帧可以打断低优先级帧的发送
+
+## Wi-Fi 6 vs Wi-Fi 7 对比
+
+| 特性 | Wi-Fi 6 | Wi-Fi 7 |
+|------|---------|---------|
+| 标准 | 802.11ax | 802.11be |
+| 最高速率 | 9.6 Gbps | 46 Gbps |
+| 最大带宽 | 160 MHz | 320 MHz |
+| 调制 | 1024-QAM | 4096-QAM |
+| 多链路 | 不支持 | MLO |
+| 确定时延 | 不支持 | TAS + 帧抢占 |
+| 频段 | 2.4/5/6 GHz | 2.4/5/6 GHz |
+
+## 企业 Wi-Fi 部署建议
+
+### 高密度场景（会议室、体育馆）
+
+- 启用 OFDMA 和 MU-MIMO
+- 使用 BSS Coloring 减少同频干扰
+- 合理规划信道，避免同信道干扰
+
+### IoT 场景（工厂、仓库）
+
+- 启用 TWT，让 IoT 设备省电
+- 使用 2.4GHz 频段（穿透力强、覆盖广）
+- 考虑 Wi-Fi 7 的 MLO 提高可靠性
+
+### 远程办公
+
+- Wi-Fi 6E 或 Wi-Fi 7 使用 6GHz 频段（干扰少、带宽大）
+- MLO 保障视频会议的稳定性和低延迟
+
+## 总结
+
+Wi-Fi 6 和 Wi-Fi 7 的核心要点：
+
+1. **OFDMA** 是 Wi-Fi 6 最重要的创新，让多设备同时通信
+2. **BSS Coloring** 解决密集部署的同频干扰问题
+3. **TWT** 是 IoT 场景的省电利器
+4. **MLO** 是 Wi-Fi 7 的杀手锏，多链路同时传输
+5. **320MHz + 4096-QAM** 将峰值速率推到 46 Gbps
+6. **确定性时延** 让 Wi-Fi 7 适合工业和实时应用`,
   quizzes: [
-        {
-          id: 'quiz-60-01',
-          type: 'choice',
-          question: 'Wi-Fi 6 引入的 OFDMA 技术最大的改进是什么？',
-          options: [
-            '提高了单设备的最高速率',
-            '让多个设备可以同时使用不同子载波组通信',
-            '增加了最大传输距离',
-            '降低了设备功耗'
-          ],
-          answer: 'B',
-          explanation: 'OFDMA 将信道拆分为多个 RU（资源单元），允许多个设备同时通信，大幅提高了高密度环境下的效率。'
-        },
-        {
-          id: 'quiz-60-02',
-          type: 'choice',
-          question: 'Wi-Fi 7 最重要的创新技术是什么？',
-          options: ['BSS Coloring', 'TWT', 'MLO（多链路操作）', 'OFDMA'],
-          answer: 'C',
-          explanation: 'MLO（Multi-Link Operation）是 Wi-Fi 7 最核心的创新，允许设备同时通过多个频段和信道通信，实现高吞吐量和确定性低时延。'
-        },
-        {
-          id: 'quiz-60-03',
-          type: 'fill',
-          question: 'Wi-Fi 7 支持的最大信道带宽为______MHz。',
-          answer: ['320'],
-          explanation: 'Wi-Fi 7（802.11be）支持最大 320 MHz 信道带宽，是 Wi-Fi 6（160 MHz）的两倍。'
-        },
-        {
-          id: 'quiz-60-04',
-          type: 'short-answer',
-          question: '请解释 Wi-Fi 6 的 BSS Coloring 技术是如何解决同频干扰问题的。',
-          answer: 'BSS Coloring 为每个 BSS 分配一个颜色标记（0-7）。当设备收到无线帧时，检查帧中的颜色标记：如果颜色与自己所属 BSS 的颜色相同，说明是自己网络的信号，正常处理；如果颜色不同，说明是邻近 BSS 的干扰信号，可以选择忽略、降低优先级处理或退避等待。这样无需复杂的频率规划，就能在密集部署环境下有效减少同频干扰，提高空间复用效率。',
-          explanation: 'BSS Coloring 是 Wi-Fi 6 解决密集部署干扰的关键技术，原理简单但效果显著。'
-        }
+    {
+      id: 'quiz-60-01',
+      type: 'choice',
+      question: 'Wi-Fi 6 引入的 OFDMA 技术最大的改进是什么？',
+      options: [
+        '提高了单设备的最高速率',
+        '让多个设备可以同时使用不同子载波组通信',
+        '增加了最大传输距离',
+        '降低了设备功耗'
       ],
+      answer: 'B',
+      explanation: 'OFDMA 将信道拆分为多个 RU（资源单元），允许多个设备同时通信，大幅提高了高密度环境下的效率。'
+    },
+    {
+      id: 'quiz-60-02',
+      type: 'choice',
+      question: 'Wi-Fi 7 最重要的创新技术是什么？',
+      options: ['BSS Coloring', 'TWT', 'MLO（多链路操作）', 'OFDMA'],
+      answer: 'C',
+      explanation: 'MLO（Multi-Link Operation）是 Wi-Fi 7 最核心的创新，允许设备同时通过多个频段和信道通信，实现高吞吐量和确定性低时延。'
+    },
+    {
+      id: 'quiz-60-03',
+      type: 'fill',
+      question: 'Wi-Fi 7 支持的最大信道带宽为______MHz。',
+      answer: ['320'],
+      explanation: 'Wi-Fi 7（802.11be）支持最大 320 MHz 信道带宽，是 Wi-Fi 6（160 MHz）的两倍。'
+    },
+    {
+      id: 'quiz-60-04',
+      type: 'short-answer',
+      question: '请解释 Wi-Fi 6 的 BSS Coloring 技术是如何解决同频干扰问题的。',
+      answer: 'BSS Coloring 为每个 BSS 分配一个颜色标记（0-7）。当设备收到无线帧时，检查帧中的颜色标记：如果颜色与自己所属 BSS 的颜色相同，说明是自己网络的信号，正常处理；如果颜色不同，说明是邻近 BSS 的干扰信号，可以选择忽略、降低优先级处理或退避等待。这样无需复杂的频率规划，就能在密集部署环境下有效减少同频干扰，提高空间复用效率。',
+      explanation: 'BSS Coloring 是 Wi-Fi 6 解决密集部署干扰的关键技术，原理简单但效果显著。'
+    }
+  ],
   references: [
-        'IEEE 802.11ax-2021 - Enhancements for High-Efficiency WLAN',
-        'IEEE 802.11be Draft - Extremely High Throughput (EHT)',
-        'Wi-Fi Alliance - Wi-Fi 6/7 Technology Overview'
-      ]
+    'IEEE 802.11ax-2021 - Enhancements for High-Efficiency WLAN',
+    'IEEE 802.11be Draft - Extremely High Throughput (EHT)',
+    'Wi-Fi Alliance - Wi-Fi 6/7 Technology Overview'
+  ]
 };
