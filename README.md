@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 达博理 Daboli
 
-## Getting Started
+多学科知识学习平台 — 网络工程 · 软考备考 · AI 教育
 
-First, run the development server:
+## 功能
+
+- 63 个网络工程课题（OSI/TCP-IP 到 5G/零信任/TSN）
+- 软考网络工程师中级备考（6 模块、55 课题）
+- AI 智能问答（MiMo API，上下文感知当前课题）
+- 语义搜索（Supabase pgvector）
+- 交互式图表（16 个：OSI、VLAN、STP、加密流程等）
+- 练习系统（选择/填空/简答 + 自动评分 + 错题本）
+- 学习进度追踪 + 笔记
+
+## 技术栈
+
+| 层 | 技术 |
+|----|------|
+| 框架 | Next.js 16 (App Router) + TypeScript |
+| UI | React 19 + Tailwind CSS 4 |
+| 认证 | Supabase Auth |
+| 数据库 | Supabase PostgreSQL + pgvector |
+| AI | MiMo API (流式问答) |
+| 限流 | Upstash Redis |
+| 部署 | Vercel |
+
+## 快速开始
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # 填入 Supabase 和 MiMo 密钥
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 项目文档
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [系统架构](docs/architecture.md)
+- [代码规范](docs/conventions.md)
+- [开发工作流](docs/workflow.md)
+- [产品路线图](docs/roadmap.md)
+- [运维手册](docs/ops.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 部署
 
-## Learn More
+```bash
+git push origin master        # 自动部署
+# 或手动
+npx vercel --prod --yes
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 目录结构
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/              # 页面和 API
+├── components/       # UI 组件和图表
+├── data/             # 课程数据（静态 TypeScript）
+│   ├── network/      # 网络工程（15 模块、63 课题）
+│   └── ruankao/      # 软考备考
+├── hooks/            # React Hooks
+├── lib/              # 工具函数（Supabase、存储、校验）
+└── types/            # 类型定义
+```
