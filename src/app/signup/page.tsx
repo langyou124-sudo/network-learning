@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { validatePassword } from '@/lib/validate';
 import Link from 'next/link';
 
 export default function SignupPage() {
@@ -19,8 +20,9 @@ export default function SignupPage() {
     setError('');
     setMessage('');
 
-    if (password.length < 6) {
-      setError('密码至少需要 6 个字符');
+    const validation = validatePassword(password);
+    if (!validation.valid) {
+      setError(validation.error);
       setLoading(false);
       return;
     }
@@ -91,7 +93,7 @@ export default function SignupPage() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="至少 6 个字符"
+                placeholder="6-64个字符，仅限英文、数字和符号"
                 required
                 className="w-full px-4 py-2.5 rounded-xl text-[14px] focus:outline-none"
                 style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}

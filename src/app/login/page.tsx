@@ -115,6 +115,11 @@ function LoginForm() {
                   className="w-full px-4 py-2.5 rounded-xl text-[14px] focus:outline-none"
                   style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
                 />
+                <div className="text-right mt-1.5">
+                  <Link href="/forgot-password" className="text-[12px] text-[var(--accent)] hover:underline">
+                    忘记密码？
+                  </Link>
+                </div>
               </div>
             )}
 
