@@ -76,6 +76,64 @@ export function validateChatBody(body: unknown): {
   };
 }
 
+// 校验评阅请求
+export function validateEvaluateBody(body: unknown): {
+  ok: boolean;
+  error?: string;
+  questionId?: string;
+  studentAnswer?: string;
+  question?: string;
+  keyPoints?: string[];
+} {
+  if (!body || typeof body !== 'object') {
+    return { ok: false, error: '请求体格式错误' };
+  }
+
+  const { questionId, studentAnswer, question, keyPoints } = body as Record<string, unknown>;
+
+  if (typeof questionId !== 'string' || questionId.trim().length === 0) {
+    return { ok: false, error: '缺少题目 ID' };
+  }
+
+  if (typeof question !== 'string' || question.trim().length === 0) {
+    return { ok: false, error: '缺少题目内容' };
+  }
+
+  if (question.length > 5000) {
+    return { ok: false, error: '题目内容不能超过 5000 字' };
+  }
+
+  if (typeof studentAnswer !== 'string' || studentAnswer.trim().length === 0) {
+    return { ok: false, error: '缺少学生答案' };
+  }
+
+  if (studentAnswer.length > 10000) {
+    return { ok: false, error: '学生答案不能超过 10000 字' };
+  }
+
+  if (!Array.isArray(keyPoints)) {
+    return { ok: false, error: 'keyPoints 必须是数组' };
+  }
+
+  if (keyPoints.length > 20) {
+    return { ok: false, error: '关键要点不能超过 20 个' };
+  }
+
+  for (const kp of keyPoints) {
+    if (typeof kp !== 'string') {
+      return { ok: false, error: '关键要点必须是字符串' };
+    }
+  }
+
+  return {
+    ok: true,
+    questionId: (questionId as string).trim(),
+    studentAnswer: (studentAnswer as string).trim(),
+    question: (question as string).trim(),
+    keyPoints: (keyPoints as string[]).map(k => k.trim()),
+  };
+}
+
 // 校验搜索请求
 export function validateSearchParams(params: URLSearchParams): {
   ok: boolean;

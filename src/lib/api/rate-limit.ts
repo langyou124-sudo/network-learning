@@ -26,6 +26,7 @@ export interface RateLimitConfig {
 // Redis rate limiters (lazy init)
 let chatLimiter: Ratelimit | null = null;
 let searchLimiter: Ratelimit | null = null;
+let evaluateLimiter: Ratelimit | null = null;
 
 function getRedis(): Redis | null {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -60,6 +61,19 @@ function getSearchLimiter(): Ratelimit | null {
   return searchLimiter;
 }
 
+function getEvaluateLimiter(): Ratelimit | null {
+  if (evaluateLimiter) return evaluateLimiter;
+  const redis = getRedis();
+  if (!redis) return null;
+  evaluateLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, '60 s'),
+    analytics: true,
+    prefix: 'daboli:evaluate',
+  });
+  return evaluateLimiter;
+}
+
 // 内存限流（降级方案）
 function checkMemRateLimit(
   identifier: string,
@@ -87,7 +101,10 @@ export async function checkRateLimit(
   config: RateLimitConfig
 ): Promise<{ ok: boolean; remaining: number; retryAfter: number }> {
   // 尝试 Redis 限流
-  const limiter = config.max === 10 ? getChatLimiter() : getSearchLimiter();
+  let limiter: Ratelimit | null = null;
+  if (config.max === 10) limiter = getChatLimiter();
+  else if (config.max === 5) limiter = getEvaluateLimiter();
+  else limiter = getSearchLimiter();
   if (limiter) {
     const result = await limiter.limit(identifier);
     return {
@@ -104,4 +121,5 @@ export async function checkRateLimit(
 export const RATE_LIMITS = {
   chat: { windowMs: 60_000, max: 10 },
   search: { windowMs: 60_000, max: 30 },
+  evaluate: { windowMs: 60_000, max: 5 },
 } as const;
