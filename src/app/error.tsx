@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function ErrorPage({
   error,
   reset,
@@ -18,9 +20,9 @@ export default function ErrorPage({
         <button onClick={reset} className="btn btn-primary">
           重试
         </button>
-        <a href="/" className="btn btn-secondary">
+        <Link href="/" className="btn btn-secondary">
           返回首页
-        </a>
+        </Link>
       </div>
     </div>
   );

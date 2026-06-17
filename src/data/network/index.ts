@@ -64,7 +64,7 @@ import { topic_60 } from './topics/topic-60';
 import { topic_61 } from './topics/topic-61';
 import { topic_62 } from './topics/topic-62';
 
-const topicMap: Record<string, { title: string; description: string; content: string; quizzes: any[]; references: string[] }> = {
+const topicMap: Record<string, { title: string; description: string; content: string; quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[]; references: string[] }> = {
   'topic-01': topic_01,
   'topic-02': topic_02,
   'topic-03': topic_03,

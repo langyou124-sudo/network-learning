@@ -27,8 +27,11 @@ export default function RuankaoPage() {
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    const progress = getProgress();
-    setCompletedTopics(progress.completedTopics);
+    const loadData = () => {
+      const progress = getProgress();
+      setCompletedTopics(progress.completedTopics);
+    };
+    loadData();
   }, []);
 
   return (
@@ -60,7 +63,7 @@ export default function RuankaoPage() {
               </div>
 
               <div className="space-y-4">
-                {groupModules.map((mod, index) => {
+                {groupModules.map((mod) => {
                   const completedCount = mod.topics.filter(t =>
                     completedTopics.includes(t.id)
                   ).length;

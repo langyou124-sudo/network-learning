@@ -388,7 +388,7 @@ export default function SDNArchitecture() {
               <div className="px-4 py-3 rounded-lg" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
                 <div className="text-[13px] font-semibold mb-1" style={{ color: '#06b6d4' }}>SDN vs NFV</div>
                 <div className="text-[13px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  SDN关注的是"控制与转发分离"——把网络设备的决策权集中到控制器。NFV关注的是"软硬件分离"——把网络功能从专用设备搬到通用服务器。两者互补：SDN提供灵活的网络控制，NFV提供灵活的网络功能部署。
+                  SDN关注的是&ldquo;控制与转发分离&rdquo;——把网络设备的决策权集中到控制器。NFV关注的是&ldquo;软硬件分离&rdquo;——把网络功能从专用设备搬到通用服务器。两者互补：SDN提供灵活的网络控制，NFV提供灵活的网络功能部署。
                 </div>
               </div>
               <div className="px-4 py-3 rounded-lg" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>

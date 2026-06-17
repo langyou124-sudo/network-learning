@@ -9,8 +9,11 @@ export default function LearnPage() {
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    const progress = getProgress();
-    setCompletedTopics(progress.completedTopics);
+    const loadData = () => {
+      const progress = getProgress();
+      setCompletedTopics(progress.completedTopics);
+    };
+    loadData();
   }, []);
 
   return (

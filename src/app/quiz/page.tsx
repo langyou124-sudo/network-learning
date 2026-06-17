@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { modules, getAllTopics } from '@/data/courses';
+import { getAllTopics } from '@/data/courses';
 import { getProgress } from '@/lib/storage';
 import { Topic } from '@/types';
 
@@ -12,10 +12,13 @@ export default function QuizPage() {
   const [filter, setFilter] = useState<'all' | 'unattempted' | 'low-score'>('all');
 
   useEffect(() => {
-    const allTopics = getAllTopics().filter(t => t.quizzes.length > 0);
-    setTopics(allTopics);
-    const progress = getProgress();
-    setQuizScores(progress.quizScores);
+    const loadData = () => {
+      const allTopics = getAllTopics().filter(t => t.quizzes.length > 0);
+      setTopics(allTopics);
+      const progress = getProgress();
+      setQuizScores(progress.quizScores);
+    };
+    loadData();
   }, []);
 
   const getScorePercent = (topicId: string) => {
@@ -78,7 +81,6 @@ export default function QuizPage() {
       <div className="space-y-3">
         {filteredTopics.map((topic, idx) => {
           const scorePct = getScorePercent(topic.id);
-          const module = modules.find(m => m.id === topic.moduleId);
 
           return (
             <Link

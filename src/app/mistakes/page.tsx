@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { getMistakes, markMistakeReviewed } from '@/lib/storage';
 import { MistakeRecord } from '@/types';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
@@ -14,7 +13,10 @@ export default function MistakesPage() {
   useStudyTimer({ enabled: true });
 
   useEffect(() => {
-    setMistakes(getMistakes());
+    const loadData = () => {
+      setMistakes(getMistakes());
+    };
+    loadData();
   }, []);
 
   const handleMarkReviewed = (quizId: string) => {

@@ -14,10 +14,13 @@ export default function ModulePage() {
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    const mod = getModuleById(moduleId);
-    setModule(mod || null);
-    const progress = getProgress();
-    setCompletedTopics(progress.completedTopics);
+    const loadData = () => {
+      const mod = getModuleById(moduleId);
+      setModule(mod || null);
+      const progress = getProgress();
+      setCompletedTopics(progress.completedTopics);
+    };
+    loadData();
   }, [moduleId]);
 
   if (!module) {

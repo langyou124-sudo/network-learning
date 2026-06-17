@@ -40,7 +40,7 @@ export function resetProgressCache() {
 
 function migrateData(parsed: Record<string, unknown>): Progress {
   const version = (parsed._schemaVersion as number) || 1;
-  let data = { ...parsed };
+  const data = { ...parsed };
   if (version < 2) {
     if (!data.studyTimeRecords) data.studyTimeRecords = {};
     if (typeof data.totalStudyHours !== 'number') data.totalStudyHours = 0;

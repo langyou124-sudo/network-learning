@@ -23,14 +23,17 @@ export default function ProgressPage() {
   const [streak, setStreak] = useState(0);
 
   useEffect(() => {
-    setProgress(getProgress());
-    const totalTopics = modules.reduce((sum, m) => sum + m.topics.length, 0);
-    setStats(getStats(totalTopics));
-    const range = getStudyTimeRange(7);
-    setWeekData(range);
-    const today = new Date().toISOString().split('T')[0];
-    setTodaySeconds(getStudyTimeByDate(today).total);
-    setStreak(getStudyStreak());
+    const loadData = () => {
+      setProgress(getProgress());
+      const totalTopics = modules.reduce((sum, m) => sum + m.topics.length, 0);
+      setStats(getStats(totalTopics));
+      const range = getStudyTimeRange(7);
+      setWeekData(range);
+      const today = new Date().toISOString().split('T')[0];
+      setTodaySeconds(getStudyTimeByDate(today).total);
+      setStreak(getStudyStreak());
+    };
+    loadData();
   }, []);
 
   if (!progress || !stats) return null;

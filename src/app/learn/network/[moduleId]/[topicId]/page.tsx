@@ -145,14 +145,17 @@ export default function TopicPage() {
   useStudyTimer({ topicId, enabled: !!topic });
 
   useEffect(() => {
-    const mod = getModuleById(moduleId);
-    const top = getTopicById(topicId);
-    setModule(mod || null);
-    setTopic(top || null);
+    const loadData = () => {
+      const mod = getModuleById(moduleId);
+      const top = getTopicById(topicId);
+      setModule(mod || null);
+      setTopic(top || null);
 
-    const progress = getProgress();
-    setIsCompleted(progress.completedTopics.includes(topicId));
-    setNote(getNote(topicId));
+      const progress = getProgress();
+      setIsCompleted(progress.completedTopics.includes(topicId));
+      setNote(getNote(topicId));
+    };
+    loadData();
   }, [moduleId, topicId]);
 
   const handleComplete = () => {

@@ -12,8 +12,11 @@ export default function RuankaoModulePage() {
   const [completedTopics, setCompletedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    const progress = getProgress();
-    setCompletedTopics(progress.completedTopics);
+    const loadData = () => {
+      const progress = getProgress();
+      setCompletedTopics(progress.completedTopics);
+    };
+    loadData();
   }, []);
 
   const mod = getModuleById(moduleId);

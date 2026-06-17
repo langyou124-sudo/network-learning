@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function NotFound() {
   return (
     <div className="text-center py-20">
@@ -6,9 +8,9 @@ export default function NotFound() {
       <p className="text-[var(--text-muted)] text-sm mb-6">
         你访问的页面不存在或已被移除
       </p>
-      <a href="/" className="btn btn-primary">
+      <Link href="/" className="btn btn-primary">
         返回首页
-      </a>
+      </Link>
     </div>
   );
 }

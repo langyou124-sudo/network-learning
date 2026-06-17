@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
-import { validateSearchParams, errorResponse, getClientIp, rateLimitResponse } from '@/lib/api/validate';
+import { validateSearchParams, errorResponse, rateLimitResponse } from '@/lib/api/validate';
 
 export async function GET(req: NextRequest) {
   const supabase = await createServerClient();
@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return errorResponse('请先登录', 401);
 
-  const ip = getClientIp(req);
   const { ok, remaining, retryAfter } = await checkRateLimit(`search:${user.id}`, RATE_LIMITS.search);
   if (!ok) return rateLimitResponse(retryAfter, { 'X-RateLimit-Remaining': '0' });
 

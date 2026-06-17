@@ -3,7 +3,7 @@ import { updateSession } from '@/lib/supabase/middleware';
 
 const protectedPaths = ['/learn', '/quiz', '/mistakes', '/progress', '/settings', '/diagrams'];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
 
   const { pathname } = request.nextUrl;
@@ -20,6 +20,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

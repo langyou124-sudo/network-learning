@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
-import { validateChatBody, errorResponse, getClientIp, rateLimitResponse } from '@/lib/api/validate';
+import { validateChatBody, errorResponse, rateLimitResponse } from '@/lib/api/validate';
 
 const MIMO_KEY = process.env.MIMO_API_KEY!;
 const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return errorResponse('请先登录', 401);
 
-  const ip = getClientIp(req);
   const { ok, retryAfter } = await checkRateLimit(`chat:${user.id}`, RATE_LIMITS.chat);
   if (!ok) return rateLimitResponse(retryAfter);
 
