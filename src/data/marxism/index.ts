@@ -1,45 +1,32 @@
 import { Module, Quiz } from '@/types';
 import { modulesMeta } from './modules';
-import { topic_01_01 } from './topics/module-01';
 
-// Placeholder topics for modules 02-05 (to be filled with actual content later)
-const topicDataMap: Record<string, { title: string; description: string; content: string; quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[]; references: string[] }> = {
-  'marx-01-01': topic_01_01,
+// Import topics from each module file
+import { topics as topics01 } from './topics/module-01';
+import { topics as topics02 } from './topics/module-02';
+import { topics as topics03 } from './topics/module-03';
+
+import { topics as topics04 } from './topics/module-04';
+import { topics as topics05 } from './topics/module-05';
+
+// Topic data map by module
+const moduleTopicsMap: Record<string, typeof topics01> = {
+  'marxism-intro': topics01,
+  'marxism-dialectical-materialism': topics02,
+  'marxism-dialectics': topics03,
+  'marxism-epistemology': topics04,
+  'marxism-historical-materialism': topics05,
 };
-
-// Generate placeholder entries for topics without content yet
-function getTopicData(topicId: string) {
-  if (topicDataMap[topicId]) {
-    return topicDataMap[topicId];
-  }
-  // Placeholder for future topics
-  return {
-    title: topicId,
-    description: '待添加内容',
-    content: '# 待添加内容\n\n此章节内容正在编写中，敬请期待。',
-    quizzes: [] as { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[],
-    references: [] as string[]
-  };
-}
 
 export const marxismModules: Module[] = modulesMeta.map(mod => ({
   id: mod.id,
   title: mod.title,
   description: mod.description,
   icon: mod.icon,
-  topics: mod.topicIds.map(tid => ({
-    id: tid,
-    moduleId: mod.id,
-    title: getTopicData(tid).title,
-    description: getTopicData(tid).description,
-    content: getTopicData(tid).content,
-    quizzes: getTopicData(tid).quizzes as Quiz[],
-    references: getTopicData(tid).references
-  }))
+  topics: moduleTopicsMap[mod.id] || [],
 }));
 
-// Helper functions for essay question pages (backward compatibility)
-
+// Helper functions for essay question pages
 export function getQuestionsByModule(moduleId: string) {
   const mod = marxismModules.find(m => m.id === moduleId);
   if (!mod) return [];
