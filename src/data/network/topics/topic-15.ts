@@ -147,6 +147,13 @@ TCP的流量控制和拥塞控制是保证网络高效运行的关键机制。�
             options: ['cwnd不变', 'cwnd减半', 'cwnd设为1个MSS并重新慢启动', 'cwnd设为ssthresh'],
             answer: 'C',
             explanation: '超时说明网络严重拥塞，TCP Reno将ssthresh设为cwnd/2，cwnd重新设为1个MSS，从慢启动阶段重新开始。'
+          },
+          {
+            id: 'q15-6',
+            type: 'fill',
+            question: 'TCP拥塞控制中，慢启动阶段的拥塞窗口初始值通常为______个MSS。',
+            answer: '1',
+            explanation: '慢启动阶段，拥塞窗口cwnd初始化为1个MSS，每收到一个ACK增加1个MSS，呈指数增长。'
           }
         ],
   references: ['《图解TCP/IP》第6章', 'RFC 5681 - TCP Congestion Control']

@@ -200,6 +200,29 @@ export const topic_01 = {
             question: '用你自己的话解释，为什么需要计算机网络？',
             answer: '计算机网络让多台计算机可以共享资源（如打印机、文件）和传递信息（如邮件、微信），提高了效率和便利性。',
             explanation: '开放性问题，核心是理解资源共享和数据通信的价值。'
+          },
+          {
+            id: 'quiz-01-06',
+            type: 'choice',
+            question: '以下哪个是互联网诞生的标志性年份？',
+            options: ['1969年ARPANET诞生', '1983年TCP/IP成为标准', '1991年万维网发明', '1995年互联网商业化'],
+            answer: 'B',
+            explanation: '1983年1月1日，TCP/IP协议正式成为ARPANET的标准，这一天被称为"互联网的生日"。'
+          },
+          {
+            id: 'quiz-01-07',
+            type: 'fill',
+            question: '根据覆盖范围，网络分为LAN（局域网）、______和WAN（广域网）三种类型。',
+            answer: 'MAN',
+            explanation: '按照覆盖范围从小到大，网络分为LAN（局域网）、MAN（城域网）和WAN（广域网）。'
+          },
+          {
+            id: 'quiz-01-08',
+            type: 'choice',
+            question: '交换机与集线器的主要区别是什么？',
+            options: ['交换机工作速度更快', '交换机能根据MAC地址定向转发数据', '交换机支持更多端口', '交换机使用无线连接'],
+            answer: 'B',
+            explanation: '集线器收到信号后向所有端口广播，而交换机能记住每台设备的MAC地址，只把数据发给目标设备，效率更高。'
           }
         ],
   references: [

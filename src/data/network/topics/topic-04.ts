@@ -173,6 +173,21 @@ Fat-Tree（胖树）是另一种数据中心拓扑，特点是**越靠近核心�
             question: '星型拓扑的中心节点通常是______或______。',
             answer: ['交换机', '集线器'],
             explanation: '星型拓扑的中心节点是交换机或集线器。'
+          },
+          {
+            id: 'quiz-04-04',
+            type: 'choice',
+            question: '数据中心中最主流的网络拓扑架构是什么？',
+            options: ['总线型', '环型', 'Spine-Leaf', '纯星型'],
+            answer: 'C',
+            explanation: 'Spine-Leaf（脊叶架构）是目前数据中心最主流的网络拓扑，任意两台服务器之间最多经过两跳，延迟固定且可预测。'
+          },
+          {
+            id: 'quiz-04-05',
+            type: 'fill',
+            question: '网络冗余设计的核心原则是消除______。',
+            answer: '单点故障',
+            explanation: '冗余设计的核心原则是消除单点故障，无论是设备、链路还是电源，关键组件都应该有备份。'
           }
         ],
   references: [

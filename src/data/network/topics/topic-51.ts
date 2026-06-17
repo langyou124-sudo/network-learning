@@ -52,6 +52,29 @@ export const topic_51 = {
           question: '为什么实际生产环境中的 SDN 控制器通常采用分布式集群架构，而不是纯集中式？',
           answer: '纯集中式控制器存在单点故障风险——如果控制器宕机，整个网络将失去控制能力。分布式集群架构通过多个控制器实例协同工作，每个控制器管理一个域，通过东西向协议同步状态。这样既能获得全局视图实现最优决策，又能在某个控制器故障时由其他控制器接管，保证网络高可用。ONOS 和 OpenDaylight 都采用这种架构。',
           explanation: '分布式集群架构解决了SDN控制器的单点故障问题，是生产环境的必选方案。'
+        },
+        {
+          id: 'quiz-51-05',
+          type: 'choice',
+          question: 'SDN架构中，南向接口的典型协议是什么？',
+          options: ['HTTP', 'REST API', 'OpenFlow', 'SNMP'],
+          answer: 'C',
+          explanation: 'OpenFlow是SDN最重要的南向接口协议，用于控制器与交换机之间的通信。REST API是北向接口的典型协议。'
+        },
+        {
+          id: 'quiz-51-06',
+          type: 'fill',
+          question: 'SDN将网络设备的______平面和______平面分离，实现集中控制。',
+          answer: ['控制', '数据'],
+          explanation: 'SDN的核心思想是将控制平面（负责决策）从网络设备中剥离出来集中管理，数据平面（负责转发）保留在设备中。'
+        },
+        {
+          id: 'quiz-51-07',
+          type: 'choice',
+          question: '以下哪个不是主流的开源SDN控制器？',
+          options: ['OpenDaylight', 'ONOS', 'Floodlight', 'Wireshark'],
+          answer: 'D',
+          explanation: 'Wireshark是网络抓包分析工具，不是SDN控制器。OpenDaylight、ONOS和Floodlight都是主流的开源SDN控制器。'
         }
       ],
   references: [

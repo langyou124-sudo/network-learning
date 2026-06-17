@@ -60,6 +60,29 @@ OpenFlow 是 SDN 最重要的**南向接口协议**，它定义了控制器如�
           question: '解释 OpenFlow 多级流表的工作原理，并举例说明一个数据包如何依次经过多张流表处理。',
           answer: '多级流表将网络处理逻辑分解为多个阶段，每个阶段对应一张流表。数据包依次经过各张流表处理，每张流表可以执行匹配-动作操作，并通过 Write-Action 或 Goto-Table 指令将数据包传递到下一张表。例如：数据包首先经过ACL表进行访问控制匹配（允许/拒绝），通过后进入QoS表进行流量限速处理，再经过NAT表进行地址转换，最后由转发表决定输出端口。这种流水线设计使得网络功能模块化，便于管理和扩展。',
           explanation: '多级流表是OpenFlow的核心设计，通过流水线方式实现复杂的网络策略。'
+        },
+        {
+          id: 'quiz-52-05',
+          type: 'choice',
+          question: 'OpenFlow协议目前最广泛部署的版本是哪个？',
+          options: ['1.0', '1.1', '1.3', '1.5'],
+          answer: 'C',
+          explanation: 'OpenFlow 1.3是目前最广泛部署的版本，ONF推荐所有新实现都基于1.3或更高版本。'
+        },
+        {
+          id: 'quiz-52-06',
+          type: 'fill',
+          question: 'OpenFlow交换机通过______消息将无法匹配流表的数据包发送给控制器。',
+          answer: 'Packet-In',
+          explanation: '当数据包无法匹配任何流表项时，交换机通过Packet-In消息将数据包发送给控制器处理。'
+        },
+        {
+          id: 'quiz-52-07',
+          type: 'choice',
+          question: 'OpenFlow中用于实现流量限速和QoS的机制是什么？',
+          options: ['流表', '组表', 'Meter表', 'ACL表'],
+          answer: 'C',
+          explanation: 'Meter表用于实现流量监控和QoS，如限速、隔离等功能。'
         }
       ],
   references: [

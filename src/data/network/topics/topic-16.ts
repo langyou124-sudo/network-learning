@@ -131,6 +131,21 @@ TCP和UDP不是互相替代的关系，而是互补的关系。理解它们各�
             options: ['仅TCP', '仅UDP', 'TCP或UDP', '既不是TCP也不是UDP'],
             answer: 'C',
             explanation: 'DNS查询通常使用UDP（端口53），因为查询数据量小，不需要建立连接的开销。但当响应数据超过512字节时，会使用TCP。'
+          },
+          {
+            id: 'q16-6',
+            type: 'choice',
+            question: '以下哪个不是UDP的特点？',
+            options: ['无连接', '面向数据报', '可靠传输', '支持多播'],
+            answer: 'C',
+            explanation: 'UDP不提供可靠传输，不保证数据到达和顺序。可靠传输是TCP的特点。'
+          },
+          {
+            id: 'q16-7',
+            type: 'fill',
+            question: 'QUIC协议在______之上实现了可靠传输和加密，是HTTP/3的基础。',
+            answer: 'UDP',
+            explanation: 'QUIC在UDP之上实现了可靠传输、流量控制和TLS 1.3加密，是HTTP/3的传输层基础。'
           }
         ],
   references: ['《图解TCP/IP》第7章', 'RFC 768 - User Datagram Protocol']

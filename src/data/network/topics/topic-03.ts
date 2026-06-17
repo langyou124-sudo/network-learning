@@ -91,6 +91,29 @@ export const topic_03 = {
             question: '数据链路层的PDU叫______，包含帧头、数据和帧尾。',
             answer: '帧（Frame）',
             explanation: '数据链路层的PDU是帧（Frame）。'
+          },
+          {
+            id: 'quiz-03-04',
+            type: 'choice',
+            question: '帧尾中的FCS字段的作用是什么？',
+            options: ['标识源MAC地址', '标识目标MAC地址', '检测数据在传输中是否损坏', '标识数据包长度'],
+            answer: 'C',
+            explanation: 'FCS（帧校验序列）是一串校验码，接收方用它来检查数据在传输过程中是否损坏。'
+          },
+          {
+            id: 'quiz-03-05',
+            type: 'fill',
+            question: '数据从应用层到物理层逐层加头部的过程叫______，反向逐层拆头部的过程叫______。',
+            answer: ['封装', '解封装'],
+            explanation: '封装（Encapsulation）是从上到下逐层加头部，解封装（Decapsulation）是从下到上逐层拆头部。'
+          },
+          {
+            id: 'quiz-03-06',
+            type: 'choice',
+            question: 'TCP头部中包含的关键信息是什么？',
+            options: ['源IP和目标IP地址', '源端口和目标端口号', '源MAC和目标MAC地址', '序列号和FCS校验码'],
+            answer: 'B',
+            explanation: 'TCP头部包含源端口和目标端口号，用于区分同一台设备上的不同应用程序。IP地址在IP头部中，MAC地址在帧头中。'
           }
         ],
   references: [

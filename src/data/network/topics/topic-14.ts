@@ -142,6 +142,21 @@ TCP是互联网中最重要的传输层协议，它通过三次握手建立连�
             options: ['1个RTT', '2个RTT', '1个MSL', '2个MSL'],
             answer: 'D',
             explanation: 'TIME_WAIT状态需要等待2MSL（最大报文段生存时间）。这是为了确保最后的ACK能到达被动关闭方，以及确保本次连接的所有报文段都从网络中消失。'
+          },
+          {
+            id: 'q14-6',
+            type: 'choice',
+            question: 'TCP报文段首部的固定长度是多少字节？',
+            options: ['8字节', '16字节', '20字节', '32字节'],
+            answer: 'C',
+            explanation: 'TCP首部固定长度为20字节，最长可达60字节（包含选项字段）。'
+          },
+          {
+            id: 'q14-7',
+            type: 'fill',
+            question: 'TCP通过______和______机制来保证数据的可靠传输和按序到达。',
+            answer: ['序列号', '确认号'],
+            explanation: '序列号对每个传输的字节编号，确认号告知发送方已收到的数据范围，两者共同支撑TCP的可靠传输。'
           }
         ],
   references: ['《图解TCP/IP》第6章', 'RFC 793 - Transmission Control Protocol']

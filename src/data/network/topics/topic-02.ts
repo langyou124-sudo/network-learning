@@ -341,6 +341,29 @@ ARP工作在网络层（有争议，部分教材归为数据链路层，但主�
             options: ['应用层', '传输层', '网络层', '数据链路层'],
             answer: 'B',
             explanation: 'TCP头部在传输层添加，形成Segment（段）。'
+          },
+          {
+            id: 'quiz-02-05',
+            type: 'choice',
+            question: '在OSI模型中，交换机工作在哪一层？',
+            options: ['物理层', '数据链路层', '网络层', '传输层'],
+            answer: 'B',
+            explanation: '交换机根据MAC地址转发帧，工作在数据链路层（第2层）。'
+          },
+          {
+            id: 'quiz-02-06',
+            type: 'fill',
+            question: 'OSI七层模型的记忆口诀"应表会传网数物"中，"数"对应的是______层。',
+            answer: '数据链路',
+            explanation: '"应表会传网数物"分别对应：应用层、表示层、会话层、传输层、网络层、数据链路层、物理层。'
+          },
+          {
+            id: 'quiz-02-07',
+            type: 'choice',
+            question: 'TCP/IP模型中，哪一层合并了OSI模型中表示层和会话层的功能？',
+            options: ['传输层', '网际层', '应用层', '网络接口层'],
+            answer: 'C',
+            explanation: 'TCP/IP的应用层合并了OSI的应用层、表示层和会话层三层的功能。'
           }
         ],
   references: [

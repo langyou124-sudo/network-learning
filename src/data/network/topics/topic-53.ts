@@ -63,6 +63,21 @@ export const topic_53 = {
           question: '为什么说 NFV 的最大挑战是性能？SR-IOV 和 DPDK 分别从什么角度解决这一问题？',
           answer: 'NFV 的最大挑战是性能，因为传统专用硬件有专用 ASIC 芯片加速数据包处理，而通用服务器的 CPU 处理网络数据包效率较低。SR-IOV 从"绕过虚拟化层"的角度解决问题——它允许虚拟机直接访问物理网卡的虚拟功能（VF），数据包不需要经过 Hypervisor 的虚拟交换机，减少了一层转发开销。DPDK 从"优化数据包处理"的角度解决问题——它用用户态轮询模式替代内核态中断模式，并使用大页内存和 SIMD 指令加速包处理，将数据包处理速度提升 10 倍以上。两者组合使用可达到接近线速的性能。',
           explanation: 'SR-IOV 和 DPDK 是 NFV 性能优化的两大核心技术，分别从硬件直通和软件优化两个维度提升性能。'
+        },
+        {
+          id: 'quiz-53-05',
+          type: 'choice',
+          question: 'NFV中，VNF的全称是什么？',
+          options: ['Virtual Network Function', 'Virtual Network Framework', 'Virtual Node Function', 'Visual Network Function'],
+          answer: 'A',
+          explanation: 'VNF是Virtual Network Function（虚拟网络功能），指运行在虚拟机上的网络功能实例，如虚拟防火墙、虚拟路由器等。'
+        },
+        {
+          id: 'quiz-53-06',
+          type: 'fill',
+          question: 'DPDK采用______模式替代内核态中断模式来提升数据包处理性能。',
+            answer: '用户态轮询',
+            explanation: 'DPDK用用户态轮询模式（Polling Mode）替代内核态中断模式，减少了上下文切换开销，大幅提升包处理性能。'
         }
       ],
   references: [

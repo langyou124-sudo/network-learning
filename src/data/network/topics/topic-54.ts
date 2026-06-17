@@ -55,6 +55,21 @@ export const topic_54 = {
           question: '请解释 5G 网络切片的概念，以及 SDN 和 NFV 在网络切片中各自扮演什么角色。',
           answer: '5G 网络切片是在共享物理基础设施上创建多个逻辑独立的端到端网络，每个切片可以针对特定业务场景（如 eMBB 高带宽、URLLC 低延迟、mMTC 海量连接）进行定制优化。NFV 在切片中的角色是：通过组合不同的 VNF（如 vAMF、vSMF、vUPF）来构建每个切片的功能面，不同切片可以有不同的 VNF 组合和实例数量。SDN 在切片中的角色是：通过集中式控制器为每个切片配置独立的网络资源和转发路径，确保切片间的隔离性和各自的 QoS 要求。简单说，NFV 解决"每个切片跑什么功能"，SDN 解决"每个切片的流量怎么走"。',
           explanation: '5G 网络切片是 SDN 和 NFV 的典型融合应用场景，两者分别解决资源编排和流量调度问题。'
+        },
+        {
+          id: 'quiz-54-05',
+          type: 'choice',
+          question: 'Google的B4网络是SDN在哪类场景中的标志性应用案例？',
+          options: ['企业局域网', '数据中心互联', '家庭宽带', '移动基站'],
+          answer: 'B',
+          explanation: 'Google的B4网络是SDN在数据中心广域网互联场景中的标志性案例，通过集中式流量工程大幅提升链路利用率。'
+        },
+        {
+          id: 'quiz-54-06',
+          type: 'fill',
+          question: '5G核心网采用______架构，将网络功能解耦为独立的微服务组件。',
+          answer: 'SBA',
+          explanation: '5G核心网采用SBA（Service Based Architecture，服务化架构），将网络功能解耦为独立的微服务，便于NFV部署和弹性扩展。'
         }
       ],
   references: [
