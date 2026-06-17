@@ -1,37 +1,79 @@
-// 马克思主义课程数据入口
-import { EssayQuestion } from './types';
+import { Module, Quiz } from '@/types';
+import { modulesMeta } from './modules';
+import { topic_01_01 } from './topics/module-01';
 
-// 从各模块导入题目
-import { questions as q1 } from './topics/module-01';
-import { questions as q2 } from './topics/module-02';
-import { questions as q3 } from './topics/module-03';
-import { questions as q4 } from './topics/module-04';
-import { questions as q5 } from './topics/module-05';
+// Placeholder topics for modules 02-05 (to be filled with actual content later)
+const topicDataMap: Record<string, { title: string; description: string; content: string; quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[]; references: string[] }> = {
+  'marx-01-01': topic_01_01,
+};
 
-// 合并所有题目
-export const allEssayQuestions: EssayQuestion[] = [
-  ...q1,
-  ...q2,
-  ...q3,
-  ...q4,
-  ...q5,
-];
-
-// 按模块分组
-export function getQuestionsByModule(moduleId: string): EssayQuestion[] {
-  return allEssayQuestions.filter(q => q.moduleId === moduleId);
+// Generate placeholder entries for topics without content yet
+function getTopicData(topicId: string) {
+  if (topicDataMap[topicId]) {
+    return topicDataMap[topicId];
+  }
+  // Placeholder for future topics
+  return {
+    title: topicId,
+    description: '待添加内容',
+    content: '# 待添加内容\n\n此章节内容正在编写中，敬请期待。',
+    quizzes: [] as { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[],
+    references: [] as string[]
+  };
 }
 
-// 获取单个题目
-export function getQuestionById(id: string): EssayQuestion | undefined {
-  return allEssayQuestions.find(q => q.id === id);
+export const marxismModules: Module[] = modulesMeta.map(mod => ({
+  id: mod.id,
+  title: mod.title,
+  description: mod.description,
+  icon: mod.icon,
+  topics: mod.topicIds.map(tid => ({
+    id: tid,
+    moduleId: mod.id,
+    title: getTopicData(tid).title,
+    description: getTopicData(tid).description,
+    content: getTopicData(tid).content,
+    quizzes: getTopicData(tid).quizzes as Quiz[],
+    references: getTopicData(tid).references
+  }))
+}));
+
+// Helper functions for essay question pages (backward compatibility)
+
+export function getQuestionsByModule(moduleId: string) {
+  const mod = marxismModules.find(m => m.id === moduleId);
+  if (!mod) return [];
+  return mod.topics.flatMap(t =>
+    t.quizzes
+      .filter(q => q.type === 'short-answer')
+      .map(q => ({
+        id: q.id,
+        moduleId: t.moduleId,
+        moduleTitle: mod.title,
+        question: q.question,
+        keyPoints: Array.isArray(q.answer) ? q.answer : [q.answer],
+        difficulty: 'intermediate' as const,
+        tags: [],
+      }))
+  );
 }
 
-// 获取模块列表
-export const marxismModules = [
-  { id: 'module-01', title: '绪论 — 为什么今天还要读马克思？', icon: '📖' },
-  { id: 'module-02', title: '辩证唯物论 — 世界的物质性', icon: '🌍' },
-  { id: 'module-03', title: '唯物辩证法 — 世界怎么发展', icon: '🔄' },
-  { id: 'module-04', title: '认识论 — 人如何认识世界', icon: '🧠' },
-  { id: 'module-05', title: '历史唯物主义 — 社会怎么发展', icon: '🏛️' },
-];
+export function getQuestionById(id: string) {
+  for (const mod of marxismModules) {
+    for (const topic of mod.topics) {
+      const quiz = topic.quizzes.find(q => q.id === id && q.type === 'short-answer');
+      if (quiz) {
+        return {
+          id: quiz.id,
+          moduleId: topic.moduleId,
+          moduleTitle: mod.title,
+          question: quiz.question,
+          keyPoints: Array.isArray(quiz.answer) ? quiz.answer : [quiz.answer],
+          difficulty: 'intermediate' as const,
+          tags: [],
+        };
+      }
+    }
+  }
+  return undefined;
+}

@@ -1,4 +1,6 @@
-// 驮�克思主义课程类型定义
+// 马克思主义课程类型定义
+// These types are used internally for essay question management.
+// For the main app, topics export quizzes with type: 'short-answer' (compatible with @/types Quiz).
 
 export interface EssayQuestion {
   id: string;

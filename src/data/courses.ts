@@ -1,11 +1,13 @@
 import { Module } from '@/types';
 import { networkModules } from './network';
 import { ruankaoModules } from './ruankao';
+import { marxismModules } from './marxism';
 
 export { networkModules } from './network';
 export { ruankaoModules } from './ruankao';
+export { marxismModules } from './marxism';
 
-export const modules: Module[] = [...networkModules, ...ruankaoModules];
+export const modules: Module[] = [...networkModules, ...ruankaoModules, ...marxismModules];
 
 export function getAllTopics() {
   return modules.flatMap(m => m.topics);
