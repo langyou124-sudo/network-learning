@@ -33,6 +33,18 @@ const knowledgeModules = [
     tags: ['网络工程师', '软件设计师', '中级'],
   },
   {
+    id: 'marxism',
+    title: '马克思主义理论',
+    subtitle: 'Marxism Theory',
+    description: '系统学习马克思主义三大组成部分：哲学、政治经济学、科学社会主义。以历史事件驱动理论讲解，配套AI智能评判简答题。',
+    icon: '📕',
+    color: '#e63946',
+    href: '/learn/marxism',
+    topicCount: 5,
+    status: 'active' as const,
+    tags: ['考研政治', '哲学', '科社'],
+  },
+  {
     id: 'coming-soon-1',
     title: '云计算基础',
     subtitle: 'Cloud Computing',
@@ -324,6 +336,7 @@ function SearchResultCard({ result }: { result: SearchResult }) {
     'wireless-networks': '无线网络',
     'telecom-networks': '电信网络',
     'network-operations': '网络运维',
+    'marxism': '马克思主义理论',
   };
 
   return (
