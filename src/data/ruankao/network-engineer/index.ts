@@ -1,4 +1,4 @@
-import { Module } from '@/types';
+import { Module, Quiz } from '@/types';
 import { networkEngineerModulesMeta } from './modules';
 import { topic_01 } from '@/data/network/topics/topic-01';
 import { topic_02 } from '@/data/network/topics/topic-02';
@@ -131,7 +131,7 @@ export const networkEngineerModules: Module[] = networkEngineerModulesMeta.map(m
     title: topicMap[tid].title,
     description: topicMap[tid].description,
     content: topicMap[tid].content,
-    quizzes: topicMap[tid].quizzes,
+    quizzes: topicMap[tid].quizzes as Quiz[],
     references: topicMap[tid].references
   }))
 }));

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAllTopics } from '@/data/courses';
+import { getAllTopics, getModuleById } from '@/data/courses';
 import { getProgress } from '@/lib/storage';
 import { Topic } from '@/types';
 
@@ -91,7 +91,7 @@ export default function QuizPage() {
             >
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="tag tag-blue">{module?.title}</span>
+                  <span className="tag tag-blue">{getModuleById(topic.moduleId)?.title}</span>
                   <span className="text-[12px] text-[var(--text-muted)]">{topic.quizzes.length} 题</span>
                 </div>
                 <h3 className="font-semibold text-[14.5px] text-[var(--text)]">{topic.title}</h3>
