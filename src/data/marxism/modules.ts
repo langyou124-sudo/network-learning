@@ -87,4 +87,55 @@ export const modulesMeta = [
       'marx-05-12',
     ]
   },
+  {
+    id: 'marxism-political-economy',
+    title: '劳动价值论',
+    description: '商品、劳动、货币与价值规律——马克思主义政治经济学的基础',
+    icon: '💰',
+    topicIds: [
+      'marx-06-01',
+      'marx-06-02',
+      'marx-06-03',
+      'marx-06-04',
+      'marx-06-05',
+    ]
+  },
+  {
+    id: 'marxism-surplus-value',
+    title: '剩余价值论',
+    description: '资本主义剥削的秘密——剩余价值的生产与资本积累',
+    icon: '⚙️',
+    topicIds: [
+      'marx-07-01',
+      'marx-07-02',
+      'marx-07-03',
+      'marx-07-04',
+      'marx-07-05',
+      'marx-07-06',
+    ]
+  },
+  {
+    id: 'marxism-capitalist-superstructure',
+    title: '资本主义上层建筑',
+    description: '资本主义的政治制度、意识形态与历史地位',
+    icon: '🏛️',
+    topicIds: [
+      'marx-08-01',
+      'marx-08-02',
+      'marx-08-03',
+      'marx-08-04',
+    ]
+  },
+  {
+    id: 'marxism-imperialism',
+    title: '帝国主义论',
+    description: '垄断资本主义、帝国主义五大特征与经济全球化',
+    icon: '🌍',
+    topicIds: [
+      'marx-09-01',
+      'marx-09-02',
+      'marx-09-03',
+      'marx-09-04',
+    ]
+  },
 ];

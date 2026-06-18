@@ -5,9 +5,12 @@ import { modulesMeta } from './modules';
 import { topics as topics01 } from './topics/module-01';
 import { topics as topics02 } from './topics/module-02';
 import { topics as topics03 } from './topics/module-03';
-
 import { topics as topics04 } from './topics/module-04';
 import { topics as topics05 } from './topics/module-05';
+import { topics as topics06 } from './topics/module-06';
+import { topics as topics07 } from './topics/module-07';
+import { topics as topics08 } from './topics/module-08';
+import { topics as topics09 } from './topics/module-09';
 
 // Topic data map by module
 const moduleTopicsMap: Record<string, typeof topics01> = {
@@ -16,6 +19,10 @@ const moduleTopicsMap: Record<string, typeof topics01> = {
   'marxism-dialectics': topics03,
   'marxism-epistemology': topics04,
   'marxism-historical-materialism': topics05,
+  'marxism-political-economy': topics06,
+  'marxism-surplus-value': topics07,
+  'marxism-capitalist-superstructure': topics08,
+  'marxism-imperialism': topics09,
 };
 
 export const marxismModules: Module[] = modulesMeta.map(mod => ({
