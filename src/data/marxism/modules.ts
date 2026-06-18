@@ -145,4 +145,32 @@ export const modulesMeta = [
     icon: '🌟',
     topicIds: ['marx-10-01', 'marx-10-02', 'marx-10-03', 'marx-10-04']
   },
+  {
+    id: 'marxism-proletarian-revolution',
+    title: '无产阶级革命',
+    description: '马克思、列宁、毛泽东的革命理论与十月革命',
+    icon: '⚔️',
+    topicIds: ['marx-11-01', 'marx-11-02', 'marx-11-03', 'marx-11-04', 'marx-11-05']
+  },
+  {
+    id: 'marxism-dictatorship-of-proletariat',
+    title: '无产阶级专政',
+    description: '无产阶级专政理论、人民民主专政与全过程人民民主',
+    icon: '🏛️',
+    topicIds: ['marx-12-01', 'marx-12-02', 'marx-12-03']
+  },
+  {
+    id: 'marxism-socialist-construction',
+    title: '社会主义建设',
+    description: '从列宁到邓小平的社会主义建设探索',
+    icon: '🔨',
+    topicIds: ['marx-13-01', 'marx-13-02', 'marx-13-03', 'marx-13-04']
+  },
+  {
+    id: 'marxism-communism-ideals',
+    title: '共产主义理想',
+    description: '共产主义社会的基本特征与两个必然',
+    icon: '☀️',
+    topicIds: ['marx-14-01', 'marx-14-02']
+  },
 ];

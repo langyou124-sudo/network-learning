@@ -12,6 +12,10 @@ import { topics as topics07 } from './topics/module-07';
 import { topics as topics08 } from './topics/module-08';
 import { topics as topics09 } from './topics/module-09';
 import { topics as topics10 } from './topics/module-10';
+import { topics as topics11 } from './topics/module-11';
+import { topics as topics12 } from './topics/module-12';
+import { topics as topics13 } from './topics/module-13';
+import { topics as topics14 } from './topics/module-14';
 
 // Topic data map by module
 const moduleTopicsMap: Record<string, typeof topics01> = {
@@ -25,6 +29,10 @@ const moduleTopicsMap: Record<string, typeof topics01> = {
   'marxism-capitalist-superstructure': topics08,
   'marxism-imperialism': topics09,
   'marxism-from-utopia-to-science': topics10,
+  'marxism-proletarian-revolution': topics11,
+  'marxism-dictatorship-of-proletariat': topics12,
+  'marxism-socialist-construction': topics13,
+  'marxism-communism-ideals': topics14,
 };
 
 export const marxismModules: Module[] = modulesMeta.map(mod => ({
