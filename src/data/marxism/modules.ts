@@ -162,15 +162,15 @@ export const modulesMeta = [
   {
     id: 'marxism-socialist-construction',
     title: '社会主义建设',
-    description: '从列宁到邓小平的社会主义建设探索',
+    description: '从列宁到习近平的社会主义建设探索',
     icon: '🔨',
-    topicIds: ['marx-13-01', 'marx-13-02', 'marx-13-03', 'marx-13-04']
+    topicIds: ['marx-13-01', 'marx-13-02', 'marx-13-03', 'marx-13-04', 'marx-13-05', 'marx-13-06', 'marx-13-07', 'marx-13-08'],
   },
   {
     id: 'marxism-communism-ideals',
     title: '共产主义理想',
-    description: '共产主义社会的基本特征与两个必然',
+    description: '共产主义社会的基本特征、两个必然与社会主义初级阶段',
     icon: '☀️',
-    topicIds: ['marx-14-01', 'marx-14-02']
+    topicIds: ['marx-14-01', 'marx-14-02', 'marx-14-03', 'marx-14-04'],
   },
 ];
