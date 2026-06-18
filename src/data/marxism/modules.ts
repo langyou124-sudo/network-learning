@@ -138,4 +138,11 @@ export const modulesMeta = [
       'marx-09-04',
     ]
   },
+  {
+    id: 'marxism-from-utopia-to-science',
+    title: '从空想到科学',
+    description: '空想社会主义的历史功绩与科学社会主义的诞生',
+    icon: '🌟',
+    topicIds: ['marx-10-01', 'marx-10-02', 'marx-10-03', 'marx-10-04']
+  },
 ];
