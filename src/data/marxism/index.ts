@@ -62,6 +62,14 @@ export function getQuestionsByModule(moduleId: string) {
   );
 }
 
+export function getTopicById(topicId: string) {
+  for (const mod of marxismModules) {
+    const topic = mod.topics.find(t => t.id === topicId);
+    if (topic) return topic;
+  }
+  return undefined;
+}
+
 export function getQuestionById(id: string) {
   for (const mod of marxismModules) {
     for (const topic of mod.topics) {

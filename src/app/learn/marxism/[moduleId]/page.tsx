@@ -3,27 +3,21 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { marxismModules, getQuestionsByModule } from '@/data/marxism';
-import { EssayQuestion } from '@/data/marxism/types';
-
-const difficultyMap = {
-  basic: { label: '基础', color: 'var(--success)' },
-  intermediate: { label: '中等', color: 'var(--warning)' },
-  advanced: { label: '进阶', color: 'var(--danger)' },
-};
+import { marxismModules } from '@/data/marxism';
+import { Topic } from '@/types';
 
 export default function MarxismModulePage() {
   const params = useParams();
   const moduleId = params.moduleId as string;
 
-  const [module, setModule] = useState<{ id: string; title: string; icon: string } | null>(null);
-  const [questions, setQuestions] = useState<EssayQuestion[]>([]);
+  const [module, setModule] = useState<{ id: string; title: string; icon: string; description: string } | null>(null);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     const mod = marxismModules.find((m) => m.id === moduleId);
     setModule(mod || null);
     if (mod) {
-      setQuestions(getQuestionsByModule(moduleId));
+      setTopics(mod.topics);
     }
   }, [moduleId]);
 
@@ -53,52 +47,60 @@ export default function MarxismModulePage() {
               {module.title}
             </h1>
             <p className="text-sm text-[var(--text-muted)] mt-0.5">
-              {questions.length} 道论述题
+              {module.description}
             </p>
           </div>
         </div>
       </div>
 
-      {questions.length > 0 ? (
+      {/* 统计 */}
+      <div className="grid grid-cols-2 gap-4 mb-8 animate-in" style={{ animationDelay: '0.06s' }}>
+        <div className="card px-5 py-4 text-center">
+          <div className="text-2xl font-bold text-[var(--accent)]">{topics.length}</div>
+          <div className="text-[13px] text-[var(--text-muted)]">课题</div>
+        </div>
+        <div className="card px-5 py-4 text-center">
+          <div className="text-2xl font-bold text-[var(--success)]">
+            {topics.reduce((sum, t) => sum + t.quizzes.length, 0)}
+          </div>
+          <div className="text-[13px] text-[var(--text-muted)]">练习题</div>
+        </div>
+      </div>
+
+      {/* 课题列表 */}
+      {topics.length > 0 ? (
         <div className="space-y-3">
-          {questions.map((q, index) => {
-            const diff = difficultyMap[q.difficulty];
-            return (
-              <Link
-                key={q.id}
-                href={`/learn/marxism/${moduleId}/${q.id}`}
-                className="card-lift flex items-center justify-between px-5 py-4 animate-in"
-                style={{ animationDelay: `${index * 0.06}s` }}
-              >
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold bg-[var(--accent-light)] text-[var(--accent)]"
-                  >
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-[14.5px] font-semibold text-[var(--text)] line-clamp-2">
-                      {q.question}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span
-                        className="text-[11px] px-2 py-0.5 rounded-full"
-                        style={{ background: diff.color + '20', color: diff.color }}
-                      >
-                        {diff.label}
-                      </span>
-                      {q.tags.map((tag) => (
-                        <span key={tag} className="text-[11px] text-[var(--text-muted)]">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          {topics.map((topic, index) => (
+            <Link
+              key={topic.id}
+              href={`/learn/marxism/${moduleId}/topic/${topic.id}`}
+              className="card-lift flex items-center justify-between px-5 py-4 animate-in"
+              style={{ animationDelay: `${(index + 2) * 0.06}s` }}
+            >
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold bg-[var(--accent-light)] text-[var(--accent)]">
+                  {index + 1}
                 </div>
-                <span className="text-[var(--text-muted)] ml-3">→</span>
-              </Link>
-            );
-          })}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[14.5px] font-semibold text-[var(--text)] line-clamp-1">
+                    {topic.title}
+                  </h3>
+                  <p className="text-[13px] text-[var(--text-muted)] mt-0.5 line-clamp-1">
+                    {topic.description}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 shrink-0 ml-3">
+                {topic.quizzes.length > 0 && (
+                  <span className="text-[11px] px-2 py-0.5 rounded-full"
+                    style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+                    {topic.quizzes.length} 题
+                  </span>
+                )}
+                <span className="text-[var(--text-muted)]">→</span>
+              </div>
+            </Link>
+          ))}
         </div>
       ) : (
         <div className="card text-center py-16">
