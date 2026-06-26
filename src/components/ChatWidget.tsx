@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
+import { getSuggestions } from '@/lib/suggestions';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -40,37 +42,20 @@ async function readSSEStream(
   }
 }
 
-// 推荐问题池（覆盖多学科）
-const allSuggestions = [
-  'TCP 三次握手是怎么回事？',
-  '子网划分怎么计算？',
-  'OSPF 和 RIP 有什么区别？',
-  'VLAN 的作用是什么？',
-  '什么是 ARP 协议？',
-  'HTTP 和 HTTPS 有什么区别？',
-  'DNS 解析的过程是怎样的？',
-  '什么是 NAT？为什么要用 NAT？',
-  '列宁的物质定义是什么？',
-  '什么是剩余价值？',
-  '矛盾的普遍性和特殊性是什么关系？',
-  '实践是检验真理的唯一标准，为什么？',
-  '量变和质变的辩证关系是什么？',
-  '什么是否定之否定规律？',
-  '帝国主义的五大特征是什么？',
-  '社会主义初级阶段的含义是什么？',
-];
-
-function pickRandomSuggestions(count: number) {
-  const shuffled = [...allSuggestions].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-}
-
 export default function ChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [suggestions] = useState(() => pickRandomSuggestions(3));
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  // 每次打开面板时重新生成推荐（基于当前页面和学习数据）
+  useEffect(() => {
+    if (open) {
+      setSuggestions(getSuggestions(pathname, 3));
+    }
+  }, [open, pathname]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // 用 ref 跟踪最新 messages，避免闭包过期
