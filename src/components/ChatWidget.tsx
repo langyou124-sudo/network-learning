@@ -152,15 +152,23 @@ export default function ChatWidget() {
         <button
           onClick={() => setOpen(true)}
           aria-label="打开 AI 助手"
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-105"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 h-12 sm:h-14 rounded-full shadow-lg z-50 flex items-center gap-2 px-4 sm:px-5 transition-all hover:scale-105 group"
           style={{
             background: 'linear-gradient(135deg, var(--accent) 0%, #6366f1 100%)',
-            boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
+            boxShadow: '0 4px 24px rgba(99, 102, 241, 0.45)',
           }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          {/* 闪光动画 */}
+          <span className="absolute inset-0 rounded-full animate-ping opacity-20"
+            style={{ background: 'var(--accent)', animationDuration: '2s' }} />
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="relative shrink-0">
+            <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z" />
+            <path d="M9.5 14.5 3 21" /><path d="M14.5 14.5 21 21" />
+            <circle cx="12" cy="7" r="1.5" fill="white" stroke="none" />
           </svg>
+          <span className="text-white text-[13px] font-semibold relative hidden sm:block">
+            AI 助手
+          </span>
         </button>
       )}
 
@@ -193,7 +201,7 @@ export default function ChatWidget() {
               </div>
               <div>
                 <div className="text-white font-semibold text-[14px]">达博理 AI 助手</div>
-                <div className="text-white/60 text-[11px]">网络工程 · 智能问答</div>
+                <div className="text-white/60 text-[11px]">课程知识 · 智能问答</div>
               </div>
             </div>
             <button
@@ -213,7 +221,7 @@ export default function ChatWidget() {
               <div className="text-center py-12">
                 <div className="text-3xl mb-3">🤖</div>
                 <p className="text-[13px] text-[var(--text-muted)] mb-1">你好！我是达博理 AI 助手</p>
-                <p className="text-[12px] text-[var(--text-muted)]">可以问我任何网络工程相关的问题</p>
+                <p className="text-[12px] text-[var(--text-muted)]">可以问我课程相关的任何问题</p>
                 <div className="mt-4 space-y-2">
                   {['TCP 三次握手是怎么回事？', '子网划分怎么计算？', 'OSPF 和 RIP 有什么区别？'].map(q => (
                     <button
