@@ -1,44 +1,53 @@
-# 达博理 (Daboli) — 项目指南
+# 达博理 (Daboli) — Agent 地图
 
-多学科知识学习平台，面向网络工程师、软考备考者及中小学 AI 教育。
+多学科学习平台：网络工程 / 软考 / 马克思主义。面向 agent 的开发指南。
 
 ## 快速参考
 
-- **技术栈**: Next.js 16 + React 19 + TypeScript + Tailwind CSS 4 + Supabase + MiMo API
-- **部署**: Vercel (生产) → `npx vercel --prod --yes`
-- **仓库**: `https://github.com/langyou124-sudo/network-learning`
-- **构建**: `NODE_OPTIONS="--max-old-space-size=4096" npm run build`
+| 项目 | 值 |
+|------|-----|
+| 技术栈 | Next.js 16 + React 19 + TypeScript + Tailwind 4 + Supabase + MiMo API |
+| 仓库 | `https://github.com/langyou124-sudo/network-learning` |
+| 部署 | Vercel，push to master 自动部署 |
+| 构建 | `NODE_OPTIONS="--max-old-space-size=4096" npm run build` |
 
-## 项目文档
+## 验证命令速查
 
-| 文档 | 内容 |
-|------|------|
-| [docs/architecture.md](docs/architecture.md) | 系统架构、技术栈、目录结构、数据流 |
-| [docs/conventions.md](docs/conventions.md) | 代码规范、命名规则、提交规范 |
-| [docs/workflow.md](docs/workflow.md) | 开发→测试→部署流程 |
-| [docs/roadmap.md](docs/roadmap.md) | 功能规划、优先级、里程碑 |
-| [docs/ops.md](docs/ops.md) | 运维手册、环境变量、灾备恢复 |
+```bash
+npx tsc --noEmit          # 类型检查
+npm test                   # 单元测试
+npm run build              # 构建（需要 Supabase 环境变量）
+npx eslint src/            # 代码规范
+npx prettier --check src/  # 格式检查
+npx vercel --prod --yes    # 手动部署
+```
 
-## 核心架构
+## 文档地图
 
-- **课程数据**: TypeScript 静态文件 (`src/data/`)，编译时类型安全
-- **认证**: Supabase Auth (邮箱/密码 + Magic Link)
-- **AI**: MiMo API 流式问答，上下文感知当前课题
-- **搜索**: Supabase pgvector 语义检索
-- **用户数据**: localStorage (进度/笔记/错题)
-- **多学科**: 学科注册表 + 模块化数据源，新增学科只需加数据目录
+按需读取，不要预加载全部。
+
+| 何时读 | 文档 | 内容 |
+|--------|------|------|
+| 改代码前 | [docs/conventions.md](docs/conventions.md) | 命名规范、提交规范、技术栈约束 |
+| 新功能开发 | [docs/workflow.md](docs/workflow.md) | 分支策略、开发流程、测试部署步骤 |
+| 了解架构 | [docs/architecture.md](docs/architecture.md) | 系统架构、数据流、目录结构、设计决策 |
+| 规划任务 | [docs/roadmap.md](docs/roadmap.md) | 功能规划、技术债、里程碑 |
+| 运维问题 | [docs/ops.md](docs/ops.md) | 环境变量、灾备、回滚、API 版本 |
+| Agent 规则 | [AGENTS.md](AGENTS.md) | agent 行为约束（每条可追溯到具体失败） |
+| Harness 手册 | [docs/harness.md](docs/harness.md) | Harness 工程方法论、规则演进记录 |
+| 当前任务 | [PLAN.md](PLAN.md) | 执行计划、验收标准、进度 |
 
 ## 关键约束
 
-- Next.js 16.2.7 是非标准版本，改动前读 `node_modules/next/dist/docs/`
-- 课题内容中的代码块必须在 `processChildren()` 中跳过 (避免术语高亮破坏样式)
-- 模板字面量中的反引号需要转义: `` \` ``
-- 构建需要增大内存: `--max-old-space-size=4096`
-- 课程改动后必须: build → 浏览器验证 → commit → push → vercel --prod
+- **Next.js 16.2.7 非标准版本** — 改动前读 `node_modules/next/dist/docs/`
+- **课题内容代码块** — 必须在 `processChildren()` 中跳过（避免术语高亮破坏样式）
+- **模板字面量反引号** — 需要转义: `` \` ``
+- **构建内存** — 需要 `--max-old-space-size=4096`
+- **课程改动流程** — build → 浏览器验证 → commit → push → vercel --prod
 
 ## 行为准则
 
-1. **不要假设** — 不确定就问
-2. **最简方案** — 200 行能解决的事别写 500 行
-3. **手术刀改动** — 只改该改的
-4. **目标驱动** — 改完要能验证
+1. 不确定就问，别猜
+2. 200 行能解决的事别写 500 行
+3. 只改该改的，别顺手"优化"别的
+4. 改完要能验证

@@ -1,0 +1,17 @@
+# Git pre-commit hooks — 确定性拦截，agent 和人都必须通过
+# 安装: npm install -g lefthook && lefthook install
+
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      run: npx tsc --noEmit
+      stage_fixed: false
+    lint:
+      glob: "*.{ts,tsx}"
+      run: npx eslint --fix {staged_files}
+      stage_fixed: true
+    format:
+      glob: "*.{ts,tsx,json,md,css}"
+      run: npx prettier --write {staged_files}
+      stage_fixed: true

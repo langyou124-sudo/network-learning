@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom/vitest';
+
 // Mock localStorage for Node environment
 class LocalStorageMock {
   private store: Record<string, string> = {};
