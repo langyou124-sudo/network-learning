@@ -45,6 +45,30 @@ const knowledgeModules = [
     tags: ['考研政治', '哲学', '科社'],
   },
   {
+    id: 'pe-exam-802',
+    title: '802经济学综合',
+    subtitle: 'RUC Economics 802',
+    description: '中国人民大学考研专业课。政治经济学(50分)、微观经济学(50分)、宏观经济学(50分)，共40个课题全覆盖。',
+    icon: '💰',
+    color: '#2d6a4f',
+    href: '/learn/pe-exam-802',
+    topicCount: 40,
+    status: 'active' as const,
+    tags: ['人大考研', '政治经济学', '微观经济学', '宏观经济学'],
+  },
+  {
+    id: 'pe-exam-303',
+    title: '303数学三',
+    subtitle: 'Math 303',
+    description: '考研数学三全科目覆盖。微积分(90分)、线性代数(30分)、概率论与数理统计(30分)，共33个课题。',
+    icon: '📐',
+    color: '#577590',
+    href: '/learn/pe-exam-303',
+    topicCount: 33,
+    status: 'active' as const,
+    tags: ['考研数学', '微积分', '线性代数', '概率论'],
+  },
+  {
     id: 'coming-soon-1',
     title: '云计算基础',
     subtitle: 'Cloud Computing',
@@ -337,6 +361,12 @@ function SearchResultCard({ result }: { result: SearchResult }) {
     'telecom-networks': '电信网络',
     'network-operations': '网络运维',
     'marxism': '马克思主义理论',
+    'pe-exam-802-political-economy': '政治经济学',
+    'pe-exam-802-microeconomics': '微观经济学',
+    'pe-exam-802-macroeconomics': '宏观经济学',
+    'pe-exam-303-calculus': '微积分',
+    'pe-exam-303-linear-algebra': '线性代数',
+    'pe-exam-303-probability': '概率论',
   };
 
   return (

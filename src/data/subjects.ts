@@ -27,6 +27,24 @@ export const subjects: Subject[] = [
     status: 'active',
     moduleCount: 6,
   },
+  {
+    id: 'pe-exam-802',
+    title: '802经济学综合',
+    description: '政治经济学(50分) + 微观经济学(50分) + 宏观经济学(50分)',
+    icon: '💰',
+    href: '/learn/pe-exam-802',
+    status: 'active',
+    moduleCount: 3,
+  },
+  {
+    id: 'pe-exam-303',
+    title: '303数学三',
+    description: '微积分(90分) + 线性代数(30分) + 概率论(30分)',
+    icon: '📐',
+    href: '/learn/pe-exam-303',
+    status: 'active',
+    moduleCount: 3,
+  },
 ];
 
 export function getSubjectById(id: string) {
