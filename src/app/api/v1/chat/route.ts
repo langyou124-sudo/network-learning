@@ -6,7 +6,7 @@ import { validateChatBody, errorResponse, rateLimitResponse } from '@/lib/api/va
 import { env } from '@/lib/env';
 
 const MIMO_KEY = env.MIMO_API_KEY;
-const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
+const MIMO_ENDPOINT = 'https://token-plan-cn.xiaomimimo.com/anthropic/v1/messages';
 const MODEL = 'mimo-v2.5-pro';
 
 async function searchContext(supabase: Awaited<ReturnType<typeof createServerClient>>, query: string): Promise<string> {

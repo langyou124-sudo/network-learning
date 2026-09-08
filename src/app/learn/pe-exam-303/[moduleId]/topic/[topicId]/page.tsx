@@ -7,8 +7,7 @@ import { peExam303Modules, getTopicById } from '@/data/pe-exam-303';
 import { Topic } from '@/types';
 import { getProgress, toggleTopicComplete, saveNote, getNote } from '@/lib/storage';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { renderContentWithDiagrams } from '@/lib/renderContent';
 
 type TabType = 'content' | 'quiz' | 'notes';
 
@@ -111,8 +110,8 @@ export default function PeExam303TopicPage() {
 
       {activeTab === 'content' && (
         <div className="card px-6 py-5 animate-in" style={{ animationDelay: '0.18s' }}>
-          <div className="prose prose-sm max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{topic.content}</ReactMarkdown>
+          <div className="lesson-content">
+            {renderContentWithDiagrams(topic.content)}
           </div>
         </div>
       )}

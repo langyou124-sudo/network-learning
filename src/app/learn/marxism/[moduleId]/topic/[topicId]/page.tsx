@@ -7,8 +7,7 @@ import { marxismModules, getTopicById } from '@/data/marxism';
 import { Topic } from '@/types';
 import { getProgress, toggleTopicComplete, saveNote, getNote } from '@/lib/storage';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { renderContentWithDiagrams } from '@/lib/renderContent';
 
 type TabType = 'content' | 'quiz' | 'notes';
 
@@ -132,9 +131,7 @@ export default function MarxismTopicPage() {
       {activeTab === 'content' && (
         <div className="card px-4 sm:px-8 py-4 sm:py-8 animate-in">
           <div className="lesson-content">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {topic.content}
-            </ReactMarkdown>
+            {renderContentWithDiagrams(topic.content)}
           </div>
 
           {topic.references && topic.references.length > 0 && (
