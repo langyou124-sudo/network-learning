@@ -158,7 +158,7 @@ export default function ExplorePage() {
 
     setSearching(true);
     try {
-      const resp = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}&limit=8`);
+      const resp = await fetch(`/api/v1/search?q=${encodeURIComponent(q.trim())}&limit=8`);
       const data = await resp.json();
       setResults(data.results || []);
       setSearched(true);

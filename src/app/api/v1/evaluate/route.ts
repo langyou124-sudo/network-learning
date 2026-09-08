@@ -2,8 +2,9 @@ import { NextRequest } from 'next/server';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
 import { validateEvaluateBody, errorResponse, rateLimitResponse } from '@/lib/api/validate';
+import { env } from '@/lib/env';
 
-const MIMO_KEY = process.env.MIMO_API_KEY!;
+const MIMO_KEY = env.MIMO_API_KEY;
 const MIMO_ENDPOINT = 'https://api.xiaomimimo.com/anthropic/v1/messages';
 const MODEL = 'mimo-v2.5-pro';
 

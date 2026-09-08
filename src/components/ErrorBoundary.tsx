@@ -35,7 +35,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
           <div className="text-3xl mb-3">⚠️</div>
           <h2 className="text-[15px] font-semibold text-[var(--text)] mb-2">组件渲染出错</h2>
           <p className="text-[13px] text-[var(--text-muted)] mb-4">
-            {this.state.error?.message || '未知错误'}
+            组件加载失败，请刷新页面重试
           </p>
           <button
             onClick={() => this.setState({ hasError: false })}
