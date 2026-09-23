@@ -1,5 +1,9 @@
 import { networkModules } from '@/data/network';
 import { marxismModules } from '@/data/marxism';
+import { ruankaoModules } from '@/data/ruankao';
+import { peExam303Modules } from '@/data/pe-exam-303';
+import { peExam802Modules } from '@/data/pe-exam-802';
+import { Module } from '@/types';
 import { getProgress, getMistakes } from './storage';
 
 interface Suggestion {
@@ -7,26 +11,24 @@ interface Suggestion {
   subject: string;
 }
 
+function collectFromModules(modules: Module[], subject: string, out: Suggestion[]) {
+  for (const mod of modules) {
+    for (const topic of mod.topics) {
+      for (const q of topic.quizzes) {
+        out.push({ question: q.question, subject });
+      }
+    }
+  }
+}
+
 // 从所有学科收集全部 quiz 问题
 function getAllQuizzes(): Suggestion[] {
   const quizzes: Suggestion[] = [];
-
-  for (const mod of networkModules) {
-    for (const topic of mod.topics) {
-      for (const q of topic.quizzes) {
-        quizzes.push({ question: q.question, subject: 'network' });
-      }
-    }
-  }
-
-  for (const mod of marxismModules) {
-    for (const topic of mod.topics) {
-      for (const q of topic.quizzes) {
-        quizzes.push({ question: q.question, subject: 'marxism' });
-      }
-    }
-  }
-
+  collectFromModules(networkModules, 'network', quizzes);
+  collectFromModules(marxismModules, 'marxism', quizzes);
+  collectFromModules(ruankaoModules, 'ruankao', quizzes);
+  collectFromModules(peExam303Modules, 'pe-exam-303', quizzes);
+  collectFromModules(peExam802Modules, 'pe-exam-802', quizzes);
   return quizzes;
 }
 
@@ -35,6 +37,8 @@ function detectSubject(pathname: string): string | null {
   if (pathname.includes('/learn/network')) return 'network';
   if (pathname.includes('/learn/marxism')) return 'marxism';
   if (pathname.includes('/learn/ruankao')) return 'ruankao';
+  if (pathname.includes('/learn/pe-exam-303')) return 'pe-exam-303';
+  if (pathname.includes('/learn/pe-exam-802')) return 'pe-exam-802';
   return null;
 }
 
