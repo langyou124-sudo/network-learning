@@ -80,7 +80,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '垄断资本主义形成的物质技术基础是什么？',
         options: ['第一次工业革命', '第二次工业革命', '第三次科技革命', '信息革命'],
-        answer: '第二次工业革命',
+        answer: 'B',
         explanation: '以电力广泛应用、内燃机发明和化学工业发展为标志的第二次工业革命，极大地推动了生产力发展，为垄断的形成奠定了物质技术基础。'
       },
       {
@@ -88,7 +88,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '以下哪种垄断组织形式中，各企业完全丧失独立性？',
         options: ['卡特尔', '辛迪加', '托拉斯', '康采恩'],
-        answer: '托拉斯',
+        answer: 'C',
         explanation: '托拉斯是各企业完全合并为一个大企业的垄断组织形式，原企业丧失独立性，由统一的管理机构经营。'
       },
       {
@@ -167,7 +167,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '列宁在哪部著作中系统阐述了帝国主义的五大特征？',
         options: ['《国家与革命》', '《帝国主义是资本主义的最高阶段》', '《唯物主义和经验批判主义》', '《怎么办？》'],
-        answer: '《帝国主义是资本主义的最高阶段》',
+        answer: 'B',
         explanation: '列宁在1916年撰写的《帝国主义是资本主义的最高阶段》一书中系统阐述了帝国主义理论和五大基本经济特征。'
       },
       {
@@ -175,7 +175,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '帝国主义的实质是什么？',
         options: ['竞争', '垄断', '侵略', '掠夺'],
-        answer: '垄断',
+        answer: 'B',
         explanation: '列宁明确指出，帝国主义的实质是垄断，帝国主义是垄断的资本主义，帝国主义的一切特征都是由垄断决定的。'
       },
       {
@@ -282,7 +282,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '推动经济全球化的根本动力是什么？',
         options: ['国际组织的推动', '资本逐利的本性和生产力发展', '发展中国家的要求', '文化交流的需要'],
-        answer: '资本逐利的本性和生产力发展',
+        answer: 'B',
         explanation: '资本追求利润最大化的本性是经济全球化的内在驱动力，科学技术革命和生产力发展为全球化提供了物质技术基础。'
       },
       {
@@ -290,7 +290,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '以下哪项不是经济全球化的消极影响？',
         options: ['南北差距扩大', '经济风险传播', '促进了技术转让和扩散', '国家主权受到侵蚀'],
-        answer: '促进了技术转让和扩散',
+        answer: 'C',
         explanation: '促进了技术转让和扩散是经济全球化的积极意义，不属于消极影响。'
       },
       {
@@ -401,7 +401,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '"两个决不会"出自马克思的哪部著作？',
         options: ['《共产党宣言》', '《资本论》', '《〈政治经济学批判〉序言》', '《哥达纲领批判》'],
-        answer: '《〈政治经济学批判〉序言》',
+        answer: 'C',
         explanation: '马克思在1859年《〈政治经济学批判〉序言》中提出了"两个决不会"的著名论断。'
       },
       {
@@ -409,7 +409,7 @@ export const topics: Topic[] = [
         type: 'choice',
         question: '"两个必然"揭示的是什么问题？',
         options: ['社会主义建设的途径', '资本主义发展的历史趋势和最终结局', '阶级斗争的具体形式', '经济危机的原因'],
-        answer: '资本主义发展的历史趋势和最终结局',
+        answer: 'B',
         explanation: '"两个必然"揭示的是资本主义必然灭亡、社会主义必然胜利的历史趋势，回答的是"向何处去"的问题。'
       },
       {

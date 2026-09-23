@@ -12,11 +12,20 @@ export const subjects: Subject[] = [
   {
     id: 'network',
     title: '网络工程',
-    description: '从网络基础到运维实战，10大模块循序渐进',
+    description: '从网络基础到运维实战，15大模块循序渐进',
     icon: '📐',
     href: '/learn/network',
     status: 'active',
-    moduleCount: 10,
+    moduleCount: 15,
+  },
+  {
+    id: 'marxism',
+    title: '马克思主义理论',
+    description: '哲学、政治经济学、科学社会主义三大组成部分，14模块系统学习',
+    icon: '📕',
+    href: '/learn/marxism',
+    status: 'active',
+    moduleCount: 14,
   },
   {
     id: 'ruankao',
