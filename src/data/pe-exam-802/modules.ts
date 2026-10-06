@@ -17,9 +17,10 @@ export const modulesMeta802 = [
   {
     id: 'pe-exam-802-microeconomics',
     title: '微观经济学',
-    description: '消费者理论、生产者理论、市场结构与一般均衡分析',
+    description: '供求与弹性、消费者理论、生产者理论、市场结构与市场失灵',
     icon: '📊',
     topicIds: [
+      'mi-00-01', 'mi-00-02',
       'mi-01-01', 'mi-01-02', 'mi-01-03',
       'mi-02-01', 'mi-02-02',
       'mi-03-01', 'mi-03-02', 'mi-03-03', 'mi-03-04',
