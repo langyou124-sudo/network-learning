@@ -120,18 +120,24 @@ const topicMap: Record<string, { title: string; description: string; content: st
   'topic-60': topic_60,
 };
 
+// 软考网络工程师复用网络工程的课题内容，但学习数据（进度/笔记/错题）
+// 以 topicId、quizId 为键存储。若直接沿用裸 id（topic-01…topic-62），
+// 两个课程会共享进度与错题，且 getTopicById 会歧义。
+// 因此给软考侧统一加 `ne-` 前缀，把学习数据的命名空间隔开。
+const NS = 'ne-';
+
 export const networkEngineerModules: Module[] = networkEngineerModulesMeta.map(mod => ({
   id: mod.id,
   title: mod.title,
   description: mod.description,
   icon: mod.icon,
   topics: mod.topicIds.map(tid => ({
-    id: tid,
+    id: NS + tid,
     moduleId: mod.id,
     title: topicMap[tid].title,
     description: topicMap[tid].description,
     content: topicMap[tid].content,
-    quizzes: topicMap[tid].quizzes as Quiz[],
+    quizzes: (topicMap[tid].quizzes as Quiz[]).map(q => ({ ...q, id: NS + q.id })),
     references: topicMap[tid].references
   }))
 }));

@@ -95,8 +95,14 @@ export function renderContentWithDiagrams(content: string) {
             <GlossaryCard terms={terms} />
           </div>
         );
-      } catch {
-        return null;
+      } catch (err) {
+        // 不再静默丢弃：坏编码会导致整张术语卡消失，用户看不到任何提示
+        console.warn('[renderContent] Glossary 解码失败，回退为纯文本:', err);
+        return (
+          <p key={i} className="my-2 text-[12px] text-[var(--text-muted)]" style={{ opacity: 0.7 }}>
+            （术语表渲染失败）
+          </p>
+        );
       }
     }
     return part.value.trim() ? (

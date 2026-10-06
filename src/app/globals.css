@@ -226,6 +226,10 @@ select:focus-visible {
 
 .lesson-content p {
   margin-bottom: 14px;
+  /* 保留软换行：线代矩阵、公式推导等靠换行对齐的内容，
+     不加这行会被浏览器折叠成一行，完全不可读。
+     新换行字符仍在 DOM 中，只是被 white-space:normal 视觉压平。 */
+  white-space: pre-wrap;
 }
 
 .lesson-content strong {

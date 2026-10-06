@@ -8,7 +8,7 @@ const topic_mi_01_01: Topic = {
   description: '预算线、无差异曲线、边际替代率',
   content: `# 预算约束与偏好
 
-<Glossary terms="%5B%7B%22term%22%3A%22预算约束%22%2C%22english%22%3A%22Budget%20Constraint%22%2C%22definition%22%3A%22消费者收入和价格限制下的消费选择范围%22%7D%2C%7B%22term%22%3A%22无差异曲线%22%2C%22english%22%3A%22Indifference%20Curve%22%2C%22definition%22%3A%22给消费者带来相同满足程度的不同商品组合的轨迹%22%7D%2C%7B%22term%22%3A%22边际替代率%22%2C%22english%22%3A%22Marginal%20Rate%20of%2Substitution%22%2C%22definition%22%3A%22消费者愿意用一种商品替代另一种商品的比率%22%7D%5D" />
+<Glossary terms="%5B%7B%22term%22%3A%22预算约束%22%2C%22english%22%3A%22Budget%20Constraint%22%2C%22definition%22%3A%22消费者收入和价格限制下的消费选择范围%22%7D%2C%7B%22term%22%3A%22无差异曲线%22%2C%22english%22%3A%22Indifference%20Curve%22%2C%22definition%22%3A%22给消费者带来相同满足程度的不同商品组合的轨迹%22%7D%2C%7B%22term%22%3A%22边际替代率%22%2C%22english%22%3A%22Marginal%20Rate%20of%20Substitution%22%2C%22definition%22%3A%22消费者愿意用一种商品替代另一种商品的比率%22%7D%5D" />
 
 ## 考情分析
 

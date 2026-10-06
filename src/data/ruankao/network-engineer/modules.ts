@@ -80,7 +80,7 @@ export const networkEngineerModulesMeta = [
   {
     "id": "ne-new-technologies",
     "title": "网络新技术",
-    "description": "IPv6、SDN/NFV、无线网络、5G、云计算",
+    "description": "IPv6、SDN/NFV、无线网络、5G、云计算、电信网与光纤",
     "icon": "🚀",
     "topicIds": [
       "topic-41",
@@ -99,7 +99,10 @@ export const networkEngineerModulesMeta = [
       "topic-08-03",
       "topic-08-04",
       "topic-59",
-      "topic-60"
+      "topic-60",
+      "topic-09-01",
+      "topic-09-02",
+      "topic-09-03"
     ]
   }
 ];
