@@ -118,7 +118,7 @@ export const topics: Topic[] = [
       {
         id: 'marx-07-01-q1',
         type: 'choice',
-        question: "资本的总公式 G—W—G中，增殖额 ΔG 被称为什么？",
+        question: "资本的总公式 G—W—G'（其中 G' = G + ΔG）中，增殖额 ΔG 被称为什么？",
         options: ['利润', '剩余价值', '利息', '地租'],
         answer: 'B',
         explanation: '马克思将资本运动中的增殖额称为剩余价值（surplus value），它是资本家无偿占有的工人劳动创造的超过劳动力价值的价值。'
