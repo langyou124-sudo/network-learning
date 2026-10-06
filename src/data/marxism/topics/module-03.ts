@@ -87,7 +87,7 @@ export const topics: Topic[] = [
         explanation: '应从世界观和方法论两个维度分析两种发展观的对立，重点说明辩证法三个阶段的代表人物和核心特征。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-02',
@@ -169,7 +169,7 @@ export const topics: Topic[] = [
         explanation: '应准确阐述同一性和斗争性的含义，说明二者相对与绝对的关系，并用具体事例加以论证。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-03',
@@ -256,7 +256,7 @@ export const topics: Topic[] = [
         explanation: '应从矛盾普遍性（马克思主义一般原理）和特殊性（中国具体国情）两个维度展开，说明二者如何辩证统一并产生理论与实践成果。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-04',
@@ -356,7 +356,7 @@ export const topics: Topic[] = [
         explanation: '应分别阐述两点论和重点论的含义，说明二者如何辩证统一，避免一点论和均衡论的错误，并举出具体实例。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-05',
@@ -441,7 +441,7 @@ export const topics: Topic[] = [
         explanation: '应准确阐述量变、质变、度的概念及其辩证关系，并从实践角度说明方法论要求。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-06',
@@ -527,7 +527,7 @@ export const topics: Topic[] = [
         explanation: '应区分两种量变形式，说明部分质变的两种情况，并用具体例子论证质量互变的复杂性。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-07',
@@ -621,7 +621,7 @@ export const topics: Topic[] = [
         explanation: '应从辩证否定的含义、特点和实质三个方面展开论述，并清晰对比两种否定观的根本区别。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-08',
@@ -700,7 +700,7 @@ export const topics: Topic[] = [
         explanation: '应分别论述普遍性和特殊性的含义，用社会发展实例加以说明，并指出方法论意义。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-09',
@@ -784,7 +784,7 @@ export const topics: Topic[] = [
         explanation: '应阐述现象与本质的含义和辩证关系，区分真相与假象，说明认识从现象到本质的必要性。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-10',
@@ -875,7 +875,7 @@ export const topics: Topic[] = [
         explanation: '应准确阐述两个范畴的含义和辩证关系，并分别从科学研究和实际工作角度说明方法论意义。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-11',
@@ -975,7 +975,7 @@ export const topics: Topic[] = [
         explanation: '应分别阐述两对思维方法的含义，说明各自的辩证关系，并指出综合运用的方法论要求。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   },
   {
     id: 'marx-03-12',
@@ -1066,6 +1066,6 @@ export const topics: Topic[] = [
         explanation: '应分别阐述三位领导人的辩证法思想特点，说明各自的时代背景和实践应用，并指出其理论上的继承发展关系。'
       }
     ],
-    references: []
+    references: ['恩格斯《反杜林论》', '恩格斯《自然辩证法》', '毛泽东《矛盾论》']
   }
 ];

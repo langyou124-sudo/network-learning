@@ -537,7 +537,7 @@ export const topics: Topic[] = [
         explanation: '全国人民代表大会行使立法权、决定权、任免权和监督权，不直接管理地方政府事务。'
       }
     ],
-    references: []
+    references: ['马克思《哥达纲领批判》', '列宁《国家与革命》', '马克思《法兰西内战》']
   },
   {
     id: 'marx-12-05',
@@ -652,7 +652,7 @@ export const topics: Topic[] = [
         explanation: '人民政协的主要职能是政治协商、民主监督、参政议政。人民政协不是国家权力机关，不具有立法权和行政权。'
       }
     ],
-    references: []
+    references: ['马克思《哥达纲领批判》', '列宁《国家与革命》', '马克思《法兰西内战》']
   },
   {
     id: 'marx-12-06',
@@ -771,6 +771,6 @@ export const topics: Topic[] = [
         explanation: '全面依法治国的根本目的是依法保障人民权益，要完善保障公民权利的法律法规，确保公民的各项权利不受侵犯。'
       }
     ],
-    references: []
+    references: ['马克思《哥达纲领批判》', '列宁《国家与革命》', '马克思《法兰西内战》']
   }
 ];

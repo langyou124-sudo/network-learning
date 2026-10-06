@@ -99,7 +99,7 @@ export const topics: Topic[] = [
         explanation: '银行资本与工业资本的融合是金融资本形成的基础，金融资本是垄断资本主义的基本特征之一。'
       }
     ],
-    references: []
+    references: ['列宁《帝国主义是资本主义的最高阶段》', '马克思《资本论》第三卷']
   },
   {
     id: 'marx-09-02',
@@ -186,7 +186,7 @@ export const topics: Topic[] = [
         explanation: '在自由竞争资本主义阶段以商品输出为主，到了垄断阶段，资本输出成为帝国主义的重要经济特征。'
       }
     ],
-    references: []
+    references: ['列宁《帝国主义是资本主义的最高阶段》', '马克思《资本论》第三卷']
   },
   {
     id: 'marx-09-03',
@@ -301,7 +301,7 @@ export const topics: Topic[] = [
         explanation: '经济全球化主要表现为贸易、生产、金融和科技四个方面的全球化。'
       }
     ],
-    references: []
+    references: ['列宁《帝国主义是资本主义的最高阶段》', '马克思《资本论》第三卷']
   },
   {
     id: 'marx-09-04',
@@ -420,6 +420,6 @@ export const topics: Topic[] = [
         explanation: '"两个必然"是马克思和恩格斯运用唯物史观分析资本主义社会基本矛盾运动得出的科学结论。'
       }
     ],
-    references: []
+    references: ['列宁《帝国主义是资本主义的最高阶段》', '马克思《资本论》第三卷']
   }
 ]

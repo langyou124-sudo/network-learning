@@ -70,7 +70,7 @@ const topic1: Topic = {
       explanation: '好的回答应从修辞策略和政治含义两个层面分析，说明马克思如何用一个词同时完成了文学表达和政治宣言的双重功能。'
     }
   ],
-  references: []
+  references: ['马克思《关于费尔巴哈的提纲》', '恩格斯《路德维希·费尔巴哈和德国古典哲学的终结》']
 };
 
 const topic2: Topic = {
@@ -137,7 +137,7 @@ const topic2: Topic = {
       explanation: '好的回答应将个人经历与理论建构联系起来，说明马克思的理论不是象牙塔里的抽象思辨，而是根植于对现实苦难的深刻体验和反思。'
     }
   ],
-  references: []
+  references: ['马克思《关于费尔巴哈的提纲》', '恩格斯《路德维希·费尔巴哈和德国古典哲学的终结》']
 };
 
 const topic3: Topic = {
@@ -214,7 +214,7 @@ const topic3: Topic = {
       explanation: '好的回答应清楚地区分唯心辩证法和唯物辩证法的本质差异，并能用具体例子说明这种差异如何影响对社会历史的理解。'
     }
   ],
-  references: []
+  references: ['马克思《关于费尔巴哈的提纲》', '恩格斯《路德维希·费尔巴哈和德国古典哲学的终结》']
 };
 
 const topic4: Topic = {
@@ -303,7 +303,7 @@ const topic4: Topic = {
       explanation: '好的回答应说明三大组成部分不是简单的并列关系，而是层层递进、有机统一的整体。哲学是方法论基础，政治经济学是具体应用，科学社会主义是理论结论。'
     }
   ],
-  references: []
+  references: ['马克思《关于费尔巴哈的提纲》', '恩格斯《路德维希·费尔巴哈和德国古典哲学的终结》']
 };
 
 export const topics: Topic[] = [topic1, topic2, topic3, topic4];
