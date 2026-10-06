@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { highlightTerms } from '@/components/GlossaryTooltip';
 import { GlossaryCard } from '@/components/diagrams';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
+import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis, SupplyDemand, ISLM, CostCurves } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
@@ -26,6 +26,9 @@ const diagramComponents: Record<string, React.ComponentType> = {
   'sdn-architecture': SDNArchitecture,
   'snmp-diagram': SNMPDiagram,
   'fault-diagnosis': FaultDiagnosis,
+  'supply-demand': SupplyDemand,
+  'is-lm': ISLM,
+  'cost-curves': CostCurves,
 };
 
 // 处理 React 子节点，对纯文本节点做术语高亮

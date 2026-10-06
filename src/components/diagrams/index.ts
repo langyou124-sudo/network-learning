@@ -16,3 +16,6 @@ export { default as FiberOptic } from './FiberOptic';
 export { default as SDNArchitecture } from './SDNArchitecture';
 export { default as SNMPDiagram } from './SNMPDiagram';
 export { default as FaultDiagnosis } from './FaultDiagnosis';
+export { default as SupplyDemand } from './SupplyDemand';
+export { default as ISLM } from './ISLM';
+export { default as CostCurves } from './CostCurves';
