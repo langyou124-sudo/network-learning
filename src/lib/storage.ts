@@ -128,10 +128,15 @@ export function getMistakes(): MistakeRecord[] {
   }
 }
 
-// 保存错题
+// 保存错题（同一题只保留最新一条，避免重复提交让错题本无限膨胀）
 export function saveMistake(mistake: MistakeRecord) {
   const mistakes = getMistakes();
-  mistakes.push(mistake);
+  const idx = mistakes.findIndex(m => m.quizId === mistake.quizId);
+  if (idx >= 0) {
+    mistakes[idx] = { ...mistake, reviewed: mistakes[idx].reviewed };
+  } else {
+    mistakes.push(mistake);
+  }
   localStorage.setItem(MISTAKES_KEY, JSON.stringify(mistakes));
 }
 

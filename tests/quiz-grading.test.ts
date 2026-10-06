@@ -9,6 +9,7 @@ import {
   isObjective,
   gradeAnswer,
   renderAnswer,
+  renderUserAnswer,
 } from '@/lib/quiz-grading';
 import type { Quiz } from '@/types';
 
@@ -134,6 +135,35 @@ describe('parseAnswerSpec — 覆盖真实数据的四种形态', () => {
     expect(specs).toHaveLength(1);
     expect(specs[0].variants).toEqual([normalizeAnswer('1/|E|')]);
     expect(gradeAnswer(q({ question: '勒纳指数 = ______。', answer: '1/|E|' }), '1/|E|').correct).toBe(true);
+  });
+
+  it('嵌套数组：逐空 + 每空多变体', () => {
+    const specs = parseAnswerSpec(
+      q({
+        question: '路由器消息类型是____，类型号为____。',
+        answer: [['Router Advertisement', 'RA', '路由器通告'], ['134']],
+      })
+    );
+    expect(specs).toHaveLength(2);
+    expect(specs[0].variants).toEqual(['router advertisement', 'ra', '路由器通告']);
+    expect(specs[1].variants).toEqual(['134']);
+    const quiz = q({
+      question: '路由器消息类型是____，类型号为____。',
+      answer: [['Router Advertisement', 'RA', '路由器通告'], ['134']],
+    });
+    expect(gradeAnswer(quiz, ['路由器通告', '134']).correct).toBe(true);
+    expect(gradeAnswer(quiz, ['RA', '135']).correct).toBe(false);
+  });
+
+  it('中文分号打包的多空 "二；无穷"', () => {
+    const specs = parseAnswerSpec(
+      q({ question: 'f(x)=1/x 在 x=0 处是第 ______ 类间断点中的 ______ 间断点', answer: '二；无穷' })
+    );
+    expect(specs).toHaveLength(2);
+    expect(gradeAnswer(
+      q({ question: '第 ______ 类的 ______ 间断点', answer: '二；无穷' }),
+      ['二', '无穷']
+    ).correct).toBe(true);
   });
 });
 
@@ -281,5 +311,20 @@ describe('renderAnswer', () => {
   });
   it('字符串原样返回', () => {
     expect(renderAnswer(q({ answer: 'x' }))).toBe('x');
+  });
+  it('选择题显示选项文本（C. 交换价值）', () => {
+    const quiz = q({
+      type: 'choice',
+      options: ['使用价值', '价值', '交换价值'],
+      answer: 'C',
+    });
+    expect(renderAnswer(quiz)).toBe('C. 交换价值');
+    expect(renderUserAnswer(quiz, 'A')).toBe('A. 使用价值');
+  });
+  it('选择题未作答显示"未作答"', () => {
+    const quiz = q({ type: 'choice', options: ['x', 'y'], answer: 'A' });
+    expect(renderUserAnswer(quiz, '')).toBe('未作答');
+    expect(renderUserAnswer(quiz, undefined)).toBe('未作答');
+    expect(renderUserAnswer(quiz, [])).toBe('未作答');
   });
 });

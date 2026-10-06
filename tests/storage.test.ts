@@ -15,6 +15,8 @@ import {
   saveNote,
   clearAllData,
   resetProgressCache,
+  saveMistake,
+  getMistakes,
 } from '@/lib/storage';
 
 beforeEach(() => {
@@ -160,5 +162,42 @@ describe('clearAllData', () => {
     clearAllData();
     const p = getProgress();
     expect(p.completedTopics).toEqual([]);
+  });
+});
+
+describe('saveMistake — 同题去重', () => {
+  const base = {
+    quizId: 'q1',
+    topicId: 't1',
+    question: '题目',
+    correctAnswer: 'B',
+    date: '2026-10-06',
+    reviewed: false,
+  };
+
+  it('重复提交同一题不产生重复记录', () => {
+    saveMistake({ ...base, userAnswer: 'A' });
+    saveMistake({ ...base, userAnswer: 'C' });
+    saveMistake({ ...base, userAnswer: 'D' });
+    const mistakes = getMistakes();
+    expect(mistakes).toHaveLength(1);
+    expect(mistakes[0].userAnswer).toBe('D'); // 保留最新作答
+  });
+
+  it('不同题各保留一条', () => {
+    saveMistake({ ...base, quizId: 'q1', userAnswer: 'A' });
+    saveMistake({ ...base, quizId: 'q2', userAnswer: 'A' });
+    expect(getMistakes()).toHaveLength(2);
+  });
+
+  it('更新时不重置已复习标记', () => {
+    saveMistake({ ...base, userAnswer: 'A' });
+    const first = getMistakes()[0];
+    // 模拟已复习
+    localStorage.setItem('network-learning-mistakes', JSON.stringify([{ ...first, reviewed: true }]));
+    saveMistake({ ...base, userAnswer: 'B' });
+    expect(getMistakes()).toHaveLength(1);
+    expect(getMistakes()[0].reviewed).toBe(true);
+    expect(getMistakes()[0].userAnswer).toBe('B');
   });
 });

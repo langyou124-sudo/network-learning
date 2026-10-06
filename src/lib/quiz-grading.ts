@@ -91,11 +91,27 @@ export function parseAnswerSpec(quiz: Quiz): BlankSpec[] {
   const ans = quiz.answer;
   const nBlanks = blankCount(quiz);
 
+  // 0) 嵌套数组：逐空 + 每空多个可接受变体
+  //    [[ 'Router Advertisement', 'RA', '路由器通告' ], [ '134' ]]
+  if (Array.isArray(ans) && ans.length > 0 && Array.isArray(ans[0])) {
+    return (ans as string[][]).map((group) => ({
+      variants: group.map((s) => normalizeAnswer(String(s))).filter(Boolean),
+    }));
+  }
+
   // 1) 竖线打包的多空：'具体|抽象' 或 'MAC|IP'
   //    注意：| 也可能是答案内容本身（如数学绝对值 '1/|E|'），
   //    因此只有当分割段数恰好等于题干空格数时才视为分隔符。
   if (typeof ans === 'string' && ans.includes('|') && nBlanks >= 2) {
     const parts = ans.split('|').map((s) => s.trim()).filter(Boolean);
+    if (parts.length === nBlanks) {
+      return parts.map((p) => ({ variants: [normalizeAnswer(p)] }));
+    }
+  }
+
+  // 1b) 中文分号打包的多空：'二；无穷'
+  if (typeof ans === 'string' && /[；;]/.test(ans) && nBlanks >= 2) {
+    const parts = ans.split(/[；;]/).map((s) => s.trim()).filter(Boolean);
     if (parts.length === nBlanks) {
       return parts.map((p) => ({ variants: [normalizeAnswer(p)] }));
     }
@@ -231,7 +247,35 @@ export function gradeAnswer(quiz: Quiz, userAnswer: UserAnswer): GradingResult {
 export function renderAnswer(quiz: Quiz): string {
   const ans = quiz.answer;
   if (Array.isArray(ans)) return ans.join(' / ');
-  return String(ans);
+  const text = String(ans);
+
+  // 选择题：显示 "C. 选项文本"，否则结果页只看到一个字母无法复盘
+  if (quiz.type === 'choice' && quiz.options && quiz.options.length > 0) {
+    const letter = normalizeAnswer(text);
+    const idx = /^[a-z]$/.test(letter) ? letter.charCodeAt(0) - 97 : -1;
+    if (idx >= 0 && idx < quiz.options.length) {
+      return `${text.toUpperCase()}. ${quiz.options[idx]}`;
+    }
+    // answer 存的是选项原文的情况
+    return text;
+  }
+  return text;
+}
+
+/** 用户作答的展示文本（选择题同样带选项内容） */
+export function renderUserAnswer(quiz: Quiz, userAnswer: UserAnswer | undefined): string {
+  if (userAnswer === undefined || userAnswer === '') return '未作答';
+  if (Array.isArray(userAnswer)) {
+    return userAnswer.length ? userAnswer.join(' / ') : '未作答';
+  }
+  if (quiz.type === 'choice' && quiz.options && quiz.options.length > 0) {
+    const letter = normalizeAnswer(userAnswer);
+    const idx = /^[a-z]$/.test(letter) ? letter.charCodeAt(0) - 97 : -1;
+    if (idx >= 0 && idx < quiz.options.length) {
+      return `${userAnswer.toUpperCase()}. ${quiz.options[idx]}`;
+    }
+  }
+  return userAnswer;
 }
 
 /** 生成分空展示，per-blank 时用于逐空显示 */
