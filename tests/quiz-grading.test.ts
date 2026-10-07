@@ -247,6 +247,22 @@ describe('gradeAnswer — 单空填空', () => {
     // 不在变体列表里的写法不应被误判为对
     expect(gradeAnswer(q({ answer: '100000' }), '10万').correct).toBe(false);
   });
+
+  it('纯数字答案精确比对，不子串误判', () => {
+    // '0' 不应匹配 '10'/'30'
+    expect(gradeAnswer(q({ answer: '0' }), '10').correct).toBe(false);
+    expect(gradeAnswer(q({ answer: '0' }), '30').correct).toBe(false);
+    // '25' 不应匹配 '6.25'，'200' 不应匹配 '2000'
+    expect(gradeAnswer(q({ answer: '25' }), '6.25').correct).toBe(false);
+    expect(gradeAnswer(q({ answer: '200' }), '2000').correct).toBe(false);
+    // 多空写反不应双双判对
+    const q2 = q({ question: 'X=______，Y=______。', answer: ['25', '6.25'] });
+    expect(gradeAnswer(q2, ['6.25', '25']).correct).toBe(false);
+    expect(gradeAnswer(q2, ['25', '6.25']).correct).toBe(true);
+    // 精确匹配仍判对
+    expect(gradeAnswer(q({ answer: '0' }), '0').correct).toBe(true);
+    expect(gradeAnswer(q({ answer: '200' }), '200').correct).toBe(true);
+  });
   it('空答案判错', () => {
     expect(gradeAnswer(q({ answer: '甲' }), '').correct).toBe(false);
     expect(gradeAnswer(q({ answer: '甲' }), undefined as unknown as string).correct).toBe(false);

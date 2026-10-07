@@ -63,11 +63,19 @@ function squeeze(s: string): string {
   return normalizeAnswer(s).replace(/[\s,，、;；:：.。]/g, '');
 }
 
+/** 是否为纯数字（可带小数点、负号）——纯数字答案必须精确比对，不能子串匹配 */
+function isPureNumber(s: string): boolean {
+  return /^-?\d+(\.\d+)?$/.test(s.trim());
+}
+
 function looseMatch(user: string, expected: string): boolean {
   const u = normalizeAnswer(user);
   const e = normalizeAnswer(expected);
   if (u === e) return true;
-  // 允许用户多写单位/等式前后缀，如 "25" 对 "X=25"、"10m" 对 "10"
+  // 纯数字答案：只做精确比对。否则 '0' 会误匹配 '10'/'30'、'25' 误匹配 '6.25'、
+  // '200' 误匹配 '2000'，把错作答判对。
+  if (isPureNumber(u) && isPureNumber(e)) return false;
+  // 非纯数字才允许单位/等式前后缀的子串容错，如 "25" 对 "X=25"、"10m" 对 "10"
   if (u && e && (u.includes(e) || e.includes(u))) return true;
   return squeeze(u) === squeeze(e);
 }
