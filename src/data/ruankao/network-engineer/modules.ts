@@ -50,7 +50,8 @@ export const networkEngineerModulesMeta = [
       "topic-07-01",
       "topic-07-02",
       "topic-07-03",
-      "topic-07-04"
+      "topic-07-04",
+      "topic-61"
     ]
   },
   {
@@ -102,7 +103,11 @@ export const networkEngineerModulesMeta = [
       "topic-60",
       "topic-09-01",
       "topic-09-02",
-      "topic-09-03"
+      "topic-09-03",
+      "topic-47",
+      "topic-48",
+      "topic-49",
+      "topic-62"
     ]
   }
 ];
