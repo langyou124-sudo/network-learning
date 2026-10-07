@@ -83,4 +83,25 @@ export const softwareDesignerModulesMeta = [
     icon: '📝',
     topicIds: ['sd-12-01', 'sd-12-02'],
   },
+  {
+    id: 'sd-professional-english',
+    title: '专业英语',
+    description: '软考上午 5 分专业英语：阅读理解技巧、高频计算机词汇、常见句式',
+    icon: '🔤',
+    topicIds: ['sd-13-01', 'sd-13-02'],
+  },
+  {
+    id: 'sd-algorithm-c-code',
+    title: '算法与C代码填空',
+    description: '软考下午题：算法流程图、C 语言代码填空与补全',
+    icon: '🧮',
+    topicIds: ['sd-14-01', 'sd-14-02'],
+  },
+  {
+    id: 'sd-cpp-java',
+    title: 'C++/Java程序设计',
+    description: '面向对象程序设计：C++/Java 语法、继承、多态、异常处理',
+    icon: '☕',
+    topicIds: ['sd-15-01', 'sd-15-02'],
+  },
 ];

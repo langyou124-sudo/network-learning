@@ -75,7 +75,10 @@ function looseMatch(user: string, expected: string): boolean {
   // 纯数字答案：只做精确比对。否则 '0' 会误匹配 '10'/'30'、'25' 误匹配 '6.25'、
   // '200' 误匹配 '2000'，把错作答判对。
   if (isPureNumber(u) && isPureNumber(e)) return false;
-  // 非纯数字才允许单位/等式前后缀的子串容错，如 "25" 对 "X=25"、"10m" 对 "10"
+  // 短答案（≤2 字符，如运算符 '>'、下标 'k'、字母 's'）：只做精确比对。
+  // 否则 'k' 会误匹配 'k+1'、'>' 误匹配 '>='、's' 误匹配 's[i]'，把错作答判对。
+  if (e.length <= 2 || u.length <= 2) return squeeze(u) === squeeze(e);
+  // 较长答案才允许单位/等式前后缀的子串容错，如 "25" 对 "X=25"、"10m" 对 "10"
   if (u && e && (u.includes(e) || e.includes(u))) return true;
   return squeeze(u) === squeeze(e);
 }

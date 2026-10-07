@@ -234,11 +234,14 @@ describe('gradeAnswer — 单空填空', () => {
     expect(gradeAnswer(quiz, 'ap').correct).toBe(true);
     expect(gradeAnswer(quiz, '交换机').correct).toBe(false);
   });
-  it('含等式前后缀容错（"25" 匹配 "X=25"）', () => {
+  it('含等式前后缀容错（长答案可省略标签）', () => {
     expect(gradeAnswer(q({ answer: '52.56' }), '52.6').correct).toBe(false);
     expect(gradeAnswer(q({ answer: ['52.6', '53', '52.56'] }), '53').correct).toBe(true);
-    expect(gradeAnswer(q({ answer: 'X=25' }), '25').correct).toBe(true);
+    // 长答案之间容错：'100000小时' 可匹配 '100000'（省略单位）
     expect(gradeAnswer(q({ answer: '100000' }), '100000小时').correct).toBe(true);
+    // 短答案（'25'）不再子串容错，需显式变体表达可接受写法
+    expect(gradeAnswer(q({ answer: ['X=25', '25'] }), '25').correct).toBe(true);
+    expect(gradeAnswer(q({ answer: 'X=25' }), '25').correct).toBe(false);
   });
   it('中文单位写法靠变体覆盖，不做跨单位换算', () => {
     const quiz = q({ answer: ['100000', '10万'] });
@@ -262,6 +265,19 @@ describe('gradeAnswer — 单空填空', () => {
     // 精确匹配仍判对
     expect(gradeAnswer(q({ answer: '0' }), '0').correct).toBe(true);
     expect(gradeAnswer(q({ answer: '200' }), '200').correct).toBe(true);
+  });
+
+  it('短答案（≤2字符）精确比对，不子串误判', () => {
+    // 'k' 不应判 'k+1' 对（k+1 删除失效）
+    expect(gradeAnswer(q({ answer: 'k' }), 'k+1').correct).toBe(false);
+    expect(gradeAnswer(q({ answer: 'k' }), 'k').correct).toBe(true);
+    // '>' 不应判 '>=' 对（>= 失去稳定性）
+    expect(gradeAnswer(q({ answer: '>' }), '>=').correct).toBe(false);
+    expect(gradeAnswer(q({ answer: '>' }), '>').correct).toBe(true);
+    // 's' 不应判 's[i]' 对（无意义子串）
+    expect(gradeAnswer(q({ answer: 's' }), 's[i]').correct).toBe(false);
+    // 反向：'k+1' 是答案时，'k' 也不判对
+    expect(gradeAnswer(q({ answer: 'k+1' }), 'k').correct).toBe(false);
   });
   it('空答案判错', () => {
     expect(gradeAnswer(q({ answer: '甲' }), '').correct).toBe(false);
