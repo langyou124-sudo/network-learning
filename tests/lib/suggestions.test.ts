@@ -162,14 +162,15 @@ describe('getSuggestions', () => {
     expect(results[0]).toBe('软考问题1?');
   });
 
-  it('prioritizes mistake questions', () => {
+  it('prioritizes questions from the topic the user got wrong', () => {
     mockMistakes.push({
       question: '错题问题?',
       topicId: 't1',
       subject: 'network',
     });
     const results = getSuggestions('/', 3);
-    expect(results[0]).toBe('错题问题?');
+    // 推荐的是错题所属课题下的题，而不是错题原文
+    expect(['网络问题1?', '网络问题2?']).toContain(results[0]);
   });
 
   it('returns empty array when no quizzes available', async () => {

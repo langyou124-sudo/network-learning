@@ -3,27 +3,27 @@ import { marxismModules } from '@/data/marxism';
 import { ruankaoModules } from '@/data/ruankao';
 import { peExam303Modules } from '@/data/pe-exam-303';
 import { peExam802Modules } from '@/data/pe-exam-802';
-import { Module } from '@/types';
+import { Module, MistakeRecord, Progress } from '@/types';
 import { getProgress, getMistakes } from './storage';
 
-interface Suggestion {
+export interface SuggestionQuiz {
   question: string;
   subject: string;
+  topicId: string;
 }
 
-function collectFromModules(modules: Module[], subject: string, out: Suggestion[]) {
+function collectFromModules(modules: Module[], subject: string, out: SuggestionQuiz[]) {
   for (const mod of modules) {
     for (const topic of mod.topics) {
       for (const q of topic.quizzes) {
-        out.push({ question: q.question, subject });
+        out.push({ question: q.question, subject, topicId: topic.id });
       }
     }
   }
 }
 
-// 从所有学科收集全部 quiz 问题
-function getAllQuizzes(): Suggestion[] {
-  const quizzes: Suggestion[] = [];
+export function getAllQuizzes(): SuggestionQuiz[] {
+  const quizzes: SuggestionQuiz[] = [];
   collectFromModules(networkModules, 'network', quizzes);
   collectFromModules(marxismModules, 'marxism', quizzes);
   collectFromModules(ruankaoModules, 'ruankao', quizzes);
@@ -32,76 +32,121 @@ function getAllQuizzes(): Suggestion[] {
   return quizzes;
 }
 
-// 从 URL 路径推断当前学科
-function detectSubject(pathname: string): string | null {
-  if (pathname.includes('/learn/network')) return 'network';
-  if (pathname.includes('/learn/marxism')) return 'marxism';
-  if (pathname.includes('/learn/ruankao')) return 'ruankao';
-  if (pathname.includes('/learn/pe-exam-303')) return 'pe-exam-303';
-  if (pathname.includes('/learn/pe-exam-802')) return 'pe-exam-802';
+/** 从 URL 路径推断当前学科。 */
+export function detectSubject(pathname: string): string | null {
+  const prefixes: [string, string][] = [
+    ['/learn/pe-exam-303', 'pe-exam-303'],
+    ['/learn/pe-exam-802', 'pe-exam-802'],
+    ['/learn/network', 'network'],
+    ['/learn/marxism', 'marxism'],
+    ['/learn/ruankao', 'ruankao'],
+  ];
+  for (const [prefix, subject] of prefixes) {
+    if (pathname.startsWith(prefix)) return subject;
+  }
   return null;
 }
 
-// 洗牌
-function shuffle<T>(arr: T[]): T[] {
+function shuffle<T>(arr: T[], random: () => number = Math.random): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
 }
 
 /**
- * 智能推荐问题
- * 优先级：
- * 1. 用户有错题 → 从错题相关问题中挑（复习）
- * 2. 当前在某学科页面 → 从该学科随机挑
- * 3. 兜底 → 全学科随机混合
+ * 按薄弱度给课题排序（纯函数，便于测试）。
+ * 权重来源：
+ *   - 错题：每题 +3（错得越多越该复习）
+ *   - 正确率低于 70% 的成绩：(1 - 正确率) × 2
+ *   - 未完成：+0.5，只作为同分时的倾向，不压过真实错题
+ */
+export function rankWeakTopics(input: {
+  mistakes: MistakeRecord[];
+  progress: Pick<Progress, 'quizScores' | 'completedTopics'>;
+}): string[] {
+  const weights = new Map<string, number>();
+  const bump = (topicId: string, value: number) => {
+    weights.set(topicId, (weights.get(topicId) ?? 0) + value);
+  };
+
+  for (const mistake of input.mistakes) {
+    if (mistake.topicId) bump(mistake.topicId, 3);
+  }
+
+  for (const [topicId, score] of Object.entries(input.progress.quizScores ?? {})) {
+    if (!score || score.total <= 0) continue;
+    const accuracy = score.correct / score.total;
+    if (accuracy < 0.7) bump(topicId, (1 - accuracy) * 2);
+  }
+
+  const completed = new Set(input.progress.completedTopics ?? []);
+  for (const topicId of [...weights.keys()]) {
+    if (!completed.has(topicId)) bump(topicId, 0.5);
+  }
+
+  return [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([topicId]) => topicId);
+}
+
+/**
+ * 挑选推荐问题（纯函数）。
+ * 顺序：薄弱课题（最多占一半名额）→ 当前学科 → 全库兜底，全程去重。
+ */
+export function pickSuggestionQuestions(
+  input: {
+    quizzes: SuggestionQuiz[];
+    mistakes: MistakeRecord[];
+    progress: Pick<Progress, 'quizScores' | 'completedTopics'>;
+    subject: string | null;
+    count: number;
+  },
+  random: () => number = Math.random,
+): string[] {
+  const { quizzes, subject, count } = input;
+  if (quizzes.length === 0 || count <= 0) return [];
+
+  const byTopic = new Map<string, SuggestionQuiz[]>();
+  for (const quiz of quizzes) {
+    const list = byTopic.get(quiz.topicId) ?? [];
+    list.push(quiz);
+    byTopic.set(quiz.topicId, list);
+  }
+
+  const picked: string[] = [];
+  const used = new Set<string>();
+  const take = (candidates: SuggestionQuiz[]) => {
+    for (const candidate of shuffle(candidates, random)) {
+      if (picked.length >= count) return;
+      if (used.has(candidate.question)) continue;
+      picked.push(candidate.question);
+      used.add(candidate.question);
+    }
+  };
+
+  const maxWeak = Math.max(1, Math.ceil(count / 2));
+  for (const topicId of rankWeakTopics(input)) {
+    if (picked.length >= maxWeak) break;
+    take(byTopic.get(topicId) ?? []);
+  }
+
+  if (subject) take(quizzes.filter((q) => q.subject === subject));
+  take(quizzes);
+
+  return picked;
+}
+
+/**
+ * 智能推荐问题。
+ * 有错题/低分时优先推相关课题；否则按当前学科；再不行全库随机。
  */
 export function getSuggestions(pathname: string, count: number = 3): string[] {
-  const allQuizzes = getAllQuizzes();
-  if (allQuizzes.length === 0) return [];
-
-  const subject = detectSubject(pathname);
-  const progress = getProgress();
-  const mistakes = getMistakes();
-  const results: string[] = [];
-  const usedQuestions = new Set<string>();
-
-  // 第一优先：错题复习（如果有错题且数量够）
-  if (mistakes.length > 0) {
-    const mistakeQuizzes = shuffle(mistakes)
-      .filter(m => !usedQuestions.has(m.question))
-      .slice(0, 1); // 最多推1个错题
-    for (const m of mistakeQuizzes) {
-      results.push(m.question);
-      usedQuestions.add(m.question);
-    }
-  }
-
-  // 第二优先：当前学科的问题
-  if (subject && results.length < count) {
-    const subjectQuizzes = shuffle(
-      allQuizzes.filter(q => q.subject === subject && !usedQuestions.has(q.question))
-    );
-    for (const q of subjectQuizzes) {
-      if (results.length >= count) break;
-      results.push(q.question);
-      usedQuestions.add(q.question);
-    }
-  }
-
-  // 补齐：全学科随机
-  if (results.length < count) {
-    const remaining = shuffle(
-      allQuizzes.filter(q => !usedQuestions.has(q.question))
-    );
-    for (const q of remaining) {
-      if (results.length >= count) break;
-      results.push(q.question);
-    }
-  }
-
-  return results;
+  return pickSuggestionQuestions({
+    quizzes: getAllQuizzes(),
+    mistakes: getMistakes(),
+    progress: getProgress(),
+    subject: detectSubject(pathname),
+    count,
+  });
 }
