@@ -40,17 +40,17 @@
 2. [ ] 学习日历与时长图表（数据已在记，只差展示）
 3. [ ] 错题 → 薄弱知识点 → 推荐练习（现在推荐是硬编码 3 条 + 随机）
 
-### 阶段 2 上线动作（需要人做）
+### 阶段 2 上线动作（已完成）
 
-- 在 Supabase SQL Editor 执行 `supabase/migrations/20261111000000_learning_state.sql`
-- 已验证现状：`GET /rest/v1/learning_state` 返回 `PGRST205`（表不存在），
-  同步层据此自动禁用并只打一条警告；执行迁移后自动生效，不需要改代码
+- [x] 在 Supabase SQL Editor 执行 `supabase/migrations/20261111000000_learning_state.sql`
+- [x] 验证（2026-11-11）：匿名 `GET /rest/v1/learning_state` 返回 `200 []`（RLS 过滤，无泄漏）；
+      匿名 `POST` 被拒 `42501 new row violates row-level security policy`，说明 RLS 生效且策略正确
 
 ## 待决策（需要人拍板，agent 不自行决定）
 
 1. **未登录试用额度**：现在 chat 强制登录，未登录直接 401。放开需要定「每人多少次、
    按 IP 还是按浏览器指纹、超限后如何引导注册」，直接影响 API 成本，暂不实现。
-2. **Supabase 迁移**：`20261111000000_learning_state.sql` 尚未执行，云同步当前自动禁用。
+2. **Supabase 迁移**：已执行并验证（见上）。
 3. **马理论是否继续投入**：内容最重（915 KB），无考试锚点，建议冻结增量。
 
 ## 已知问题（按优先级）
