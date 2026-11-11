@@ -10,7 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "content:embed": "tsx scripts/embed-knowledge.ts",
+    "content:index": "node scripts/build-content-index.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
@@ -41,6 +43,7 @@
     "jsdom": "^29.1.1",
     "prettier": "^3.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^4.1.8"
   }

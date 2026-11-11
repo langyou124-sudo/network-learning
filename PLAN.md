@@ -5,58 +5,59 @@
 
 ## 当前阶段
 
-- [进行中] 阶段 0 — 恢复质量门禁
-- [未开始] 阶段 1 — 内容流水线
-- [未排期] 阶段 2 — 学习闭环（localStorage → Supabase）
+- [已完成] 阶段 0 — 恢复质量门禁（提交 349b260）
+- [已完成] 阶段 1 — 内容流水线
+- [下一步] 阶段 2 — 学习闭环（localStorage → Supabase）
 - [未排期] 阶段 3 — AI 对齐多学科
 
 ## 验收标准
 
 ### 阶段 0：恢复质量门禁
 
-- [ ] `npm run typecheck` 零错（内部走 `next typegen && tsc --noEmit`）
-- [ ] `npm run build` 成功一次
-- [ ] 启动脚本不会重复拉起 `next dev`（端口探测改 HTTP 探测）
-- [ ] CI 的类型检查与本地一致（同样先 typegen）
+- [x] `npm run typecheck` 零错（内部走 `next typegen && tsc --noEmit`）
+- [x] `npm run build` 成功
+- [x] 启动脚本不会重复拉起 `next dev`（TCP/HTTP 探测）
+- [x] CI 的类型检查与本地一致（同样先 typegen）
 
 ### 阶段 1：内容流水线
 
-- [ ] `scripts/embed-knowledge.mjs` 数据源改为真实内容、默认 `--dry-run`、默认不清库、写库用 service_role
-- [ ] 内容完整性测试替换掉两个空转测试（id 唯一、选择题选项、解析、每题最少题数）
-- [ ] 删除 `src/data/sdn-nfv/`、根目录 `_gen_*.mjs`、`_backup/`
-- [ ] 新增课题 = 放 1 个文件 + 跑 1 条命令，不再手改索引
+- [x] `scripts/embed-knowledge.ts` 数据源为真实内容、默认 dry-run、默认不清库、可用 service_role
+- [x] 内容完整性测试替换掉两个空转测试（id 唯一、选项字母范围、解析非空、每题最少一题）
+- [x] 删除 `src/data/sdn-nfv/`、根目录 `_gen_*.mjs`、`_backup/`
+- [x] 新增课题 = 放 1 个文件 + 跑 `npm run content:index`，不再手改索引
+- [x] CI 校验索引是否最新
 
-## 进度
+## 阶段 1 收尾数据
 
-### 阶段 0
+- 全库课题：323 个（网络 63、马理论 14 模块、软考 12 模块、802 三科、303 三科）
+- 向量化分块：3710 块（size=500 overlap=80），全量约 12 分钟
+- 测试：8 文件 / 80 用例全绿（原 75，新增 5 条内容完整性断言）
+- 构建：`✓ Compiled successfully`
 
-- [ ] 加 `next typegen` 与 `typecheck` 脚本
-- [ ] 修启动脚本端口探测
-- [ ] CI 类型检查步骤对齐
-- [ ] 删 `.next` 重建并验证 typecheck / build
+## 下一阶段（阶段 2）待办
 
-### 阶段 1
+1. localStorage → Supabase：进度 / 错题 / 笔记 / 时长按用户同步（表结构 + RLS 需要人工确认）
+2. 学习日历与时长图表（数据已在记，只差展示）
+3. 错题 → 薄弱知识点 → 推荐练习（现在推荐是硬编码 3 条 + 随机）
 
-- [ ] 修 RAG 脚本
-- [ ] 内容完整性测试
-- [ ] 清理死代码与一次性产物
-- [ ] 索引自动生成
+## 已知问题（按优先级）
 
-## 已知地雷（下阶段前必须知道）
-
-- `scripts/embed-knowledge.mjs` 用正则解析 `src/data/courses.ts`，但该文件只是聚合入口，
-  提取结果为 0 条；而脚本会**先清空 `knowledge_chunks` 再灌入**，跑通即清库。
-  目前因缺少 `dotenv` 依赖在第一步就抛错，地雷没有触发。
-- `npx tsc --noEmit` 在本地必挂：`next-env.d.ts` 引用了 `.next/dev/types/routes.d.ts`，
-  而该生成文件可能被并发写入写坏。CI 因为不提交 `.next` 与 `next-env.d.ts` 反而看不到这个问题。
-- `chat/route.ts` 的 systemPrompt 仍只覆盖网络工程，与 5 个学科的现状不符。
-- `course-data.test.ts` 里两个 "should be unique" 测试实际没有断言唯一性。
+- `chat/route.ts` 的 systemPrompt 仍只覆盖网络工程，与 5 个学科不符（阶段 3）
+- RAG 的 `filter_module: null` 会把马理论片段喂给网络问题（阶段 3）
+- `C:\Users\李光为\package.json` / `package-lock.json` / `node_modules` 让 Next 把家目录当成 workspace 根，
+  构建时会警告并忽略项目的 lockfile；确认无用后可删掉这三项
+- env 缺 `UPSTASH_*`，限流静默降级为进程内 Map；缺 `ZHIPUAI_API_KEY` 时 RAG 静默失效
+- `rate-limit.ts` 用 `config.max` 魔法值选 limiter，改限额会静默切错
+- `.env.local` 里的 `ZHIPUAI_API_KEY` 用于 embedding，未纳入 `env.ts` 校验
 
 ## 决策日志
 
-- [2026-11-11] 学科收敛为两个战场：软考网络工程师（主）+ 考研 802/303（副），马理论冻结扩内容
+- [2026-11-11] 学科收敛：软考网络工程师（主）+ 考研 802/303（副），马理论冻结扩内容
 - [2026-11-11] 长期任务的状态放磁盘（本文件 + git），不依赖对话上下文
 - [2026-11-11] 阶段 0 用 `next typegen` 而不是删 `.next` 了事，让 CI 与本地行为一致
+- [2026-11-11] 引入 `tsx` 跑内容脚本：Node 无法直接 import 带 `@/` 别名的 TS 数据
+- [2026-11-11] topic id 统一取文件名（网络工程课题对象里没有 id 字段）
+- [2026-11-11] 向量化默认 dry-run、清库必须显式 `--reset`：旧脚本会清库后灌 0 条
 - [2026-06-30] 选择 lefthook 而非 husky — 更轻量，无运行时依赖
 - [2026-06-30] 选择 @testing-library/react 而非 Enzyme — React 19 官方推荐
 - [2026-06-30] CLAUDE.md 控制在 ~50 行 — 地图而非百科，避免上下文污染
@@ -64,4 +65,4 @@
 ## 历史（已完成）
 
 Harness Engineering 改造：CLAUDE.md / AGENTS.md / .claude hooks / lefthook / .env.example /
-组件测试 / 工具测试 / CI 增强 / docs/harness.md。测试 8 文件 75 用例全绿。
+组件测试 / 工具测试 / CI 增强 / docs/harness.md。

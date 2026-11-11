@@ -27,6 +27,11 @@ jobs:
       - name: Lint
         run: npx eslint src/ --max-warnings=0
 
+      # 课题索引是生成的：新增课题后必须跑 npm run content:index 并提交，
+      # 否则 CI 会在这里拦住，避免“加了文件但页面里没有”。
+      - name: Content index up to date
+        run: node scripts/build-content-index.mjs --check
+
       - name: Tests
         run: npm test -- --coverage
 
