@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { modules } from '@/data/courses';
 import { getProgress, getStats, getStudyTimeRange, getStudyTimeByDate, getStudyStreak } from '@/lib/storage';
 import { Progress } from '@/types';
+import StudyCalendar from '@/components/StudyCalendar';
 
 // 格式化秒数为 Xh Xm 或 Xm
 function formatDuration(seconds: number): string {
@@ -115,6 +116,9 @@ export default function ProgressPage() {
           })()}
         </div>
       </div>
+
+      {/* 最近 5 周学习日历 */}
+      <StudyCalendar records={progress.studyTimeRecords ?? {}} />
 
       {/* 各模块详情 */}
       <div className="space-y-4 mb-8">
