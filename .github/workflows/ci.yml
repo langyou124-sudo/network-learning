@@ -19,8 +19,10 @@ jobs:
 
       - run: npm ci
 
+      # 先 typegen 再 tsc：本地 tsc 会通过 next-env.d.ts 引用 .next 下生成的
+      # 路由类型，CI 没有这些文件，不生成就会漏检路由/页面类型。
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Lint
         run: npx eslint src/ --max-warnings=0
