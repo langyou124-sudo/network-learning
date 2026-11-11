@@ -24,12 +24,13 @@ export function validateChatBody(body: unknown): {
   error?: string;
   messages?: { role: string; content: string }[];
   context?: string;
+  subject?: string;
 } {
   if (!body || typeof body !== 'object') {
     return { ok: false, error: '请求体格式错误' };
   }
 
-  const { messages, context } = body as Record<string, unknown>;
+  const { messages, context, subject } = body as Record<string, unknown>;
 
   // 校验 messages
   if (!Array.isArray(messages)) {
@@ -69,10 +70,18 @@ export function validateChatBody(body: unknown): {
     }
   }
 
+  // 校验 subject（可选，用于按学科注入人格；非法值由路由层忽略）
+  if (subject !== undefined && subject !== null) {
+    if (typeof subject !== 'string' || subject.length > 32) {
+      return { ok: false, error: 'subject 格式错误' };
+    }
+  }
+
   return {
     ok: true,
     messages: messages as { role: string; content: string }[],
     context: context as string | undefined,
+    subject: subject as string | undefined,
   };
 }
 

@@ -4,23 +4,27 @@ import { getEmbedding } from '@/lib/api/embedding';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/api/rate-limit';
 import { validateChatBody, errorResponse, rateLimitResponse } from '@/lib/api/validate';
 import { env } from '@/lib/env';
+import { buildSystemPrompt, formatRagContext, pickRelevantChunks, type KnowledgeChunk } from '@/lib/chat-persona';
 
 const MIMO_KEY = env.MIMO_API_KEY;
 const MIMO_ENDPOINT = 'https://token-plan-cn.xiaomimimo.com/anthropic/v1/messages';
 const MODEL = 'mimo-v2.5-pro';
 
-async function searchContext(supabase: Awaited<ReturnType<typeof createServerClient>>, query: string): Promise<string> {
+async function searchContext(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  query: string,
+  subject?: string | null,
+): Promise<string> {
   try {
     const embedding = await getEmbedding(query);
+    // 多召回一些，再按学科过滤后取前 3 条
     const { data } = await supabase.rpc('search_knowledge', {
       query_embedding: embedding,
-      match_count: 3,
+      match_count: 6,
       filter_module: null,
     });
-    if (!data || data.length === 0) return '';
-    return data.map((r: { chunk_text: string; metadata?: { topicTitle?: string } }) =>
-      `【${r.metadata?.topicTitle || '相关知识'}】\n${r.chunk_text}`
-    ).join('\n\n---\n\n');
+    const chunks = pickRelevantChunks((data ?? []) as KnowledgeChunk[], subject);
+    return formatRagContext(chunks.slice(0, 3));
   } catch (err) {
     console.error('RAG search error:', err);
     return '';
@@ -47,26 +51,12 @@ export async function POST(req: NextRequest) {
   const validation = validateChatBody(body);
   if (!validation.ok) return errorResponse(validation.error!);
 
-  const { messages, context } = validation;
+  const { messages, context, subject } = validation;
 
   const lastUserMsg = [...messages!].reverse().find(m => m.role === 'user');
-  const ragContext = lastUserMsg ? await searchContext(supabase, lastUserMsg.content) : '';
+  const ragContext = lastUserMsg ? await searchContext(supabase, lastUserMsg.content, subject) : '';
 
-  let systemPrompt = `你是达博理智能学习助手，专注于网络工程和通信技术领域。
-你的职责是帮助学生理解网络工程知识，包括OSI模型、TCP/IP协议、路由交换、网络安全等。
-回答要求：
-- 准确、简洁、通俗易懂
-- 适当使用类比帮助理解
-- 涉及技术细节时给出具体例子
-- 如果问题超出网络工程范围，礼貌说明并尽量关联到网络领域`;
-
-  if (ragContext) {
-    systemPrompt += `\n\n以下是与用户问题相关的知识库内容，优先参考这些内容回答：\n\n${ragContext}`;
-  }
-
-  if (context) {
-    systemPrompt += `\n\n用户当前正在学习的内容：\n${context}`;
-  }
+  const systemPrompt = buildSystemPrompt({ subject, ragContext, context });
 
   const mimoResp = await fetch(MIMO_ENDPOINT, {
     method: 'POST',

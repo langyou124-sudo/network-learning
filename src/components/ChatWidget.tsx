@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import { getSuggestions } from '@/lib/suggestions';
+import { detectSubject } from '@/lib/suggestions';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -77,6 +78,7 @@ export default function ChatWidget() {
   const doSend = useCallback(async (text: string, context?: string) => {
     const userMsg: Message = { role: 'user', content: text };
     const currentMessages = messagesRef.current;
+    const subject = detectSubject(pathname);
     setMessages(prev => [...prev, userMsg]);
     setLoading(true);
 
@@ -87,6 +89,7 @@ export default function ChatWidget() {
         body: JSON.stringify({
           messages: [...currentMessages, userMsg].map(m => ({ role: m.role, content: m.content })),
           ...(context ? { context } : {}),
+          ...(subject ? { subject } : {}),
         }),
       });
 
@@ -124,7 +127,7 @@ export default function ChatWidget() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pathname]);
 
   // 监听外部触发的 AI 解释请求
   useEffect(() => {
