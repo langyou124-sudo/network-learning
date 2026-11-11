@@ -15,6 +15,19 @@ export const MISTAKES_KEY = 'network-learning-mistakes';
 const SCHEMA_VERSION_KEY = 'network-learning-schema-version';
 const CURRENT_SCHEMA_VERSION = 2;
 
+/** 云同步用：本地数据被写入时通知订阅者（sync.ts 据此去抖上行）。 */
+export type LocalDataKey = 'progress' | 'mistakes';
+const changeListeners = new Set<(key: LocalDataKey) => void>();
+
+export function onLocalDataChanged(listener: (key: LocalDataKey) => void) {
+  changeListeners.add(listener);
+  return () => changeListeners.delete(listener);
+}
+
+function emitChange(key: LocalDataKey) {
+  for (const listener of changeListeners) listener(key);
+}
+
 function today(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -70,6 +83,7 @@ export function saveProgress(progress: Progress) {
   if (typeof window === 'undefined') return;
   _progressCache = progress;
   localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  emitChange('progress');
 }
 
 // 标记课题完成
@@ -133,6 +147,7 @@ export function saveMistake(mistake: MistakeRecord) {
   const mistakes = getMistakes();
   mistakes.push(mistake);
   localStorage.setItem(MISTAKES_KEY, JSON.stringify(mistakes));
+  emitChange('mistakes');
 }
 
 // 标记错题已复习
@@ -142,6 +157,7 @@ export function markMistakeReviewed(quizId: string) {
     m.quizId === quizId ? { ...m, reviewed: true } : m
   );
   localStorage.setItem(MISTAKES_KEY, JSON.stringify(updated));
+  emitChange('mistakes');
 }
 
 // 计算统计数据（totalTopics 由调用方传入，避免硬编码）
@@ -288,6 +304,8 @@ export function clearAllData() {
   _progressCache = null;
   localStorage.removeItem(PROGRESS_KEY);
   localStorage.removeItem(MISTAKES_KEY);
+  emitChange('progress');
+  emitChange('mistakes');
 }
 
 // 导入数据（带结构校验）
@@ -321,6 +339,7 @@ export function importData(jsonStr: string): { ok: boolean; error?: string } {
       return { ok: false, error: 'mistakes 不是数组' };
     }
     localStorage.setItem(MISTAKES_KEY, JSON.stringify(data.mistakes));
+    emitChange('mistakes');
   }
 
   return { ok: true };

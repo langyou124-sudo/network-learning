@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import UserMenu from "@/components/UserMenu";
 import ChatWidget from "@/components/ChatWidget";
+import SyncProvider from "@/components/SyncProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
           </div>
         </main>
         <ChatWidget />
+        <SyncProvider />
       </body>
     </html>
   );
