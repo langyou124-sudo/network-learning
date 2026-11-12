@@ -12,6 +12,9 @@ import { topics as m09 } from './topics/module-09';
 import { topics as m10 } from './topics/module-10';
 import { topics as m11 } from './topics/module-11';
 import { topics as m12 } from './topics/module-12';
+import { topics as m13 } from './topics/module-13';
+import { topics as m14 } from './topics/module-14';
+import { topics as m15 } from './topics/module-15';
 
 const moduleTopicsMap: Record<string, typeof m01> = {
   'sd-computer-system': m01,
@@ -26,6 +29,9 @@ const moduleTopicsMap: Record<string, typeof m01> = {
   'sd-network-security': m10,
   'sd-ip-standards': m11,
   'sd-case-study': m12,
+  'sd-professional-english': m13,
+  'sd-algorithm-c-code': m14,
+  'sd-cpp-java': m15,
 };
 
 export const softwareDesignerModules: Module[] = softwareDesignerModulesMeta.map((mod) => ({

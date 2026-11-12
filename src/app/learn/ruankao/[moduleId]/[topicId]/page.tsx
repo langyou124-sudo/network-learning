@@ -8,6 +8,11 @@ import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, sav
 import { Module, Topic } from '@/types';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { renderContentWithDiagrams } from '@/lib/renderContent';
+import {
+  gradeAnswer, isMultiBlank, isSelfAssess, isObjective,
+  renderAnswer, blankCount,
+  type UserAnswer,
+} from '@/lib/quiz-grading';
 
 type TabType = 'content' | 'quiz' | 'notes';
 
@@ -26,7 +31,8 @@ export default function RuankaoTopicPage() {
   const [note, setNote] = useState('');
 
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<string, UserAnswer>>({});
+  const [selfAssessResults, setSelfAssessResults] = useState<Record<string, 'mastered' | 'review'>>({});
   const [showResult, setShowResult] = useState(false);
   const [quizScore, setQuizScore] = useState({ correct: 0, total: 0 });
 
@@ -56,26 +62,47 @@ export default function RuankaoTopicPage() {
     alert('笔记已保存');
   };
 
-  const handleQuizAnswer = (quizId: string, answer: string) => {
+  const handleQuizAnswer = (quizId: string, answer: string | string[]) => {
     setUserAnswers(prev => ({ ...prev, [quizId]: answer }));
+  };
+
+  /** 该题是否已作答（多空填空要求至少填一空） */
+  const hasAnswer = (quizId: string) => {
+    const v = userAnswers[quizId];
+    if (Array.isArray(v)) return v.some(s => s.trim() !== '');
+    return typeof v === 'string' && v.trim() !== '';
+  };
+
+  /** 用户答案展示文本 */
+  const userAnswerText = (quizId: string) => {
+    const v = userAnswers[quizId];
+    if (Array.isArray(v)) return v.filter(s => s.trim() !== '').join(' / ') || '未作答';
+    return v || '未作答';
+  };
+
+  const handleSelfAssess = (quizId: string, result: 'mastered' | 'review') => {
+    setSelfAssessResults(prev => ({ ...prev, [quizId]: result }));
   };
 
   const handleSubmitQuiz = () => {
     if (!topic) return;
 
+    // 只统计客观题；简答题自评，不计分、不进错题本
     let correct = 0;
+    let total = 0;
     topic.quizzes.forEach(quiz => {
-      const userAnswer = userAnswers[quiz.id];
-      const correctAnswer = Array.isArray(quiz.answer) ? quiz.answer.join(',') : quiz.answer;
-
-      if (userAnswer === correctAnswer) {
+      if (!isObjective(quiz)) return;
+      const ua = userAnswers[quiz.id] ?? '';
+      const r = gradeAnswer(quiz, ua);
+      total++;
+      if (r.correct) {
         correct++;
       } else {
         saveMistake({
           quizId: quiz.id,
           topicId: topic.id,
           question: quiz.question,
-          userAnswer: userAnswer || '未作答',
+          userAnswer: Array.isArray(ua) ? ua : (ua || '未作答'),
           correctAnswer: quiz.answer,
           date: new Date().toISOString().split('T')[0],
           reviewed: false,
@@ -83,13 +110,14 @@ export default function RuankaoTopicPage() {
       }
     });
 
-    setQuizScore({ correct, total: topic.quizzes.length });
-    saveQuizScore(topicId, correct, topic.quizzes.length);
+    setQuizScore({ correct, total });
+    saveQuizScore(topicId, correct, total);
     setShowResult(true);
   };
 
   const handleResetQuiz = () => {
     setUserAnswers({});
+    setSelfAssessResults({});
     setShowResult(false);
     setCurrentQuizIndex(0);
   };
@@ -200,31 +228,94 @@ export default function RuankaoTopicPage() {
           ) : showResult ? (
             <div className="text-center">
               <div className="text-5xl mb-3">
-                {quizScore.correct / quizScore.total >= 0.8 ? '🎉' : '📚'}
+                {quizScore.total > 0 && quizScore.correct / quizScore.total >= 0.8 ? '🎉' : '📚'}
               </div>
               <h2 className="text-xl font-bold text-[var(--text)] mb-1">测验完成</h2>
               <p className="text-[var(--text-secondary)] mb-6">
-                得分：<span className="font-bold text-[var(--accent)]">{quizScore.correct}/{quizScore.total}</span>
-                <span className="text-[var(--text-muted)] ml-1">（{Math.round(quizScore.correct / quizScore.total * 100)}分）</span>
+                客观题：<span className="font-bold text-[var(--accent)]">{quizScore.correct}/{quizScore.total}</span>
+                <span className="text-[var(--text-muted)] ml-1">
+                  （{quizScore.total > 0 ? Math.round(quizScore.correct / quizScore.total * 100) : 0}分，简答题自评不计分）
+                </span>
               </p>
 
               <div className="text-left space-y-3 mb-8">
                 {topic.quizzes.map(quiz => {
-                  const userAnswer = userAnswers[quiz.id];
-                  const correctAnswer = Array.isArray(quiz.answer) ? quiz.answer.join(',') : quiz.answer;
-                  const isCorrect = userAnswer === correctAnswer;
+                  const ua = userAnswers[quiz.id] ?? '';
+                  const r = gradeAnswer(quiz, ua);
+                  const selfAssessed = isSelfAssess(quiz);
+                  const selfResult = selfAssessResults[quiz.id];
 
                   return (
                     <div key={quiz.id} className="rounded-xl px-5 py-4"
-                      style={{ background: isCorrect ? 'var(--success-bg)' : 'var(--danger-bg)' }}>
-                      <p className="font-medium text-[var(--text)] text-[14px]">{quiz.question}</p>
+                      style={{
+                        background: selfAssessed
+                          ? 'var(--bg-warm)'
+                          : r.correct ? 'var(--success-bg)' : 'var(--danger-bg)',
+                      }}>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="font-medium text-[var(--text)] text-[14px]">{quiz.question}</p>
+                        {selfAssessed ? (
+                          <span className="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: 'var(--border-light)', color: 'var(--text-muted)' }}>
+                            自评
+                          </span>
+                        ) : (
+                          <span className="shrink-0 text-[13px] font-semibold"
+                            style={{ color: r.correct ? 'var(--success)' : 'var(--danger)' }}>
+                            {r.correct ? '✓ 正确' : '✗ 错误'}
+                          </span>
+                        )}
+                      </div>
+
                       <p className="text-[13px] mt-1.5">
-                        你的答案：<span style={{ color: isCorrect ? 'var(--success)' : 'var(--danger)' }}>{userAnswer || '未作答'}</span>
+                        你的答案：
+                        <span style={{
+                          color: selfAssessed
+                            ? 'var(--text-secondary)'
+                            : r.correct ? 'var(--success)' : 'var(--danger)',
+                        }}>
+                          {userAnswerText(quiz.id)}
+                        </span>
                       </p>
-                      {!isCorrect && (
-                        <p className="text-[13px]" style={{ color: 'var(--success)' }}>正确答案：{correctAnswer}</p>
+
+                      <p className="text-[13px]" style={{ color: 'var(--success)' }}>
+                        {selfAssessed ? '参考答案' : '正确答案'}：{selfAssessed ? renderAnswer(quiz) : r.displayAnswer}
+                      </p>
+
+                      {r.blankResults && (
+                        <p className="text-[12.5px] text-[var(--text-muted)]">
+                          逐空判定：{r.blankResults.map((ok, i) => `第${i + 1}空 ${ok ? '✓' : '✗'}`).join('  ')}
+                        </p>
                       )}
+
                       <p className="text-[12.5px] text-[var(--text-muted)] mt-1.5">{quiz.explanation}</p>
+
+                      {selfAssessed && (
+                        <div className="flex gap-2 mt-3">
+                          <button
+                            onClick={() => handleSelfAssess(quiz.id, 'mastered')}
+                            className="btn"
+                            style={{
+                              background: selfResult === 'mastered' ? 'var(--success-bg)' : 'var(--surface)',
+                              color: 'var(--success)',
+                              border: `1.5px solid ${selfResult === 'mastered' ? 'var(--success)' : 'var(--border)'}`,
+                            }}
+                          >
+                            ✅ 已掌握
+                          </button>
+                          <button
+                            onClick={() => handleSelfAssess(quiz.id, 'review')}
+                            className="btn"
+                            style={{
+                              background: selfResult === 'review' ? 'var(--danger-bg)' : 'var(--surface)',
+                              color: 'var(--warning)',
+                              border: `1.5px solid ${selfResult === 'review' ? 'var(--warning)' : 'var(--border)'}`,
+                            }}
+                          >
+                            🔁 需复习
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -252,14 +343,14 @@ export default function RuankaoTopicPage() {
                       className={`w-7 h-7 rounded-full text-[12px] font-medium transition-all ${
                         i === currentQuizIndex
                           ? 'text-white'
-                          : userAnswers[topic.quizzes[i].id]
+                          : hasAnswer(topic.quizzes[i].id)
                           ? 'text-[var(--success)]'
                           : 'text-[var(--text-muted)]'
                       }`}
                       style={{
                         background: i === currentQuizIndex
                           ? 'var(--accent)'
-                          : userAnswers[topic.quizzes[i].id]
+                          : hasAnswer(topic.quizzes[i].id)
                           ? 'var(--success-bg)'
                           : 'var(--border-light)',
                       }}
@@ -306,10 +397,40 @@ export default function RuankaoTopicPage() {
                   </div>
                 )}
 
-                {currentQuiz.type === 'fill' && (
+                {currentQuiz.type === 'fill' && isMultiBlank(currentQuiz) && (
+                  <div className="space-y-3">
+                    {Array.from({ length: blankCount(currentQuiz) }).map((_, bi) => {
+                      const arr = Array.isArray(userAnswers[currentQuiz.id])
+                        ? (userAnswers[currentQuiz.id] as string[])
+                        : [];
+                      return (
+                        <input
+                          key={bi}
+                          type="text"
+                          value={arr[bi] || ''}
+                          onChange={(e) => {
+                            const n = blankCount(currentQuiz);
+                            const next = Array.from({ length: n }, (__, i) =>
+                              i === bi ? e.target.value : (arr[i] || '')
+                            );
+                            handleQuizAnswer(currentQuiz.id, next);
+                          }}
+                          placeholder={`第${bi + 1}空`}
+                          className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none"
+                          style={{
+                            border: '1.5px solid var(--border)',
+                            background: 'var(--surface)',
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+
+                {currentQuiz.type === 'fill' && !isMultiBlank(currentQuiz) && (
                   <input
                     type="text"
-                    value={userAnswers[currentQuiz.id] || ''}
+                    value={typeof userAnswers[currentQuiz.id] === 'string' ? (userAnswers[currentQuiz.id] as string) : ''}
                     onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
                     placeholder="请输入答案"
                     className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none"
@@ -322,7 +443,7 @@ export default function RuankaoTopicPage() {
 
                 {currentQuiz.type === 'short-answer' && (
                   <textarea
-                    value={userAnswers[currentQuiz.id] || ''}
+                    value={typeof userAnswers[currentQuiz.id] === 'string' ? (userAnswers[currentQuiz.id] as string) : ''}
                     onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
                     placeholder="请输入你的答案"
                     rows={4}

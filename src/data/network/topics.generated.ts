@@ -68,7 +68,7 @@ export type TopicRecord = {
   title: string;
   description: string;
   content: string;
-  quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[];
+  quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[] | string[][]; explanation: string }[];
   references: string[];
 };
 

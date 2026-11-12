@@ -400,7 +400,7 @@ ICMPv6和NDP的设计体现了IPv6的核心理念：自动化、集成化、安�
       id: 'quiz-45-03',
       type: 'fill',
       question: 'IPv6中，路由器周期性发送的ICMPv6消息类型是____（填类型名称），其类型号为____。',
-      answer: ['Router Advertisement', 'RA', '路由器通告'],
+      answer: [['Router Advertisement', 'RA', '路由器通告'], ['134']],
       explanation: '路由器通告（RA，类型134）由路由器周期性（默认每200秒）或响应RS消息时发送，包含前缀信息、MTU、跳数限制等网络配置信息，是SLAAC和路由器发现的基础。'
     },
     {

@@ -58,8 +58,13 @@ import { topic_57 } from '@/data/network/topics/topic-57';
 import { topic_58 } from '@/data/network/topics/topic-58';
 import { topic_59 } from '@/data/network/topics/topic-59';
 import { topic_60 } from '@/data/network/topics/topic-60';
+import { topic_47 } from '@/data/network/topics/topic-47';
+import { topic_48 } from '@/data/network/topics/topic-48';
+import { topic_49 } from '@/data/network/topics/topic-49';
+import { topic_61 } from '@/data/network/topics/topic-61';
+import { topic_62 } from '@/data/network/topics/topic-62';
 
-const topicMap: Record<string, { title: string; description: string; content: string; quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[]; explanation: string }[]; references: string[] }> = {
+const topicMap: Record<string, { title: string; description: string; content: string; quizzes: { id: string; type: string; question: string; options?: string[]; answer: string | string[] | string[][]; explanation: string }[]; references: string[] }> = {
   'topic-01': topic_01,
   'topic-02': topic_02,
   'topic-03': topic_03,
@@ -118,7 +123,18 @@ const topicMap: Record<string, { title: string; description: string; content: st
   'topic-58': topic_58,
   'topic-59': topic_59,
   'topic-60': topic_60,
+  'topic-47': topic_47,
+  'topic-48': topic_48,
+  'topic-49': topic_49,
+  'topic-61': topic_61,
+  'topic-62': topic_62,
 };
+
+// 软考网络工程师复用网络工程的课题内容，但学习数据（进度/笔记/错题）
+// 以 topicId、quizId 为键存储。若直接沿用裸 id（topic-01…topic-62），
+// 两个课程会共享进度与错题，且 getTopicById 会歧义。
+// 因此给软考侧统一加 `ne-` 前缀，把学习数据的命名空间隔开。
+const NS = 'ne-';
 
 export const networkEngineerModules: Module[] = networkEngineerModulesMeta.map(mod => ({
   id: mod.id,
@@ -126,12 +142,12 @@ export const networkEngineerModules: Module[] = networkEngineerModulesMeta.map(m
   description: mod.description,
   icon: mod.icon,
   topics: mod.topicIds.map(tid => ({
-    id: tid,
+    id: NS + tid,
     moduleId: mod.id,
     title: topicMap[tid].title,
     description: topicMap[tid].description,
     content: topicMap[tid].content,
-    quizzes: topicMap[tid].quizzes as Quiz[],
+    quizzes: (topicMap[tid].quizzes as Quiz[]).map(q => ({ ...q, id: NS + q.id })),
     references: topicMap[tid].references
   }))
 }));

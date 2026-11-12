@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { highlightTerms } from '@/components/GlossaryTooltip';
 import { GlossaryCard } from '@/components/diagrams';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis } from '@/components/diagrams';
+import { OsiLayers, TcpIpLayers, NetworkTopology, Encapsulation, RoutingTable, VlanDiagram, STPTopology, RoutingProcess, EncryptionFlow, FirewallTypes, VPNTunnel, WirelessStandards, CellularNetwork, FiberOptic, SDNArchitecture, SNMPDiagram, FaultDiagnosis, SupplyDemand, ISLM, CostCurves } from '@/components/diagrams';
 
 const diagramComponents: Record<string, React.ComponentType> = {
   'osi-layers': OsiLayers,
@@ -26,6 +26,9 @@ const diagramComponents: Record<string, React.ComponentType> = {
   'sdn-architecture': SDNArchitecture,
   'snmp-diagram': SNMPDiagram,
   'fault-diagnosis': FaultDiagnosis,
+  'supply-demand': SupplyDemand,
+  'is-lm': ISLM,
+  'cost-curves': CostCurves,
 };
 
 // 处理 React 子节点，对纯文本节点做术语高亮
@@ -95,8 +98,14 @@ export function renderContentWithDiagrams(content: string) {
             <GlossaryCard terms={terms} />
           </div>
         );
-      } catch {
-        return null;
+      } catch (err) {
+        // 不再静默丢弃：坏编码会导致整张术语卡消失，用户看不到任何提示
+        console.warn('[renderContent] Glossary 解码失败，回退为纯文本:', err);
+        return (
+          <p key={i} className="my-2 text-[12px] text-[var(--text-muted)]" style={{ opacity: 0.7 }}>
+            （术语表渲染失败）
+          </p>
+        );
       }
     }
     return part.value.trim() ? (

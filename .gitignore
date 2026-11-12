@@ -43,3 +43,6 @@ courses-export.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 参考教材（版权资料，不入库）
+reference-materials/

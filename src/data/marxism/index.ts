@@ -44,6 +44,9 @@ export const marxismModules: Module[] = modulesMeta.map(mod => ({
 }));
 
 // Helper functions for essay question pages
+const toKeyPoints = (a: string | string[] | string[][]): string[] =>
+  Array.isArray(a) ? a.flat().map(String) : [String(a)];
+
 export function getQuestionsByModule(moduleId: string) {
   const mod = marxismModules.find(m => m.id === moduleId);
   if (!mod) return [];
@@ -55,7 +58,7 @@ export function getQuestionsByModule(moduleId: string) {
         moduleId: t.moduleId,
         moduleTitle: mod.title,
         question: q.question,
-        keyPoints: Array.isArray(q.answer) ? q.answer : [q.answer],
+        keyPoints: toKeyPoints(q.answer),
         difficulty: 'intermediate' as const,
         tags: [],
       }))
@@ -80,7 +83,7 @@ export function getQuestionById(id: string) {
           moduleId: topic.moduleId,
           moduleTitle: mod.title,
           question: quiz.question,
-          keyPoints: Array.isArray(quiz.answer) ? quiz.answer : [quiz.answer],
+          keyPoints: toKeyPoints(quiz.answer),
           difficulty: 'intermediate' as const,
           tags: [],
         };

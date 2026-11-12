@@ -24,7 +24,13 @@ export interface Quiz {
   type: 'choice' | 'fill' | 'short-answer';
   question: string;
   options?: string[]; // 选择题选项
-  answer: string | string[];
+  /**
+   * 正确答案：
+   * - string：单空单答案，或多空竖线打包（'具体|抽象'）
+   * - string[]：多空逐空答案，或单空的多个可接受变体
+   * - string[][]：逐空 + 每空多个可接受变体
+   */
+  answer: string | string[] | string[][];
   explanation: string;
 }
 
@@ -55,7 +61,7 @@ export interface MistakeRecord {
   topicId: string;
   question: string;
   userAnswer: string | string[];
-  correctAnswer: string | string[];
+  correctAnswer: string | string[] | string[][];
   date: string;
   reviewed: boolean;
 }

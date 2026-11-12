@@ -204,10 +204,10 @@ export const topic_01 = {
           {
             id: 'quiz-01-06',
             type: 'choice',
-            question: '以下哪个是互联网诞生的标志性年份？',
-            options: ['1969年ARPANET诞生', '1983年TCP/IP成为标准', '1991年万维网发明', '1995年互联网商业化'],
+            question: 'TCP/IP 协议正式成为 ARPANET 标准协议是在哪一年？',
+            options: ['1969年', '1983年', '1991年', '1995年'],
             answer: 'B',
-            explanation: '1983年1月1日，TCP/IP协议正式成为ARPANET的标准，这一天被称为"互联网的生日"。'
+            explanation: '1983年1月1日，TCP/IP协议正式成为ARPANET的标准，这一天被称为"互联网的生日"。注意区分：1969年是ARPANET诞生（网络互联的起点），1983年才是TCP/IP成为标准的年份。'
           },
           {
             id: 'quiz-01-07',

@@ -147,7 +147,8 @@ describe('Course Data Integrity', () => {
     for (const topic of getAllTopics()) {
       for (const quiz of topic.quizzes) {
         const answerEmpty = Array.isArray(quiz.answer)
-          ? quiz.answer.length === 0 || quiz.answer.some(a => !a.trim())
+          ? quiz.answer.length === 0 ||
+            quiz.answer.some(a => (Array.isArray(a) ? a.length === 0 || a.some(x => !x.trim()) : !String(a).trim()))
           : !String(quiz.answer ?? '').trim();
         if (!quiz.question?.trim()) broken.push(`${topic.id}/${quiz.id}: 题干为空`);
         if (answerEmpty) broken.push(`${topic.id}/${quiz.id}: 答案为空`);

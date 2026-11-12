@@ -5,9 +5,14 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { marxismModules, getTopicById } from '@/data/marxism';
 import { Topic } from '@/types';
-import { getProgress, toggleTopicComplete, saveNote, getNote } from '@/lib/storage';
+import { getProgress, toggleTopicComplete, saveNote, getNote, saveMistake, saveQuizScore } from '@/lib/storage';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
 import { renderContentWithDiagrams } from '@/lib/renderContent';
+import {
+  gradeAnswer, isMultiBlank, isSelfAssess, isObjective,
+  renderAnswer, blankCount,
+  type UserAnswer,
+} from '@/lib/quiz-grading';
 
 type TabType = 'content' | 'quiz' | 'notes';
 
@@ -23,7 +28,9 @@ export default function MarxismTopicPage() {
   const [note, setNote] = useState('');
 
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<string, UserAnswer>>({});
+  const [selfAssessRatings, setSelfAssessRatings] = useState<Record<string, 'mastered' | 'review'>>({});
+  const [revealedRef, setRevealedRef] = useState<Record<string, boolean>>({});
   const [showResult, setShowResult] = useState(false);
   const [quizScore, setQuizScore] = useState({ correct: 0, total: 0 });
 
@@ -50,24 +57,89 @@ export default function MarxismTopicPage() {
     alert('笔记已保存');
   };
 
-  const handleQuizAnswer = (quizId: string, answer: string) => {
+  const handleQuizAnswer = (quizId: string, answer: string | string[]) => {
     setUserAnswers(prev => ({ ...prev, [quizId]: answer }));
+  };
+
+  const hasAnswer = (quizId: string) => {
+    const a = userAnswers[quizId];
+    if (Array.isArray(a)) return a.some(x => x.trim() !== '');
+    return typeof a === 'string' && a.trim() !== '';
+  };
+
+  const displayUserAnswer = (quizId: string) => {
+    const a = userAnswers[quizId];
+    if (Array.isArray(a)) return a.map(x => x.trim() || '—').join(' / ');
+    return a || '';
+  };
+
+  const handleSelfAssess = (quizId: string, rating: 'mastered' | 'review') => {
+    setSelfAssessRatings(prev => ({ ...prev, [quizId]: rating }));
+  };
+
+  const selfAssessButtons = (quizId: string) => {
+    const rating = selfAssessRatings[quizId];
+    return (
+      <div className="flex gap-2 mt-2.5">
+        <button
+          onClick={() => handleSelfAssess(quizId, 'mastered')}
+          className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all"
+          style={{
+            background: rating === 'mastered' ? 'var(--success)' : 'var(--surface)',
+            color: rating === 'mastered' ? '#fff' : 'var(--text-secondary)',
+            border: `1.5px solid ${rating === 'mastered' ? 'var(--success)' : 'var(--border)'}`,
+          }}
+        >
+          ✅ 已掌握
+        </button>
+        <button
+          onClick={() => handleSelfAssess(quizId, 'review')}
+          className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all"
+          style={{
+            background: rating === 'review' ? 'var(--danger)' : 'var(--surface)',
+            color: rating === 'review' ? '#fff' : 'var(--text-secondary)',
+            border: `1.5px solid ${rating === 'review' ? 'var(--danger)' : 'var(--border)'}`,
+          }}
+        >
+          🔁 需复习
+        </button>
+      </div>
+    );
   };
 
   const handleSubmitQuiz = () => {
     if (!topic) return;
+    // 只统计客观题；简答题自评，不计分、不进错题本
     let correct = 0;
+    let total = 0;
     topic.quizzes.forEach(quiz => {
-      const userAnswer = userAnswers[quiz.id];
-      const correctAnswer = Array.isArray(quiz.answer) ? quiz.answer.join(',') : quiz.answer;
-      if (userAnswer === correctAnswer) correct++;
+      if (!isObjective(quiz)) return;
+      total++;
+      const ua = userAnswers[quiz.id] ?? '';
+      const r = gradeAnswer(quiz, ua);
+      if (r.correct) {
+        correct++;
+      } else {
+        saveMistake({
+          quizId: quiz.id,
+          topicId: topic.id,
+          question: quiz.question,
+          userAnswer: Array.isArray(ua) ? ua : (ua || '未作答'),
+          correctAnswer: quiz.answer,
+          date: new Date().toISOString().split('T')[0],
+          reviewed: false,
+        });
+      }
     });
-    setQuizScore({ correct, total: topic.quizzes.length });
+    setQuizScore({ correct, total });
+    saveQuizScore(topicId, correct, total);
     setShowResult(true);
   };
 
   const handleResetQuiz = () => {
     setUserAnswers({});
+    setSelfAssessRatings({});
+    setRevealedRef({});
     setShowResult(false);
     setCurrentQuizIndex(0);
   };
@@ -178,28 +250,51 @@ export default function MarxismTopicPage() {
           ) : showResult ? (
             <div className="text-center">
               <div className="text-5xl mb-3">
-                {quizScore.correct / quizScore.total >= 0.8 ? '🎉' : '📚'}
+                {quizScore.total > 0 && quizScore.correct / quizScore.total >= 0.8 ? '🎉' : '📚'}
               </div>
               <h2 className="text-xl font-bold text-[var(--text)] mb-1">测验完成</h2>
               <p className="text-[var(--text-secondary)] mb-6">
-                得分：<span className="font-bold text-[var(--accent)]">{quizScore.correct}/{quizScore.total}</span>
-                <span className="text-[var(--text-muted)] ml-1">（{Math.round(quizScore.correct / quizScore.total * 100)}分）</span>
+                客观题：<span className="font-bold text-[var(--accent)]">{quizScore.correct}/{quizScore.total}</span>
+                <span className="text-[var(--text-muted)] ml-1">（{quizScore.total > 0 ? Math.round(quizScore.correct / quizScore.total * 100) : 0}分）</span>
+                <span className="text-[var(--text-muted)] ml-2">简答题自评，不计分</span>
               </p>
 
               <div className="text-left space-y-3 mb-8">
                 {topic.quizzes.map(quiz => {
-                  const userAnswer = userAnswers[quiz.id];
-                  const correctAnswer = Array.isArray(quiz.answer) ? quiz.answer.join(',') : quiz.answer;
-                  const isCorrect = userAnswer === correctAnswer;
+                  const userAnswer = userAnswers[quiz.id] ?? '';
+                  const r = gradeAnswer(quiz, userAnswer);
+                  const selfAssess = isSelfAssess(quiz);
+                  const rating = selfAssessRatings[quiz.id];
                   return (
                     <div key={quiz.id} className="rounded-xl px-5 py-4"
-                      style={{ background: isCorrect ? 'var(--success-bg)' : 'var(--danger-bg)' }}>
-                      <p className="font-medium text-[var(--text)] text-[14px]">{quiz.question}</p>
+                      style={{
+                        background: selfAssess
+                          ? rating === 'mastered' ? 'var(--success-bg)'
+                            : rating === 'review' ? 'var(--danger-bg)'
+                            : 'var(--surface)'
+                          : r.correct ? 'var(--success-bg)' : 'var(--danger-bg)',
+                        border: selfAssess ? '1px solid var(--border)' : 'none',
+                      }}>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="font-medium text-[var(--text)] text-[14px]">{quiz.question}</p>
+                        {selfAssess && (
+                          <span className="shrink-0 text-[11px] px-2 py-0.5 rounded-full"
+                            style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>自评</span>
+                        )}
+                      </div>
                       <p className="text-[13px] mt-1.5">
-                        你的答案：<span style={{ color: isCorrect ? 'var(--success)' : 'var(--danger)' }}>{userAnswer || '未作答'}</span>
+                        你的答案：
+                        <span style={{ color: selfAssess ? 'var(--text-secondary)' : r.correct ? 'var(--success)' : 'var(--danger)' }}>
+                          {displayUserAnswer(quiz.id) || '未作答'}
+                        </span>
                       </p>
-                      {!isCorrect && (
-                        <p className="text-[13px]" style={{ color: 'var(--success)' }}>正确答案：{correctAnswer}</p>
+                      {selfAssess ? (
+                        <>
+                          <p className="text-[13px]" style={{ color: 'var(--success)' }}>参考答案：{r.displayAnswer}</p>
+                          {selfAssessButtons(quiz.id)}
+                        </>
+                      ) : (
+                        <p className="text-[13px]" style={{ color: 'var(--success)' }}>正确答案：{r.displayAnswer}</p>
                       )}
                       {quiz.explanation && (
                         <p className="text-[12.5px] text-[var(--text-muted)] mt-1.5">{quiz.explanation}</p>
@@ -228,14 +323,14 @@ export default function MarxismTopicPage() {
                       className={`w-7 h-7 rounded-full text-[12px] font-medium transition-all ${
                         i === currentQuizIndex
                           ? 'text-white'
-                          : userAnswers[topic.quizzes[i].id]
+                          : hasAnswer(topic.quizzes[i].id)
                           ? 'text-[var(--success)]'
                           : 'text-[var(--text-muted)]'
                       }`}
                       style={{
                         background: i === currentQuizIndex
                           ? 'var(--accent)'
-                          : userAnswers[topic.quizzes[i].id]
+                          : hasAnswer(topic.quizzes[i].id)
                           ? 'var(--success-bg)'
                           : 'var(--border-light)',
                       }}
@@ -283,25 +378,73 @@ export default function MarxismTopicPage() {
                 )}
 
                 {currentQuiz.type === 'fill' && (
-                  <input
-                    type="text"
-                    value={userAnswers[currentQuiz.id] || ''}
-                    onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
-                    placeholder="请输入答案"
-                    className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none"
-                    style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
-                  />
+                  isMultiBlank(currentQuiz) ? (
+                    <div className="space-y-2">
+                      {Array.from({ length: blankCount(currentQuiz) }).map((_, bi) => {
+                        const arr = Array.isArray(userAnswers[currentQuiz.id])
+                          ? (userAnswers[currentQuiz.id] as string[])
+                          : [];
+                        return (
+                          <input
+                            key={bi}
+                            type="text"
+                            value={arr[bi] || ''}
+                            onChange={(e) => {
+                              const prev = Array.isArray(userAnswers[currentQuiz.id])
+                                ? [...(userAnswers[currentQuiz.id] as string[])]
+                                : [];
+                              while (prev.length < blankCount(currentQuiz)) prev.push('');
+                              prev[bi] = e.target.value;
+                              handleQuizAnswer(currentQuiz.id, prev);
+                            }}
+                            placeholder={`第${bi + 1}空`}
+                            className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none"
+                            style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={typeof userAnswers[currentQuiz.id] === 'string' ? (userAnswers[currentQuiz.id] as string) : ''}
+                      onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
+                      placeholder="请输入答案"
+                      className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none"
+                      style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
+                    />
+                  )
                 )}
 
-                {currentQuiz.type === 'short-answer' && (
-                  <textarea
-                    value={userAnswers[currentQuiz.id] || ''}
-                    onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
-                    placeholder="请输入你的答案"
-                    rows={4}
-                    className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none resize-none"
-                    style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
-                  />
+                {isSelfAssess(currentQuiz) && (
+                  <div>
+                    <textarea
+                      value={typeof userAnswers[currentQuiz.id] === 'string' ? (userAnswers[currentQuiz.id] as string) : ''}
+                      onChange={(e) => handleQuizAnswer(currentQuiz.id, e.target.value)}
+                      placeholder="请输入你的答案（简答题自评，不自动判分）"
+                      rows={4}
+                      className="w-full px-5 py-3.5 rounded-xl text-[14.5px] focus:outline-none resize-none"
+                      style={{ border: '1.5px solid var(--border)', background: 'var(--surface)' }}
+                    />
+                    {!revealedRef[currentQuiz.id] ? (
+                      <button
+                        onClick={() => setRevealedRef(prev => ({ ...prev, [currentQuiz.id]: true }))}
+                        className="btn btn-secondary mt-3"
+                        style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}
+                      >
+                        提交本题，查看参考答案
+                      </button>
+                    ) : (
+                      <div className="mt-3 rounded-xl px-5 py-4"
+                        style={{ background: 'var(--bg-warm)', border: '1px solid var(--border)' }}>
+                        <p className="text-[13px]" style={{ color: 'var(--success)' }}>参考答案：{renderAnswer(currentQuiz)}</p>
+                        {currentQuiz.explanation && (
+                          <p className="text-[12.5px] text-[var(--text-muted)] mt-1.5">{currentQuiz.explanation}</p>
+                        )}
+                        {selfAssessButtons(currentQuiz.id)}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 
