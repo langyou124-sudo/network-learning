@@ -46,6 +46,21 @@
 - [x] 验证（2026-11-11）：匿名 `GET /rest/v1/learning_state` 返回 `200 []`（RLS 过滤，无泄漏）；
       匿名 `POST` 被拒 `42501 new row violates row-level security policy`，说明 RLS 生效且策略正确
 
+### 端到端验证（2026-11-12，真实浏览器 + 真实账号）
+
+用 CDP 驱动一个独立 profile 的 Chrome 完成，全部用真实 UI 操作，不是 mock：
+
+1. **上行**：在课题页点「标记完成」→ 5 秒后服务端行从 `completed: 1` 变为 `2`，`updated_at` 同步刷新
+2. **下行**：`localStorage.removeItem('network-learning-progress')` → 刷新 → 进度页恢复 `2/323`，
+   本地 `completedTopics` 重新出现 `["topic-01","topic-02"]`
+3. 结论：Supabase ↔ 浏览器双向同步成立，RLS 只放行本人数据
+
+### 踩过的坑（已修，已记录）
+
+- dev 用 `127.0.0.1` 打开时，Next 16 只认 `localhost`，`/_next` 资源被跨源拦截 → React 不水合 →
+  点登录走原生 GET 提交（地址变 `/login?` 后刷新），表现为「登录没反应」。
+  修法：`next.config.ts` 加 `allowedDevOrigins: ['127.0.0.1']`（提交 2641480）
+
 ## 待决策（需要人拍板，agent 不自行决定）
 
 1. **未登录试用额度**：现在 chat 强制登录，未登录直接 401。放开需要定「每人多少次、
