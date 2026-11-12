@@ -49,7 +49,7 @@ export default function StudyCalendar({ records }: { records: Record<string, Day
           ))}
         </div>
 
-        <div className="flex-1 grid grid-flow-col auto-cols-fr gap-[6px]">
+        <div className="flex-1 flex gap-[6px] items-start">
           {weeks.map((week, wi) => (
             <div key={wi} className="flex flex-col gap-[6px]">
               {week.map((cell) => (
@@ -60,7 +60,7 @@ export default function StudyCalendar({ records }: { records: Record<string, Day
                       ? cell.date
                       : `${cell.date} · ${formatDuration(cell.seconds)}${cell.topics > 0 ? ` · ${cell.topics} 个课题` : ''}`
                   }
-                  className="h-[18px] rounded-[4px] transition-colors"
+                  className="w-[18px] h-[18px] rounded-[4px] transition-colors"
                   style={{
                     background: cell.future ? 'transparent' : LEVEL_COLORS[cell.level],
                     border: cell.future ? '1px dashed var(--border-light)' : 'none',
