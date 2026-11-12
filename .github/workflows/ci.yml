@@ -38,5 +38,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # 构建期只需要变量“存在”（env.ts 会在 production 下 fail-fast），不会连真实服务：
+          # 真实值由 Vercel 在部署时注入。这里 secrets 缺失就回落到占位符，
+          # 否则没配 secrets 的仓库连构建都跑不过（MIMO_API_KEY 之前就漏了）。
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+          MIMO_API_KEY: ${{ secrets.MIMO_API_KEY || 'placeholder-mimo-key' }}
