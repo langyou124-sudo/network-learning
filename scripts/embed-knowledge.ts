@@ -18,12 +18,11 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@supabase/supabase-js';
 import { modules } from '@/data/courses';
+import { describeEmbedding, getEmbedding, resolveEmbeddingConfig } from '@/lib/api/embedding';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
-const EMBEDDING_MODEL = 'embedding-3';
-const EMBEDDING_ENDPOINT = 'https://open.bigmodel.cn/api/paas/v4/embeddings';
 const MAX_INPUT_LENGTH = 4000;
 const DEFAULT_CHUNK_SIZE = 500;
 const DEFAULT_OVERLAP = 80;
@@ -131,16 +130,11 @@ function collectJobs(args: Args): TopicJob[] {
   return args.limit ? jobs.slice(0, args.limit) : jobs;
 }
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const input = text.length > MAX_INPUT_LENGTH ? text.slice(0, MAX_INPUT_LENGTH) : text;
-  const resp = await fetch(EMBEDDING_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model: EMBEDDING_MODEL, input }),
-  });
-  if (!resp.ok) throw new Error(`Embedding API ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
-  const data = (await resp.json()) as { data: { embedding: number[] }[] };
-  return data.data[0].embedding;
+/** 从 pgvector 的文本表示里数维度（形如 "[0.1,0.2,...]"）。 */
+function vectorDimensionOf(raw: unknown): number | null {
+  const text = typeof raw === 'string' ? raw : '';
+  if (!text.startsWith('[')) return null;
+  return text.slice(1, -1).split(',').filter((part) => part.trim() !== '').length;
 }
 
 async function main() {
@@ -151,9 +145,11 @@ async function main() {
 
   const emptyTopics = jobs.filter((job) => job.chunks.length === 0);
   const thinTopics = jobs.filter((job) => job.chunks.length === 1);
+  const embeddingConfig = resolveEmbeddingConfig();
 
   console.log('=== 达博理 内容向量化 ===');
   console.log(`模式：${args.write ? '写入' : 'dry-run（不调用 API、不写库）'}${args.reset ? ' + 清空重建' : ''}`);
+  console.log(`模型：${describeEmbedding(embeddingConfig)}`);
   console.log(`模块：${args.moduleId ?? '全部'}   课题：${jobs.length}   分块：${totalChunks}`);
   console.log(`分块参数：size=${args.chunkSize} overlap=${args.overlap}`);
   console.log(`预估 API 调用：${totalChunks} 次，约 ${Math.ceil((totalChunks * API_DELAY_MS) / 1000)} 秒\n`);
@@ -179,12 +175,11 @@ async function main() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const zhipuKey = process.env.ZHIPUAI_API_KEY;
 
   const missing = [
     !supabaseUrl && 'NEXT_PUBLIC_SUPABASE_URL',
-    !(serviceKey || anonKey) && 'SUPABASE_SERVICE_ROLE_KEY',
-    !zhipuKey && 'ZHIPUAI_API_KEY',
+    !(serviceKey || anonKey) && 'SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    !embeddingConfig.apiKey && 'EMBEDDING_API_KEY（或 ZHIPUAI_API_KEY）',
   ].filter(Boolean);
   if (missing.length > 0) throw new Error(`缺少环境变量：${missing.join(', ')}`);
   if (!serviceKey) {
@@ -192,6 +187,17 @@ async function main() {
   }
 
   const supabase = createClient(supabaseUrl!, (serviceKey ?? anonKey)!);
+
+  // 维度守卫：换 embedding 模型时最容易踩的坑是列维度不匹配，写入会被 Postgres 直接拒。
+  const { data: sampleRows } = await supabase.from('knowledge_chunks').select('embedding').limit(1);
+  const dbDimension = vectorDimensionOf((sampleRows?.[0] as { embedding?: unknown } | undefined)?.embedding);
+  if (dbDimension !== null && embeddingConfig.dimensions !== undefined && dbDimension !== embeddingConfig.dimensions) {
+    throw new Error(
+      `维度不一致：knowledge_chunks.embedding 是 ${dbDimension} 维，但 EMBEDDING_DIMENSIONS=${embeddingConfig.dimensions}。` +
+        '请先改列（alter table ... vector(N)）并重建索引，或改用同为 ' + dbDimension + ' 维的模型。',
+    );
+  }
+  if (dbDimension !== null) console.log(`数据库现有向量维度：${dbDimension}\n`);
 
   if (args.reset) {
     const { error } = await supabase.from('knowledge_chunks').delete().neq('id', 0);
@@ -212,7 +218,7 @@ async function main() {
     process.stdout.write(`[${job.moduleId}] ${job.title} → ${job.chunks.length} 块 `);
     for (let i = 0; i < job.chunks.length; i++) {
       try {
-        const embedding = await getEmbedding(job.chunks[i], zhipuKey!);
+        const embedding = await getEmbedding(job.chunks[i], embeddingConfig);
         const { error } = await supabase.from('knowledge_chunks').insert({
           module_id: job.moduleId,
           topic_id: job.topicId,
