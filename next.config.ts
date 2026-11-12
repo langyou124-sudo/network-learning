@@ -22,6 +22,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // 开发期允许通过 127.0.0.1 访问 dev 资源（默认只认 localhost）。
+  // 否则用 127.0.0.1 打开页面时客户端资源和 HMR 会被拦，React 根本不水合，
+  // 表现是「点登录没反应」——表单走了原生提交，地址变成 /login? 然后刷新。
+  allowedDevOrigins: ['127.0.0.1'],
+
   // 启用压缩
   compress: true,
   
