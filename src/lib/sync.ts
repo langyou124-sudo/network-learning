@@ -73,11 +73,6 @@ function disableOnce(message: string) {
   console.warn(`[sync] 云同步已禁用：${message}。本地数据不受影响。`);
 }
 
-/** 合并后比较，判断是否需要回写本地。 */
-function sameJson(a: unknown, b: unknown): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
 async function pullAndMerge(client: ReturnType<typeof createClient>, userId: string) {
   const { data, error } = await client
     .from(TABLE)

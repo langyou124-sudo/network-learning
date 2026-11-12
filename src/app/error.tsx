@@ -16,6 +16,11 @@ export default function ErrorPage({
       <p className="text-[var(--text-muted)] text-sm mb-6 max-w-md mx-auto">
         页面加载时发生了意外错误，请重试或返回首页
       </p>
+      {error.digest && (
+        <p className="text-[12px] text-[var(--text-muted)] opacity-60 mb-4">
+          错误编号：{error.digest}
+        </p>
+      )}
       <div className="flex gap-3 justify-center">
         <button onClick={reset} className="btn btn-primary">
           重试

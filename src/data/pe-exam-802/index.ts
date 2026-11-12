@@ -1,4 +1,4 @@
-import { Module, Quiz } from '@/types';
+import { Module } from '@/types';
 import { modulesMeta802 } from './modules';
 
 // Import topics from each module file

@@ -1,16 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { peExam303Modules } from '@/data/pe-exam-303';
 
 export default function PeExam303Page() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const totalTopics = peExam303Modules.reduce((sum, m) => sum + m.topics.length, 0);
   const totalQuizzes = peExam303Modules.reduce((sum, m) => sum + m.topics.reduce((s, t) => s + t.quizzes.length, 0), 0);
 

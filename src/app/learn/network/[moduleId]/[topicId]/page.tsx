@@ -7,9 +7,6 @@ import { getModuleById, getTopicById } from '@/data/courses';
 import { getProgress, toggleTopicComplete, saveQuizScore, saveNote, getNote, saveMistake } from '@/lib/storage';
 import { Module, Topic } from '@/types';
 import { useStudyTimer } from '@/hooks/useStudyTimer';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { highlightTerms } from '@/components/GlossaryTooltip';
 import { renderContentWithDiagrams } from '@/lib/renderContent';
 
 type TabType = 'content' | 'quiz' | 'notes';

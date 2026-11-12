@@ -1,16 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { peExam802Modules } from '@/data/pe-exam-802';
 
 export default function PeExam802Page() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const totalTopics = peExam802Modules.reduce((sum, m) => sum + m.topics.length, 0);
   const totalQuizzes = peExam802Modules.reduce((sum, m) => sum + m.topics.reduce((s, t) => s + t.quizzes.length, 0), 0);
 

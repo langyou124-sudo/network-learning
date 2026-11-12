@@ -1,16 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { marxismModules } from '@/data/marxism';
 
 export default function MarxismLearnPage() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const totalTopics = marxismModules.reduce((sum, m) => sum + m.topics.length, 0);
   const totalQuizzes = marxismModules.reduce((sum, m) => sum + m.topics.reduce((s, t) => s + t.quizzes.length, 0), 0);
 

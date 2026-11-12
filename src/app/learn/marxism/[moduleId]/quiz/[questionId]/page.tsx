@@ -26,7 +26,6 @@ export default function MarxismQuestionPage() {
   const [showModelAnswer, setShowModelAnswer] = useState(false);
 
   const charCount = answer.trim().length;
-  const wordEstimate = answer.trim() ? answer.trim().replace(/\s+/g, ' ').split(' ').length : 0;
 
   useEffect(() => {
     const q = getQuestionById(questionId);
