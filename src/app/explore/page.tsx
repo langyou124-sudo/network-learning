@@ -157,6 +157,7 @@ export default function ExplorePage() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState('');
   const [subject, setSubject] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -169,16 +170,29 @@ export default function ExplorePage() {
 
     const activeSubject = subjectOverride ?? subject;
     setSearching(true);
+    setSearchError('');
     try {
       const params = new URLSearchParams({ q: q.trim(), limit: '8' });
       if (activeSubject) params.set('subject', activeSubject);
       const resp = await fetch(`/api/v1/search?${params.toString()}`);
+      if (!resp.ok) {
+        // 401/429/500 不是「搜不到」，必须和空结果区分开，否则用户以为内容不存在
+        setResults([]);
+        setSearched(true);
+        setSearchError(
+          resp.status === 401 ? '请先登录后再搜索' :
+          resp.status === 429 ? '搜索太频繁，稍后再试' :
+          '检索服务暂时不可用，请稍后再试',
+        );
+        return;
+      }
       const data = await resp.json();
       setResults(data.results || []);
       setSearched(true);
     } catch {
       setResults([]);
       setSearched(true);
+      setSearchError('网络异常，请稍后再试');
     } finally {
       setSearching(false);
     }
@@ -259,14 +273,18 @@ export default function ExplorePage() {
               搜索结果
             </h2>
             <button
-              onClick={() => { setQuery(''); setResults([]); setSearched(false); }}
+              onClick={() => { setQuery(''); setResults([]); setSearched(false); setSearchError(''); }}
               className="text-[12px] text-[var(--accent)] hover:underline"
             >
               清除搜索
             </button>
           </div>
 
-          {results.length === 0 ? (
+          {searchError ? (
+            <div className="card px-6 py-8 text-center">
+              <p className="text-[13px]" style={{ color: 'var(--danger)' }}>{searchError}</p>
+            </div>
+          ) : results.length === 0 ? (
             <div className="card px-6 py-8 text-center">
               <p className="text-[var(--text-muted)] text-[13px]">未找到相关知识点，换个关键词试试</p>
             </div>
