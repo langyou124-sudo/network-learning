@@ -150,10 +150,12 @@ export function validateSearchParams(params: URLSearchParams): {
   query?: string;
   limit?: number;
   moduleId?: string;
+  subject?: string;
 } {
   const query = params.get('q');
   const limitStr = params.get('limit') || '5';
   const moduleId = params.get('module') || undefined;
+  const subject = params.get('subject') || undefined;
 
   if (!query || query.trim().length === 0) {
     return { ok: false, error: '缺少搜索关键词' };
@@ -171,5 +173,5 @@ export function validateSearchParams(params: URLSearchParams): {
   // 强制上限 20
   const cappedLimit = Math.min(limit, 20);
 
-  return { ok: true, query: query.trim(), limit: cappedLimit, moduleId };
+  return { ok: true, query: query.trim(), limit: cappedLimit, moduleId, subject };
 }

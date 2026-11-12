@@ -68,6 +68,11 @@ export function moduleIdsOfSubject(subject: SubjectId): Set<string> {
   return new Set(MODULES_BY_SUBJECT[subject].map((mod) => mod.id));
 }
 
+/** 学科的中文名；非法值返回 null（UI 与接口共用）。 */
+export function subjectLabel(subject: string | null | undefined): string | null {
+  return isSubjectId(subject) ? PROFILES[subject].label : null;
+}
+
 export interface PromptInput {
   subject?: string | null;
   /** 语义检索召回的知识库片段 */

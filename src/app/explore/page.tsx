@@ -139,6 +139,16 @@ interface SearchResult {
   similarity: number;
 }
 
+// 学科筛选项；id 与后端 SubjectId 一致
+const SUBJECT_FILTERS = [
+  { id: '', label: '全部' },
+  { id: 'network', label: '网络工程' },
+  { id: 'ruankao', label: '软考' },
+  { id: 'marxism', label: '马理论' },
+  { id: 'pe-exam-303', label: '数学三' },
+  { id: 'pe-exam-802', label: '802 经济学' },
+];
+
 export default function ExplorePage() {
   const activeModules = knowledgeModules.filter(m => m.status === 'active');
   const comingModules = knowledgeModules.filter(m => m.status === 'coming');
@@ -147,18 +157,22 @@ export default function ExplorePage() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [subject, setSubject] = useState('');
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const doSearch = useCallback(async (q: string) => {
+  const doSearch = useCallback(async (q: string, subjectOverride?: string) => {
     if (!q.trim()) {
       setResults([]);
       setSearched(false);
       return;
     }
 
+    const activeSubject = subjectOverride ?? subject;
     setSearching(true);
     try {
-      const resp = await fetch(`/api/v1/search?q=${encodeURIComponent(q.trim())}&limit=8`);
+      const params = new URLSearchParams({ q: q.trim(), limit: '8' });
+      if (activeSubject) params.set('subject', activeSubject);
+      const resp = await fetch(`/api/v1/search?${params.toString()}`);
       const data = await resp.json();
       setResults(data.results || []);
       setSearched(true);
@@ -168,7 +182,13 @@ export default function ExplorePage() {
     } finally {
       setSearching(false);
     }
-  }, []);
+  }, [subject]);
+
+  const handleSubjectChange = (next: string) => {
+    setSubject(next);
+    // 已有搜索词时立即用新学科重搜，否则只记下选择
+    if (query.trim()) void doSearch(query, next);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -197,6 +217,22 @@ export default function ExplorePage() {
 
       {/* 搜索栏 */}
       <div className="card px-5 py-4 mb-6 animate-in" style={{ animationDelay: '0.06s' }}>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {SUBJECT_FILTERS.map((s) => {
+            const active = subject === s.id;
+            return (
+              <button
+                key={s.id || 'all'}
+                onClick={() => handleSubjectChange(s.id)}
+                className={`px-3 py-1 rounded-full text-[12px] transition-colors ${
+                  active ? 'btn-primary' : 'btn-secondary'
+                }`}
+              >
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
         <div className="flex items-center gap-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
